@@ -30,20 +30,20 @@ function maskPhone(v: string) {
 
 function inputClass(hasError: boolean) {
   return [
-    'bg-somma-black/50 border rounded-xl px-4 py-3 font-dm text-somma-white placeholder-somma-white/30',
-    'focus:outline-none focus:ring-2 transition',
+    'bg-somma-cream border-2 rounded-xl px-4 py-3 font-dm text-somma-black placeholder-somma-black/30',
+    'focus:outline-none focus:ring-4 transition',
     hasError
-      ? 'border-red-500 focus:ring-red-500/40'
-      : 'border-somma-blue/40 focus:ring-somma-yellow/40',
+      ? 'border-red-600 focus:ring-red-500/30'
+      : 'border-somma-black focus:ring-somma-blue/30',
   ].join(' ')
 }
 
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1">
-      <label className="font-dm text-somma-white/80 text-sm font-medium">{label}</label>
+      <label className="font-bebas text-somma-black text-lg tracking-widest">{label}</label>
       {children}
-      {error && <p className="text-red-400 text-xs font-dm">{error}</p>}
+      {error && <p className="text-red-700 text-xs font-dm">{error}</p>}
     </div>
   )
 }
@@ -64,15 +64,12 @@ export default function VipFormSection() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from(cardRef.current, {
-        y: 60,
+        y: 80,
         opacity: 0,
-        scale: 0.97,
-        duration: 0.8,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: cardRef.current,
-          start: 'top 75%',
-        },
+        scale: 0.95,
+        duration: 0.9,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: cardRef.current, start: 'top 75%' },
       })
     })
     return () => ctx.revert()
@@ -98,36 +95,31 @@ export default function VipFormSection() {
   }
 
   return (
-    <section id="formulario" className="py-24 px-4 bg-somma-black">
-      <div className="max-w-lg mx-auto">
-        <div ref={cardRef} className="bg-somma-blue/20 border border-somma-blue/40 rounded-3xl p-8 md:p-12">
+    <section id="formulario" className="relative py-32 px-4 bg-somma-pink overflow-hidden">
+      <div className="absolute top-10 left-[8%] text-8xl rotate-12 opacity-40 select-none">⚡</div>
+      <div className="absolute bottom-10 right-[8%] text-8xl -rotate-12 opacity-40 select-none">⭐</div>
+
+      <div className="relative max-w-xl mx-auto">
+        <div ref={cardRef} className="bg-somma-cream border-4 border-somma-black rounded-3xl p-8 md:p-12 shadow-[10px_10px_0_#0a0a0a]">
           {submitted ? (
             <FormSuccess />
           ) : (
             <div ref={formRef}>
-              <h2 className="font-bebas text-4xl md:text-5xl text-somma-yellow text-center tracking-wider mb-2">
-                Entre na Lista VIP
-              </h2>
-              <p className="font-dm text-somma-white/60 text-center text-sm mb-8">
-                Acesso antecipado e desconto exclusivo no 1 lote
+              <p className="font-dm text-somma-blue text-xs tracking-[0.3em] uppercase text-center mb-2">
+                Acesso antecipado + desconto no 1º lote
               </p>
+              <h2 className="font-bebas text-5xl md:text-6xl text-somma-black text-center tracking-tight mb-8 leading-none">
+                ENTRA NA<br/>
+                <span className="text-somma-orange">LISTA VIP</span>
+              </h2>
 
               <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
                 <Field label="Nome completo" error={errors.nome?.message}>
-                  <input
-                    {...register('nome')}
-                    placeholder="Seu nome completo"
-                    className={inputClass(!!errors.nome)}
-                  />
+                  <input {...register('nome')} placeholder="Seu nome completo" className={inputClass(!!errors.nome)} />
                 </Field>
 
                 <Field label="E-mail" error={errors.email?.message}>
-                  <input
-                    {...register('email')}
-                    type="email"
-                    placeholder="seu@email.com"
-                    className={inputClass(!!errors.email)}
-                  />
+                  <input {...register('email')} type="email" placeholder="seu@email.com" className={inputClass(!!errors.email)} />
                 </Field>
 
                 <Field label="CPF" error={errors.cpf?.message}>
@@ -149,13 +141,13 @@ export default function VipFormSection() {
                 </Field>
 
                 {serverError && (
-                  <p className="text-red-400 text-sm font-dm text-center">{serverError}</p>
+                  <p className="text-red-700 text-sm font-dm text-center font-medium">{serverError}</p>
                 )}
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-somma-orange hover:bg-somma-orange/90 disabled:opacity-60 disabled:cursor-not-allowed text-somma-white font-bebas text-2xl tracking-widest py-4 rounded-full transition-transform hover:scale-105 active:scale-95 mt-2"
+                  className="w-full bg-somma-orange hover:bg-somma-orange/90 disabled:opacity-60 disabled:cursor-not-allowed text-somma-cream font-bebas text-2xl tracking-widest py-4 rounded-full border-4 border-somma-black shadow-[6px_6px_0_#0a0a0a] hover:shadow-[3px_3px_0_#0a0a0a] hover:translate-x-[3px] hover:translate-y-[3px] transition-all mt-2"
                 >
                   {isSubmitting ? 'Garantindo seu lugar...' : 'Garantir meu lugar'}
                 </button>

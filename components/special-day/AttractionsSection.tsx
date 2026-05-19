@@ -7,18 +7,20 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
 
 const ATTRACTIONS = [
-  { emoji: '🏃', title: '8km Percurso Inédito', desc: 'Região das embaixadas com vista para o Lago Paranoá' },
-  { emoji: '🍳', title: 'Café da Manhã Big Box', desc: 'Café especial para todos os participantes' },
-  { emoji: '🥋', title: 'Red Bull', desc: 'Coolers, ativação e kit exclusivo' },
-  { emoji: '💪', title: 'Academia Evolve', desc: 'Aulas exclusivas no evento' },
-  { emoji: '🎶', title: 'Roda de Samba ao Vivo', desc: '08h às 11h — comemore correndo e sambando' },
-  { emoji: '🎧', title: 'DJ até 15h', desc: 'A festa continua depois da chegada' },
-  { emoji: '🏐', title: 'Futevôlei + Altinha + Recovery', desc: 'Atividades extras para quem fica' },
-  { emoji: '🎯', title: 'Gincana Somma', desc: 'Competição interna com premiação' },
-  { emoji: '👕', title: 'Kit Exclusivo', desc: 'Camiseta Thermodry Track&Field + Gym Bag + brindes' },
-  { emoji: '🍺', title: 'Bar Somma', desc: 'Corona, Heineken, drinks e combos em baldes' },
-  { emoji: '🍽️', title: 'Almoço a Custo Popular', desc: 'Não precisa sair com fome' },
+  { emoji: '🏃', title: '8KM PERCURSO INEDITO', desc: 'Regiao das embaixadas com vista pro Lago Paranoa' },
+  { emoji: '🍳', title: 'CAFE BIG BOX', desc: 'Cafe especial pra todo mundo antes da largada' },
+  { emoji: '🐂', title: 'RED BULL', desc: 'Coolers, ativacao e kit exclusivo' },
+  { emoji: '💪', title: 'ACADEMIA EVOLVE', desc: 'Aulas exclusivas no evento' },
+  { emoji: '🥁', title: 'RODA DE SAMBA AO VIVO', desc: '08h as 11h. Comemore correndo e sambando' },
+  { emoji: '🎧', title: 'DJ ATE 15H', desc: 'A festa continua depois da chegada' },
+  { emoji: '🏐', title: 'FUTEVOLEI + ALTINHA', desc: 'Atividades extras pra quem fica' },
+  { emoji: '🎯', title: 'GINCANA SOMMA', desc: 'Competicao interna com premiacao' },
+  { emoji: '👕', title: 'KIT EXCLUSIVO', desc: 'Camiseta Thermodry T&F + Gym Bag + brindes' },
+  { emoji: '🍺', title: 'BAR SOMMA', desc: 'Corona, Heineken, drinks e combos em baldes' },
+  { emoji: '🍽️', title: 'ALMOCO POPULAR', desc: 'Nao precisa sair com fome' },
 ]
+
+const ROTATIONS = ['-rotate-2', 'rotate-1', '-rotate-1', 'rotate-2', 'rotate-1', '-rotate-2']
 
 export default function AttractionsSection() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -26,40 +28,39 @@ export default function AttractionsSection() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from('.attraction-card', {
-        y: 40,
+        y: 60,
         opacity: 0,
-        stagger: 0.1,
+        rotate: 0,
+        stagger: 0.08,
         ease: 'power2.out',
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top 85%',
-        },
+        scrollTrigger: { trigger: containerRef.current, start: 'top 80%' },
       })
     }, containerRef)
     return () => ctx.revert()
   }, [])
 
   return (
-    <section className="py-24 px-4 bg-somma-black">
-      <div className="max-w-5xl mx-auto">
-        <h2 className="font-bebas text-5xl md:text-7xl text-somma-yellow text-center mb-4 tracking-wider">
-          O que vai rolar
-        </h2>
-        <p className="font-dm text-somma-white/60 text-center mb-14 text-lg">
-          Um sabado inteiro de celebracao. 400 vagas. Nao fique de fora.
-        </p>
+    <section className="relative py-32 px-4 bg-somma-blue overflow-hidden">
+      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_20%_30%,#FDB716,transparent_50%),radial-gradient(circle_at_80%_70%,#FD6FDB,transparent_50%)]" />
 
-        <div ref={containerRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {ATTRACTIONS.map((a) => (
+      <div className="relative max-w-6xl mx-auto">
+        <p data-speed="1.15" className="font-dm text-somma-yellow text-xs tracking-[0.3em] uppercase text-center mb-4">
+          O que vai rolar
+        </p>
+        <h2 data-speed="1.1" className="font-bebas text-7xl md:text-9xl text-somma-cream text-center mb-20 tracking-tight leading-none">
+          Um sabado inteiro<br/>
+          <span className="text-somma-yellow">de celebracao</span>
+        </h2>
+
+        <div ref={containerRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {ATTRACTIONS.map((a, i) => (
             <div
               key={a.title}
-              className="attraction-card bg-somma-blue/20 border border-somma-blue/30 rounded-2xl p-6 flex gap-4"
+              className={`attraction-card bg-somma-cream border-4 border-somma-black rounded-3xl p-6 shadow-[6px_6px_0_#0a0a0a] ${ROTATIONS[i % ROTATIONS.length]}`}
             >
-              <span className="text-3xl">{a.emoji}</span>
-              <div>
-                <p className="font-bebas text-xl text-somma-yellow tracking-wide">{a.title}</p>
-                <p className="font-dm text-somma-white/70 text-sm mt-1">{a.desc}</p>
-              </div>
+              <div className="text-4xl mb-3">{a.emoji}</div>
+              <p className="font-bebas text-2xl text-somma-black tracking-wide leading-tight">{a.title}</p>
+              <p className="font-dm text-somma-black/70 text-sm mt-2">{a.desc}</p>
             </div>
           ))}
         </div>

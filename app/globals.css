@@ -4,24 +4,29 @@
 
 :root {
   --somma-black:  #0a0a0a;
-  --somma-blue:   #0D1B8E;
-  --somma-orange: #E8561A;
-  --somma-yellow: #FAC775;
-  --somma-white:  #f5f2ec;
+  --somma-blue:   #005EFF;
+  --somma-orange: #FF4800;
+  --somma-yellow: #FDB716;
+  --somma-pink:   #FD6FDB;
+  --somma-cream:  #F9F0DC;
 }
 
-html, body {
+html.lenis, html.lenis body {
   height: auto;
-  background-color: var(--somma-black);
-  scroll-behavior: smooth;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
 }
 
-#smooth-wrapper {
-  position: relative;
-}
-
-#smooth-content {
-  position: relative;
+body {
+  background-color: var(--somma-cream);
+  color: var(--somma-black);
 }
 
 @keyframes blink {
@@ -30,4 +35,11 @@ html, body {
 }
 .countdown-separator {
   animation: blink 1s ease-in-out infinite;
+}
+
+/* Sticker / elementos decorativos */
+.sticker {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
 }

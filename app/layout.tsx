@@ -34,7 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" className={`${bebas.variable} ${dm.variable}`}>
-      <body className="font-dm bg-somma-black text-somma-white antialiased">
+      <body className="font-dm bg-somma-cream text-somma-black antialiased">
         {children}
       </body>
     </html>

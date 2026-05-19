@@ -7,9 +7,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
 
 const STATS = [
-  { value: 4000, suffix: '+', label: 'Membros no Somma Club' },
-  { value: 400,  suffix: '',  label: 'Vagas disponíveis' },
-  { value: 1,    suffix: ' ANO', label: 'De historia e corrida' },
+  { value: 4000, suffix: '+',     label: 'membros no Somma Club',  color: 'text-somma-orange' },
+  { value: 400,  suffix: '',      label: 'vagas no evento',         color: 'text-somma-blue'   },
+  { value: 1,    suffix: ' ANO',  label: 'de historia e corrida',   color: 'text-somma-pink'   },
 ]
 
 export default function ProofSection() {
@@ -36,14 +36,14 @@ export default function ProofSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-24 px-4 bg-somma-blue">
-      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
+    <section ref={sectionRef} className="py-32 px-4 bg-somma-cream">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
         {STATS.map((stat, i) => (
           <div key={stat.label}>
-            <p id={`stat-${i}`} className="font-bebas text-6xl md:text-8xl text-somma-yellow">
+            <p id={`stat-${i}`} className={`font-bebas text-[12vw] md:text-[7vw] leading-none ${stat.color} drop-shadow-[3px_3px_0_#0a0a0a]`}>
               0{stat.suffix}
             </p>
-            <p className="font-dm text-somma-white/70 mt-2 text-sm tracking-widest uppercase">
+            <p className="font-dm text-somma-black/70 mt-4 text-sm tracking-widest uppercase">
               {stat.label}
             </p>
           </div>

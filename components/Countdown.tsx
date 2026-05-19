@@ -23,7 +23,7 @@ const Unit = forwardRef<HTMLSpanElement, { label: string; value: string }>(
     return (
       <div className="flex flex-col items-center">
         <span ref={ref} className="tabular-nums">{value}</span>
-        <span className="text-xs font-dm text-somma-white/50 tracking-widest">{label}</span>
+        <span className="text-xs font-dm text-somma-cream/70 tracking-widest">{label}</span>
       </div>
     )
   }
@@ -49,7 +49,7 @@ export default function Countdown() {
   const { days, hours, minutes, seconds } = time
 
   return (
-    <div className="flex items-center gap-2 font-bebas text-4xl md:text-6xl text-somma-yellow">
+    <div className="flex items-center gap-2 font-bebas text-4xl md:text-6xl text-somma-yellow [&_.countdown-separator]:text-somma-cream">
       <Unit label="DIAS"    value={pad(days)}    />
       <span className="countdown-separator mb-4">:</span>
       <Unit label="HORAS"   value={pad(hours)}   />

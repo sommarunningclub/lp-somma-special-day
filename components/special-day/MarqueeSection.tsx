@@ -15,24 +15,24 @@ export default function MarqueeSection() {
     const ctx = gsap.context(() => {
       const track = trackRef.current
       if (!track) return
-      const totalWidth = track.scrollWidth / 2
-
+      const totalWidth = track.scrollWidth / 3
       gsap.to(track, {
         x: -totalWidth,
         repeat: -1,
         ease: 'none',
-        duration: 18,
+        duration: 22,
       })
     })
     return () => ctx.revert()
   }, [])
 
   return (
-    <section className="py-8 bg-somma-orange overflow-hidden">
-      <div ref={trackRef} className="flex gap-12 whitespace-nowrap will-change-transform">
+    <section className="py-10 bg-somma-orange border-y-4 border-somma-black overflow-hidden">
+      <div ref={trackRef} className="flex gap-16 whitespace-nowrap will-change-transform">
         {[...PARTNERS, ...PARTNERS, ...PARTNERS].map((name, i) => (
-          <span key={i} className="font-bebas text-2xl text-somma-white tracking-[0.2em]">
-            {name} <span className="text-somma-yellow">*</span>
+          <span key={i} className="flex items-center gap-4 font-bebas text-4xl text-somma-cream tracking-[0.15em]">
+            {name}
+            <span className="text-somma-yellow text-5xl">✦</span>
           </span>
         ))}
       </div>
