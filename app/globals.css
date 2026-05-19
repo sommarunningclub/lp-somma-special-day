@@ -11,29 +11,17 @@
 }
 
 html, body {
-  overflow: hidden;
-  height: 100%;
+  height: auto;
   background-color: var(--somma-black);
+  scroll-behavior: smooth;
 }
 
 #smooth-wrapper {
-  overflow: hidden;
-  height: 100vh;
+  position: relative;
 }
 
 #smooth-content {
-  will-change: transform;
-}
-
-@media (max-width: 767px) {
-  html, body {
-    overflow: auto;
-    height: auto;
-  }
-  #smooth-wrapper {
-    overflow: visible;
-    height: auto;
-  }
+  position: relative;
 }
 
 @keyframes blink {
