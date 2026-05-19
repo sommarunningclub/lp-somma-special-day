@@ -1,18 +1,134 @@
+import Image from 'next/image'
+
 export default function FooterSection() {
   return (
-    <footer className="py-12 md:py-20 px-4 bg-somma-black text-center">
-      <p className="font-bebas text-3xl md:text-5xl text-somma-yellow tracking-tight mb-4">
-        SOMMA <span className="text-somma-orange">SPECIAL</span> DAY
-      </p>
-      <p className="font-dm text-somma-cream/80 text-sm mb-1">
-        18 de Julho de 2026, 06h · COPMDF, Setor de Clubes Sul, Brasilia
-      </p>
-      <p className="font-dm text-somma-cream/60 text-sm">
-        Contato: Priscila Salviano · (61) 99537-2477 · contato@sommaclub.com.br
-      </p>
-      <p className="font-dm text-somma-cream/30 text-xs mt-10 tracking-widest uppercase">
-        Somma Running Club © 2026
-      </p>
+    <footer className="bg-somma-black pt-16 pb-8 border-t-4 border-somma-orange">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
+          {/* Logo and Social */}
+          <div className="space-y-6">
+            <div className="flex items-center space-x-2">
+              <Image 
+                src="https://cdn.shopify.com/s/files/1/0788/1932/8253/files/HORIZONTAL_PRETA_LARANJA.png?v=1772322941" 
+                alt="SOMMA Logo"
+                width={160}
+                height={40}
+                className="h-10 w-auto invert brightness-0" // torna a logo branca para o fundo escuro
+              />
+            </div>
+            <p className="font-dm text-somma-cream/80 text-sm leading-relaxed max-w-xs">
+              Junte-se ao SOMMA Running Club, a maior comunidade de corrida de Brasília. Encontros aos sábados às 7h no Parque da Cidade. Mais de 4.300 membros ativos!
+            </p>
+            <div className="flex space-x-5">
+              <a 
+                href="https://www.instagram.com/somma.club/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-somma-cream/60 hover:text-somma-orange hover:-translate-y-1 transition-all duration-300"
+                aria-label="Instagram"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
+              </a>
+              <a 
+                href="https://www.strava.com/clubs/1608501" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-somma-cream/60 hover:text-somma-orange hover:-translate-y-1 transition-all duration-300"
+                aria-label="Strava"
+              >
+                <svg className="w-6 h-6" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <polygon points="226.172,26.001 90.149,288.345 170.29,288.345 226.172,184.036 281.605,288.345 361.116,288.345" fill="currentColor"></polygon>
+                  <polygon points="361.116,288.345 321.675,367.586 281.605,288.345 220.871,288.345 321.675,485.999 421.851,288.345" fill="currentColor"></polygon>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          {/* Contato */}
+          <div className="space-y-5">
+            <h3 className="font-bebas text-2xl text-somma-yellow tracking-widest">Contato</h3>
+            <ul className="space-y-4 font-dm text-sm text-somma-cream/80">
+              <li>
+                <a href="mailto:contato@sommaclub.com.br" className="hover:text-somma-orange transition-colors flex items-center gap-3">
+                  <svg className="h-5 w-5 flex-shrink-0 text-somma-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                  contato@sommaclub.com.br
+                </a>
+              </li>
+              <li>
+                <a href="https://wa.me/5561995372477?text=Ol%C3%A1%2C%20tudo%20bem%3F%20Vim%20do%20Site%20do%20Somma%20e%20quero%20falar%20com%20o%20atendimento." target="_blank" rel="noopener noreferrer" className="hover:text-somma-orange transition-colors flex items-center gap-3">
+                  <svg className="h-5 w-5 flex-shrink-0 text-somma-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                  +55 (61) 9537-2477
+                </a>
+              </li>
+              <li className="flex items-start gap-3">
+                <svg className="h-5 w-5 flex-shrink-0 text-somma-orange mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                <span>
+                  Srps 53WV+RX<br />
+                  Plano Piloto, Brasília - DF<br />
+                  70655-775
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Mais do Somma */}
+          <div className="space-y-5">
+            <h3 className="font-bebas text-2xl text-somma-yellow tracking-widest">Mais do Somma</h3>
+            <ul className="space-y-3 font-dm text-sm">
+              <li>
+                <a href="https://sommaclub.com.br/seja-parceiro" className="text-somma-cream/80 hover:text-somma-orange hover:translate-x-1 inline-block transition-all">
+                  Seja um Parceiro Somma Club
+                </a>
+              </li>
+              <li>
+                <a href="https://sommaclub.com.br/evolve" className="text-somma-cream/80 hover:text-somma-orange hover:translate-x-1 inline-block transition-all">
+                  Somma & Evolve
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Corporativo */}
+          <div className="space-y-5">
+            <h3 className="font-bebas text-2xl text-somma-yellow tracking-widest">Corporativo</h3>
+            <ul className="space-y-3 font-dm text-sm">
+              <li>
+                <a href="https://wa.me/5561995372477?text=Ol%C3%A1%2C%20tudo%20bem%3F%20Quero%20saber%20mais%20sobre%20como%20realizar%20um%20evento%20ou%20corrida%20com%20o%20Somma%20Club." target="_blank" rel="noopener noreferrer" className="text-somma-cream/80 hover:text-somma-orange hover:translate-x-1 inline-block transition-all">
+                  Somma Eventos
+                </a>
+              </li>
+              <li>
+                <a href="https://wa.me/5561995372477?text=Ol%C3%A1%2C%20tudo%20bem%3F%20Quero%20saber%20mais%20como%20funciona%20a%20contrata%C3%A7%C3%A3o%20de%20m%C3%ADdia%20do%20Somma%20Club." target="_blank" rel="noopener noreferrer" className="text-somma-cream/80 hover:text-somma-orange hover:translate-x-1 inline-block transition-all">
+                  Somma Mídia
+                </a>
+              </li>
+              <li>
+                <a href="https://wa.me/5561995372477?text=Ol%C3%A1%2C%20tudo%20bem%3F%20Quero%20saber%20mais%20sobre%20a%20Assessoria%20Somma%20Club" target="_blank" rel="noopener noreferrer" className="text-somma-cream/80 hover:text-somma-orange hover:translate-x-1 inline-block transition-all">
+                  Assessoria Somma Club
+                </a>
+              </li>
+              <li>
+                <a href="https://sommaclub.com.br/insider-conect" className="text-somma-cream/80 hover:text-somma-orange hover:translate-x-1 inline-block transition-all">
+                  Insider Conect
+                </a>
+              </li>
+              <li>
+                <a href="https://sommaclub.com.br/parceiro-somma-club" className="text-somma-cream/80 hover:text-somma-orange hover:translate-x-1 inline-block transition-all">
+                  Acesso Exclusivo Parceiro Somma
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom section */}
+        <div className="pt-8 border-t border-somma-cream/10 flex flex-col items-center justify-center">
+          <div className="text-center font-dm">
+            <div className="text-sm text-somma-cream/60">© 2026 Somma Running Club. All rights reserved.</div>
+            <div className="text-xs text-somma-cream/40 mt-1">CNPJ 61.315.987/0001-28</div>
+          </div>
+        </div>
+      </div>
     </footer>
   )
 }

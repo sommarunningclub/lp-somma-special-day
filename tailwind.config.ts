@@ -22,13 +22,18 @@ const config: Config = {
         dm:    ['var(--font-dm)',    'sans-serif'],
       },
       animation: {
-        'spin-slow': 'spin 12s linear infinite',
-        'float':     'float 4s ease-in-out infinite',
+        'spin-slow':  'spin 12s linear infinite',
+        'float':      'float 4s ease-in-out infinite',
+        'pulse-slow': 'pulse-slow 2.5s ease-in-out infinite',
       },
       keyframes: {
         float: {
           '0%, 100%': { transform: 'translateY(0) rotate(-3deg)' },
           '50%':       { transform: 'translateY(-12px) rotate(3deg)' },
+        },
+        'pulse-slow': {
+          '0%, 100%': { boxShadow: '5px 5px 0 #FDB716' },
+          '50%':       { boxShadow: '5px 5px 0 #FF4800' },
         },
       },
     },

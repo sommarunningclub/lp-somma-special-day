@@ -52,7 +52,7 @@ export default function AttractionsSection() {
         <p data-speed="1.15" className="font-dm text-somma-yellow text-xs tracking-[0.3em] uppercase text-center mb-4">
           O que vai rolar
         </p>
-        <h2 data-speed="1.1" className="font-bebas text-5xl sm:text-6xl md:text-8xl lg:text-9xl text-somma-cream text-center mb-10 md:mb-20 tracking-tight leading-none">
+        <h2 data-speed="1.1" className="font-bebas text-4xl sm:text-6xl md:text-8xl lg:text-9xl text-somma-cream text-center mb-10 md:mb-20 tracking-tight leading-none">
           Um sabado inteiro<br/>
           <span className="text-somma-yellow">de celebracao</span>
         </h2>

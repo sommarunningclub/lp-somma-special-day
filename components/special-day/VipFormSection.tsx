@@ -32,7 +32,7 @@ function maskPhone(v: string) {
 
 function inputClass(hasError: boolean) {
   return [
-    'bg-somma-cream border-2 rounded-xl px-4 py-3 font-dm text-somma-black placeholder-somma-black/30',
+    'bg-somma-cream border-2 rounded-xl px-4 py-3 font-dm text-somma-black placeholder-somma-black/30 w-full',
     'focus:outline-none focus:ring-4 transition',
     hasError
       ? 'border-red-600 focus:ring-red-500/30'
@@ -53,7 +53,7 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 export default function VipFormSection() {
   const cardRef = useRef<HTMLDivElement>(null)
   const formRef = useRef<HTMLDivElement>(null)
-  const [submitted, setSubmitted] = useState(false)
+  const [submittedData, setSubmittedData] = useState<{nome: string, email: string} | null>(null)
   const [serverError, setServerError] = useState('')
 
   const {
@@ -86,10 +86,10 @@ export default function VipFormSection() {
           scale: 0.95,
           opacity: 0,
           duration: 0.4,
-          onComplete: () => setSubmitted(true),
+          onComplete: () => setSubmittedData({ nome: data.nome, email: data.email }),
         })
       } else {
-        setSubmitted(true)
+        setSubmittedData({ nome: data.nome, email: data.email })
       }
     } else {
       setServerError(result.error)
@@ -107,9 +107,9 @@ export default function VipFormSection() {
       <div className="hidden md:block absolute bottom-10 right-[8%] text-8xl -rotate-12 opacity-40 select-none z-10 pointer-events-none">⭐</div>
 
       <div className="relative max-w-xl mx-auto z-10">
-        <div ref={cardRef} className="bg-somma-cream border-4 border-somma-black rounded-3xl p-6 md:p-12 shadow-[6px_6px_0_#0a0a0a] md:shadow-[10px_10px_0_#0a0a0a]">
-          {submitted ? (
-            <FormSuccess />
+        <div ref={cardRef} className="bg-somma-cream border-4 border-somma-black rounded-3xl p-4 sm:p-6 md:p-12 shadow-[6px_6px_0_#0a0a0a] md:shadow-[10px_10px_0_#0a0a0a]">
+          {submittedData ? (
+            <FormSuccess userData={submittedData} />
           ) : (
             <div ref={formRef}>
               <p className="font-dm text-somma-blue text-xs tracking-[0.3em] uppercase text-center mb-2">

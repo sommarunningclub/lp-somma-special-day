@@ -27,6 +27,9 @@ yarn-error.log*
 .env*.local
 .env
 
+# local-only asset originals (served copies live in public/)
+/assets/
+
 # vercel
 .vercel
 

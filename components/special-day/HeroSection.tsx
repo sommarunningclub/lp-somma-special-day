@@ -114,7 +114,7 @@ export default function HeroSection() {
       <a
         ref={ctaRef}
         href="#formulario"
-        className="mt-10 inline-block bg-somma-orange hover:bg-somma-orange/90 text-somma-cream font-bebas text-xl md:text-2xl lg:text-3xl tracking-widest px-8 py-4 md:px-12 md:py-5 rounded-full shadow-[4px_4px_0_#0a0a0a] md:shadow-[6px_6px_0_#0a0a0a] hover:shadow-[3px_3px_0_#0a0a0a] hover:translate-x-[3px] hover:translate-y-[3px] transition-all text-center"
+        className="mt-10 inline-block w-full sm:w-auto bg-somma-orange hover:bg-somma-orange/90 text-somma-cream font-bebas text-xl md:text-2xl lg:text-3xl tracking-widest px-6 sm:px-8 py-4 md:px-12 md:py-5 rounded-full shadow-[4px_4px_0_#0a0a0a] md:shadow-[6px_6px_0_#0a0a0a] hover:shadow-[3px_3px_0_#0a0a0a] hover:translate-x-[3px] hover:translate-y-[3px] transition-all text-center"
       >
         Quero entrar na Lista VIP
       </a>
