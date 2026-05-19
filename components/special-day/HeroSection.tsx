@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import gsap from 'gsap'
 import Countdown from '@/components/Countdown'
 
@@ -21,7 +22,7 @@ function Bolt({ className, color = '#FDB716' }: { className?: string; color?: st
 }
 
 export default function HeroSection() {
-  const titleRef = useRef<HTMLHeadingElement>(null)
+  const titleRef = useRef<HTMLDivElement>(null)
   const countdownRef = useRef<HTMLDivElement>(null)
   const ctaRef = useRef<HTMLAnchorElement>(null)
 
@@ -74,14 +75,16 @@ export default function HeroSection() {
         18 . 07 . 2026 · COPMDF Brasilia
       </p>
 
-      <h1
-        ref={titleRef}
-        className="relative font-bebas text-[18vw] md:text-[12vw] lg:text-[10vw] leading-[0.85] text-center tracking-tight"
-      >
-        <span className="block text-somma-yellow drop-shadow-[4px_4px_0_#005EFF]">SOMMA</span>
-        <span className="block text-somma-orange drop-shadow-[4px_4px_0_#005EFF] -mt-2">SPECIAL</span>
-        <span className="block text-somma-yellow drop-shadow-[4px_4px_0_#005EFF] -mt-2">DAY</span>
-      </h1>
+      <div ref={titleRef} className="relative w-full max-w-3xl px-4">
+        <Image
+          src="/logo-special-day.png"
+          alt="Somma Special Day"
+          width={1200}
+          height={1500}
+          priority
+          className="w-full h-auto drop-shadow-2xl"
+        />
+      </div>
 
       <div ref={countdownRef} className="mt-12 bg-somma-blue rounded-3xl px-8 py-6 shadow-2xl">
         <Countdown />
