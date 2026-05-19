@@ -8,6 +8,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { leadSchema, type LeadInput } from '@/lib/validations/lead'
 import { submitLead } from '@/actions/leads'
 import FormSuccess from './FormSuccess'
+import ElasticStringsBackground from './ElasticStringsBackground'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -95,11 +96,12 @@ export default function VipFormSection() {
   }
 
   return (
-    <section id="formulario" className="relative py-16 md:py-32 px-4 bg-somma-pink overflow-hidden">
-      <div className="hidden md:block absolute top-10 left-[8%] text-8xl rotate-12 opacity-40 select-none">⚡</div>
-      <div className="hidden md:block absolute bottom-10 right-[8%] text-8xl -rotate-12 opacity-40 select-none">⭐</div>
+    <section id="formulario" className="relative py-16 md:py-32 px-4 overflow-hidden">
+      <ElasticStringsBackground />
+      <div className="hidden md:block absolute top-10 left-[8%] text-8xl rotate-12 opacity-40 select-none z-10 pointer-events-none">⚡</div>
+      <div className="hidden md:block absolute bottom-10 right-[8%] text-8xl -rotate-12 opacity-40 select-none z-10 pointer-events-none">⭐</div>
 
-      <div className="relative max-w-xl mx-auto">
+      <div className="relative max-w-xl mx-auto z-10">
         <div ref={cardRef} className="bg-somma-cream border-4 border-somma-black rounded-3xl p-6 md:p-12 shadow-[6px_6px_0_#0a0a0a] md:shadow-[10px_10px_0_#0a0a0a]">
           {submitted ? (
             <FormSuccess />

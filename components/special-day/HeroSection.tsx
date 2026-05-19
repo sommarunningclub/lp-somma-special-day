@@ -28,13 +28,30 @@ export default function HeroSection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(titleRef.current, {
-        opacity: 0,
-        scale: 0.85,
-        y: 30,
-        duration: 1.2,
-        ease: 'power3.out',
-      })
+      // Animação de entrada premium para a logo
+      gsap.fromTo(
+        titleRef.current,
+        { opacity: 0, scale: 0.7, y: 50, rotationZ: -5 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          rotationZ: 0,
+          duration: 1.5,
+          ease: 'elastic.out(1, 0.5)',
+          onComplete: () => {
+            // Efeito de flutuação suave contínuo (floating effect)
+            gsap.to(titleRef.current, {
+              y: -10,
+              rotationZ: 1.5,
+              duration: 2.5,
+              ease: 'sine.inOut',
+              yoyo: true,
+              repeat: -1
+            })
+          }
+        }
+      )
       gsap.from(countdownRef.current, {
         opacity: 0,
         y: 30,
@@ -71,10 +88,6 @@ export default function HeroSection() {
       <Star className="hero-sticker sticker hidden md:block w-6 bottom-[12%] left-[20%]" color="#FD6FDB" />
       <Star className="hero-sticker sticker w-10 top-[8%] left-[48%]"   color="#FDB716" />
 
-      <p className="font-dm text-somma-blue text-xs md:text-sm tracking-[0.3em] uppercase mb-6">
-        18 . 07 . 2026 · COPMDF Brasilia
-      </p>
-
       <div ref={titleRef} className="relative w-full max-w-[90vw] sm:max-w-md md:max-w-2xl lg:max-w-3xl px-4">
         <Image
           src="/logo-special-day.svg"
@@ -98,9 +111,6 @@ export default function HeroSection() {
         Quero entrar na Lista VIP
       </a>
 
-      <p className="mt-6 font-dm text-somma-black/60 text-xs tracking-widest uppercase">
-        Apenas 400 vagas · 1º lote com desconto exclusivo
-      </p>
     </section>
   )
 }

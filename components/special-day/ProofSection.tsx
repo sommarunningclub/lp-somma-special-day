@@ -7,7 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
 
 const STATS = [
-  { value: 4000, suffix: '+',     label: 'membros no Somma Club',  color: 'text-somma-orange' },
+  { value: 5000, suffix: '+',     label: 'Mais de 5.000 mil membros no Somma Club',  color: 'text-somma-orange' },
   { value: 400,  suffix: '',      label: 'vagas no evento',         color: 'text-somma-blue'   },
   { value: 1,    suffix: ' ANO',  label: 'de historia e corrida',   color: 'text-somma-pink'   },
 ]
