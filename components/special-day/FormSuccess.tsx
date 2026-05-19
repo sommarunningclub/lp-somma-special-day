@@ -23,7 +23,7 @@ export default function FormSuccess() {
   return (
     <div ref={ref} className="text-center py-12 px-6">
       <div className="text-6xl mb-4">🎉</div>
-      <h3 className="font-bebas text-4xl text-somma-orange tracking-wider mb-4">
+      <h3 className="font-bebas text-3xl md:text-4xl text-somma-orange tracking-wider mb-4">
         Voce esta na lista!
       </h3>
       <p className="font-dm text-somma-black/70 text-base max-w-md mx-auto mb-8 leading-relaxed">

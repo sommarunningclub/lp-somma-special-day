@@ -63,19 +63,19 @@ export default function HeroSection() {
   }, [])
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 py-24 overflow-hidden bg-somma-cream">
+    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 py-12 md:py-24 overflow-hidden bg-somma-cream">
       <Star className="hero-sticker sticker w-10 top-[12%] left-[8%]"  color="#FF4800" />
       <Star className="hero-sticker sticker w-8 top-[18%] right-[12%]" color="#005EFF" />
-      <Bolt className="hero-sticker sticker w-12 top-[35%] left-[14%] rotate-12" color="#FDB716" />
+      <Bolt className="hero-sticker sticker hidden md:block w-12 top-[35%] left-[14%] rotate-12" color="#FDB716" />
       <Bolt className="hero-sticker sticker w-10 bottom-[20%] right-[10%] -rotate-12" color="#FF4800" />
-      <Star className="hero-sticker sticker w-6 bottom-[12%] left-[20%]" color="#FD6FDB" />
+      <Star className="hero-sticker sticker hidden md:block w-6 bottom-[12%] left-[20%]" color="#FD6FDB" />
       <Star className="hero-sticker sticker w-10 top-[8%] left-[48%]"   color="#FDB716" />
 
       <p className="font-dm text-somma-blue text-xs md:text-sm tracking-[0.3em] uppercase mb-6">
         18 . 07 . 2026 · COPMDF Brasilia
       </p>
 
-      <div ref={titleRef} className="relative w-full max-w-3xl px-4">
+      <div ref={titleRef} className="relative w-full max-w-[90vw] sm:max-w-md md:max-w-2xl lg:max-w-3xl px-4">
         <Image
           src="/logo-special-day.png"
           alt="Somma Special Day"
@@ -86,14 +86,14 @@ export default function HeroSection() {
         />
       </div>
 
-      <div ref={countdownRef} className="mt-12 bg-somma-blue rounded-3xl px-8 py-6 shadow-2xl">
+      <div ref={countdownRef} className="mt-8 md:mt-12 bg-somma-blue rounded-3xl px-4 py-4 md:px-8 md:py-6 shadow-2xl max-w-[95vw]">
         <Countdown />
       </div>
 
       <a
         ref={ctaRef}
         href="#formulario"
-        className="mt-10 inline-block bg-somma-orange hover:bg-somma-orange/90 text-somma-cream font-bebas text-2xl md:text-3xl tracking-widest px-12 py-5 rounded-full shadow-[6px_6px_0_#0a0a0a] hover:shadow-[3px_3px_0_#0a0a0a] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+        className="mt-10 inline-block bg-somma-orange hover:bg-somma-orange/90 text-somma-cream font-bebas text-xl md:text-2xl lg:text-3xl tracking-widest px-8 py-4 md:px-12 md:py-5 rounded-full shadow-[4px_4px_0_#0a0a0a] md:shadow-[6px_6px_0_#0a0a0a] hover:shadow-[3px_3px_0_#0a0a0a] hover:translate-x-[3px] hover:translate-y-[3px] transition-all text-center"
       >
         Quero entrar na Lista VIP
       </a>

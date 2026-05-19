@@ -24,6 +24,10 @@ html.lenis, html.lenis body {
   overflow: clip;
 }
 
+html, body {
+  overflow-x: hidden;
+}
+
 body {
   background-color: var(--somma-cream);
   color: var(--somma-black);

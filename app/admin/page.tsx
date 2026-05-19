@@ -29,9 +29,9 @@ export default async function AdminPage({
   const rows = (leads ?? []) as Lead[]
 
   return (
-    <main className="min-h-screen bg-somma-black text-somma-white p-8 font-dm">
+    <main className="min-h-screen bg-somma-black text-somma-white p-4 md:p-8 font-dm">
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-8">
           <div>
             <h1 className="font-bebas text-4xl text-somma-yellow tracking-wider">
               Lista VIP — Admin

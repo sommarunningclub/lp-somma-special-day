@@ -1,7 +1,7 @@
 export default function FooterSection() {
   return (
-    <footer className="py-20 px-4 bg-somma-black text-center">
-      <p className="font-bebas text-5xl text-somma-yellow tracking-tight mb-4">
+    <footer className="py-12 md:py-20 px-4 bg-somma-black text-center">
+      <p className="font-bebas text-3xl md:text-5xl text-somma-yellow tracking-tight mb-4">
         SOMMA <span className="text-somma-orange">SPECIAL</span> DAY
       </p>
       <p className="font-dm text-somma-cream/80 text-sm mb-1">

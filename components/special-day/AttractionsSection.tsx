@@ -40,14 +40,14 @@ export default function AttractionsSection() {
   }, [])
 
   return (
-    <section className="relative py-32 px-4 bg-somma-blue overflow-hidden">
+    <section className="relative py-16 md:py-32 px-4 bg-somma-blue overflow-hidden">
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_20%_30%,#FDB716,transparent_50%),radial-gradient(circle_at_80%_70%,#FD6FDB,transparent_50%)]" />
 
       <div className="relative max-w-6xl mx-auto">
         <p data-speed="1.15" className="font-dm text-somma-yellow text-xs tracking-[0.3em] uppercase text-center mb-4">
           O que vai rolar
         </p>
-        <h2 data-speed="1.1" className="font-bebas text-7xl md:text-9xl text-somma-cream text-center mb-20 tracking-tight leading-none">
+        <h2 data-speed="1.1" className="font-bebas text-5xl sm:text-6xl md:text-8xl lg:text-9xl text-somma-cream text-center mb-10 md:mb-20 tracking-tight leading-none">
           Um sabado inteiro<br/>
           <span className="text-somma-yellow">de celebracao</span>
         </h2>
