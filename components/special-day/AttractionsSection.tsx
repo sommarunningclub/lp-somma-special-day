@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import FloatingElement from './FloatingElement'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -41,6 +42,10 @@ export default function AttractionsSection() {
 
   return (
     <section className="relative py-16 md:py-32 px-4 bg-somma-blue overflow-hidden">
+      <FloatingElement src="/elemento-tenis.svg" alt="" speed={0.7} rotate={15}
+        className="hidden md:block top-10 right-[4%] w-32 md:w-44 opacity-95 z-10" />
+      <FloatingElement src="/elemento-relogio.svg" alt="" speed={1.3} rotate={-20}
+        className="hidden lg:block bottom-20 left-[2%] w-36 opacity-90 z-10" />
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_20%_30%,#FDB716,transparent_50%),radial-gradient(circle_at_80%_70%,#FD6FDB,transparent_50%)]" />
 
       <div className="relative max-w-6xl mx-auto">

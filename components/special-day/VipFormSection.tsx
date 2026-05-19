@@ -9,6 +9,7 @@ import { leadSchema, type LeadInput } from '@/lib/validations/lead'
 import { submitLead } from '@/actions/leads'
 import FormSuccess from './FormSuccess'
 import ElasticStringsBackground from './ElasticStringsBackground'
+import FloatingElement from './FloatingElement'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -98,6 +99,10 @@ export default function VipFormSection() {
   return (
     <section id="formulario" className="relative py-16 md:py-32 px-4 overflow-hidden">
       <ElasticStringsBackground />
+      <FloatingElement src="/elemento-corredor.svg" alt="" speed={0.8} rotate={-15}
+        className="hidden lg:block top-[8%] left-[4%] w-32 opacity-80" />
+      <FloatingElement src="/elemento-relogio.svg" alt="" speed={1.2} rotate={20}
+        className="hidden lg:block bottom-[10%] right-[6%] w-32 opacity-80" />
       <div className="hidden md:block absolute top-10 left-[8%] text-8xl rotate-12 opacity-40 select-none z-10 pointer-events-none">⚡</div>
       <div className="hidden md:block absolute bottom-10 right-[8%] text-8xl -rotate-12 opacity-40 select-none z-10 pointer-events-none">⭐</div>
 

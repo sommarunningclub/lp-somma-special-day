@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import gsap from 'gsap'
 import Countdown from '@/components/Countdown'
+import FloatingElement from './FloatingElement'
 
 function Star({ className, color = '#FF4800' }: { className?: string; color?: string }) {
   return (
@@ -81,6 +82,13 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-4 py-12 md:py-24 overflow-hidden bg-somma-cream">
+      <FloatingElement src="/elemento-relogio.svg" alt="" speed={0.85} rotate={-12}
+        className="top-[5%] left-[2%] w-24 md:w-40 lg:w-48 opacity-90" />
+      <FloatingElement src="/elemento-tenis.svg" alt="" speed={1.15} rotate={8}
+        className="hidden md:block bottom-[8%] left-[4%] w-32 md:w-44 lg:w-56" />
+      <FloatingElement src="/elemento-corredor.svg" alt="" speed={1.2} rotate={-6}
+        className="bottom-[6%] right-[3%] w-24 md:w-40 lg:w-52" />
+
       <Star className="hero-sticker sticker w-10 top-[12%] left-[8%]"  color="#FF4800" />
       <Star className="hero-sticker sticker w-8 top-[18%] right-[12%]" color="#005EFF" />
       <Bolt className="hero-sticker sticker hidden md:block w-12 top-[35%] left-[14%] rotate-12" color="#FDB716" />

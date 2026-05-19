@@ -51,7 +51,11 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       if (tween.scrollTrigger) triggers.push(tween.scrollTrigger)
     })
 
+    const handleLoad = () => ScrollTrigger.refresh()
+    window.addEventListener('load', handleLoad)
+
     return () => {
+      window.removeEventListener('load', handleLoad)
       gsap.ticker.remove(raf)
       lenis.destroy()
       ScrollTrigger.getAll().forEach((t) => t.kill())

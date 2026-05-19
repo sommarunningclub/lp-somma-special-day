@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import FloatingElement from './FloatingElement'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -36,7 +37,11 @@ export default function ProofSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-16 md:py-32 px-4 bg-somma-cream">
+    <section ref={sectionRef} className="relative overflow-hidden py-16 md:py-32 px-4 bg-somma-cream">
+      <FloatingElement src="/elemento-corredor.svg" alt="" speed={0.75} rotate={12}
+        className="hidden md:block top-[10%] left-[5%] w-28 md:w-36 opacity-90" />
+      <FloatingElement src="/elemento-tenis.svg" alt="" speed={1.25} rotate={-10}
+        className="hidden md:block bottom-[5%] right-[5%] w-32 md:w-40 opacity-95" />
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 text-center">
         {STATS.map((stat, i) => (
           <div key={stat.label}>
