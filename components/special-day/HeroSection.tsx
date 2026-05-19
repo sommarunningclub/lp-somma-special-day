@@ -77,10 +77,10 @@ export default function HeroSection() {
 
       <div ref={titleRef} className="relative w-full max-w-[90vw] sm:max-w-md md:max-w-2xl lg:max-w-3xl px-4">
         <Image
-          src="/logo-special-day.png"
+          src="/logo-special-day.svg"
           alt="Somma Special Day"
-          width={1200}
-          height={1500}
+          width={1000}
+          height={1000}
           priority
           className="w-full h-auto drop-shadow-2xl"
         />
