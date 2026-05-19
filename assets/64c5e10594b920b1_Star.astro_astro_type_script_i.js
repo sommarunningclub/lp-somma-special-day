@@ -1,0 +1,1 @@
+import{n as a}from"./router.lN-wZkZ-.js";const s="easter-egg-star",t=new WeakSet,n=()=>{document.querySelectorAll("[data-star-icon]").forEach(e=>{t.has(e)||(e.addEventListener("click",()=>{(e instanceof SVGElement||e instanceof HTMLElement)&&(e.style.viewTransitionName=s),a("/easter-egg")}),t.add(e))})};n();document.addEventListener("astro:page-load",n);

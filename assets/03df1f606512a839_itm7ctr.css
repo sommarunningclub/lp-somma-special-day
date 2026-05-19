@@ -1,0 +1,54 @@
+/*
+ * The Typekit service used to deliver this font or fonts for use on websites
+ * is provided by Adobe and is subject to these Terms of Use
+ * http://www.adobe.com/products/eulas/tou_typekit. For font license
+ * information, see the list below.
+ *
+ * polymath:
+ *   - http://typekit.com/eulas/000000000000000077588a48
+ *   - http://typekit.com/eulas/0000000000000000775828cf
+ * polymath-display:
+ *   - http://typekit.com/eulas/00000000000000007757f6c2
+ *   - http://typekit.com/eulas/00000000000000007755915c
+ * polymath-text:
+ *   - http://typekit.com/eulas/000000000000000077588a4e
+ *
+ * © 2009-2026 Adobe Systems Incorporated. All Rights Reserved.
+ */
+/*{"last_published":"2026-03-16 20:11:38 UTC"}*/
+
+@import url("1c0ff118a4290c99_p.css");
+
+@font-face {
+font-family:"polymath";
+src:url("5f7738541b1d5e99_l.woff2") format("woff2"),url("https://use.typekit.net/af/ac73e9/000000000000000077588a48/31/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n6&v=3") format("woff"),url("https://use.typekit.net/af/ac73e9/000000000000000077588a48/31/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n6&v=3") format("opentype");
+font-display:auto;font-style:normal;font-weight:600;font-stretch:normal;
+}
+
+@font-face {
+font-family:"polymath";
+src:url("8a70a9742f8fdb16_l.woff2") format("woff2"),url("https://use.typekit.net/af/d86b45/0000000000000000775828cf/31/d?subset_id=2&fvd=n4&v=3") format("woff"),url("https://use.typekit.net/af/d86b45/0000000000000000775828cf/31/a?subset_id=2&fvd=n4&v=3") format("opentype");
+font-display:auto;font-style:normal;font-weight:400;font-stretch:normal;
+}
+
+@font-face {
+font-family:"polymath-display";
+src:url("dce0c3bbb046bebb_l.woff2") format("woff2"),url("https://use.typekit.net/af/1d9bca/00000000000000007757f6c2/31/d?primer=7fa3915bdafdf03041871920a205bef951d72bf64dd4c4460fb992e3ecc3a862&fvd=n8&v=3") format("woff"),url("https://use.typekit.net/af/1d9bca/00000000000000007757f6c2/31/a?primer=7fa3915bdafdf03041871920a205bef951d72bf64dd4c4460fb992e3ecc3a862&fvd=n8&v=3") format("opentype");
+font-display:auto;font-style:normal;font-weight:800;font-stretch:normal;
+}
+
+@font-face {
+font-family:"polymath-display";
+src:url("https://use.typekit.net/af/5200d5/00000000000000007755915c/31/l?subset_id=2&fvd=n9&v=3") format("woff2"),url("https://use.typekit.net/af/5200d5/00000000000000007755915c/31/d?subset_id=2&fvd=n9&v=3") format("woff"),url("https://use.typekit.net/af/5200d5/00000000000000007755915c/31/a?subset_id=2&fvd=n9&v=3") format("opentype");
+font-display:auto;font-style:normal;font-weight:900;font-stretch:normal;
+}
+
+@font-face {
+font-family:"polymath-text";
+src:url("44219021418a334a_l.woff2") format("woff2"),url("https://use.typekit.net/af/e32df6/000000000000000077588a4e/31/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff"),url("https://use.typekit.net/af/e32df6/000000000000000077588a4e/31/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("opentype");
+font-display:auto;font-style:normal;font-weight:400;font-stretch:normal;
+}
+
+.tk-polymath { font-family: "polymath",sans-serif; }
+.tk-polymath-display { font-family: "polymath-display",sans-serif; }
+.tk-polymath-text { font-family: "polymath-text",sans-serif; }
