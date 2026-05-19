@@ -1,3 +1,45 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --somma-black:  #0a0a0a;
+  --somma-blue:   #0D1B8E;
+  --somma-orange: #E8561A;
+  --somma-yellow: #FAC775;
+  --somma-white:  #f5f2ec;
+}
+
+html, body {
+  overflow: hidden;
+  height: 100%;
+  background-color: var(--somma-black);
+}
+
+#smooth-wrapper {
+  overflow: hidden;
+  height: 100vh;
+}
+
+#smooth-content {
+  will-change: transform;
+}
+
+@media (max-width: 767px) {
+  html, body {
+    overflow: auto;
+    height: auto;
+  }
+  #smooth-wrapper {
+    overflow: visible;
+    height: auto;
+  }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+.countdown-separator {
+  animation: blink 1s ease-in-out infinite;
+}
