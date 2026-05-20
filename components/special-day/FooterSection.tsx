@@ -122,11 +122,17 @@ export default function FooterSection() {
         </div>
 
         {/* Bottom section */}
-        <div className="pt-8 border-t border-somma-cream/10 flex flex-col items-center justify-center">
+        <div className="pt-8 border-t border-somma-cream/10 flex flex-col items-center justify-center gap-3">
           <div className="text-center font-dm">
             <div className="text-sm text-somma-cream/60">© 2026 Somma Running Club. All rights reserved.</div>
             <div className="text-xs text-somma-cream/40 mt-1">CNPJ 61.315.987/0001-28</div>
           </div>
+          <a
+            href="/login-admin"
+            className="font-dm text-[11px] uppercase tracking-widest text-somma-cream/20 transition-colors hover:text-somma-cream/50"
+          >
+            admin
+          </a>
         </div>
       </div>
     </footer>

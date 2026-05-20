@@ -47,3 +47,9 @@ body {
   pointer-events: none;
   user-select: none;
 }
+
+/* Marquee infinite scroll */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-33.333%); }
+}

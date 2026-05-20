@@ -1,81 +1,70 @@
+import Link from 'next/link'
+import Image from 'next/image'
 import { redirect } from 'next/navigation'
+import { isAuthenticated } from '@/lib/auth'
 import { createServerClient } from '@/lib/supabase/server'
+import PropostaTableRow from '@/components/proposta-admin/PropostaTableRow'
+import LogoutButton from '@/components/admin/LogoutButton'
+import type { Proposta } from '@/lib/types/proposta'
 
-interface Lead {
-  id: string
-  nome: string
-  email: string
-  cpf: string
-  telefone: string
-  created_at: string
-}
+export const dynamic = 'force-dynamic'
 
-export default async function AdminPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ key?: string }>
-}) {
-  const params = await searchParams
-  if (params.key !== process.env.ADMIN_SECRET_KEY) {
-    redirect('/')
+export default async function AdminPage() {
+  if (!(await isAuthenticated())) {
+    redirect('/login-admin')
   }
 
   const supabase = createServerClient()
-  const { data: leads } = await supabase
-    .from('vip_leads')
+  const { data } = await supabase
+    .from('propostas')
     .select('*')
     .order('created_at', { ascending: false })
 
-  const rows = (leads ?? []) as Lead[]
+  const propostas = (data ?? []) as Proposta[]
 
   return (
-    <main className="min-h-screen bg-somma-black text-somma-white p-4 md:p-8 font-dm">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-8">
-          <div>
-            <h1 className="font-bebas text-4xl text-somma-yellow tracking-wider">
-              Lista VIP — Admin
-            </h1>
-            <p className="text-somma-white/60 text-sm mt-1">
-              {rows.length} pessoa{rows.length !== 1 ? 's' : ''} na lista
-            </p>
+    <main className="min-h-screen bg-somma-black px-4 py-8 font-dm text-somma-cream md:px-8 md:py-12">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
+            <Image src="/logo-special-day.svg" alt="Somma Special Day" width={120} height={60} className="h-10 w-auto" />
+            <div>
+              <h1 className="font-bebas text-4xl tracking-wider text-somma-yellow">Propostas</h1>
+              <p className="mt-0.5 text-sm text-somma-cream/60">
+                {propostas.length} proposta{propostas.length !== 1 ? 's' : ''} cadastrada{propostas.length !== 1 ? 's' : ''}
+              </p>
+            </div>
           </div>
-          <a
-            href={`/api/admin/export?key=${params.key}`}
-            className="bg-somma-orange hover:bg-somma-orange/90 text-white font-bebas text-lg tracking-widest px-6 py-3 rounded-full transition"
-          >
-            Exportar CSV
-          </a>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin/nova"
+              className="rounded-full border-4 border-somma-black bg-somma-orange px-7 py-3.5 font-bebas text-lg tracking-widest text-somma-cream shadow-[5px_5px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_#0a0a0a]"
+            >
+              + Nova proposta
+            </Link>
+            <LogoutButton />
+          </div>
         </div>
 
-        <div className="overflow-x-auto rounded-2xl border border-somma-blue/30">
+        <div className="overflow-x-auto rounded-3xl border-4 border-somma-black shadow-[6px_6px_0_#005EFF]">
           <table className="w-full text-sm">
-            <thead className="bg-somma-blue/30 text-somma-yellow font-bebas text-base tracking-wide">
+            <thead className="bg-somma-blue font-bebas text-base tracking-widest text-somma-cream">
               <tr>
-                {['Nome', 'E-mail', 'CPF', 'Telefone', 'Data'].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left">{h}</th>
-                ))}
+                <th className="px-5 py-4 text-left">Cliente</th>
+                <th className="px-5 py-4 text-left">Slug</th>
+                <th className="px-5 py-4 text-left">Recomendada</th>
+                <th className="px-5 py-4 text-left">Validade</th>
+                <th className="px-5 py-4 text-right">Ações</th>
               </tr>
             </thead>
-            <tbody>
-              {rows.map((lead, i) => (
-                <tr
-                  key={lead.id}
-                  className={i % 2 === 0 ? 'bg-somma-black' : 'bg-somma-blue/10'}
-                >
-                  <td className="px-4 py-3">{lead.nome}</td>
-                  <td className="px-4 py-3">{lead.email}</td>
-                  <td className="px-4 py-3">{lead.cpf}</td>
-                  <td className="px-4 py-3">{lead.telefone}</td>
-                  <td className="px-4 py-3 text-somma-white/50">
-                    {new Date(lead.created_at).toLocaleString('pt-BR')}
-                  </td>
-                </tr>
+            <tbody className="bg-somma-black/80">
+              {propostas.map(p => (
+                <PropostaTableRow key={p.id} proposta={p} />
               ))}
-              {rows.length === 0 && (
+              {propostas.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-somma-white/40">
-                    Nenhum lead ainda.
+                  <td colSpan={5} className="px-5 py-16 text-center text-somma-cream/40">
+                    Nenhuma proposta ainda. Clique em <strong className="text-somma-orange">+ Nova proposta</strong> para criar a primeira.
                   </td>
                 </tr>
               )}
