@@ -3,10 +3,10 @@
 import { formatBRL, type Cota } from '@/lib/proposta-data'
 
 const COLORS: Record<Cota['cor'], { bg: string; border: string; text: string; shadow: string }> = {
-  orange: { bg: 'bg-somma-orange', border: 'border-somma-orange', text: 'text-somma-orange', shadow: 'shadow-[8px_8px_0_#FF4800]' },
-  yellow: { bg: 'bg-somma-yellow', border: 'border-somma-yellow', text: 'text-somma-yellow', shadow: 'shadow-[8px_8px_0_#FDB716]' },
-  blue:   { bg: 'bg-somma-blue',   border: 'border-somma-blue',   text: 'text-somma-blue',   shadow: 'shadow-[8px_8px_0_#005EFF]' },
-  pink:   { bg: 'bg-somma-pink',   border: 'border-somma-pink',   text: 'text-somma-pink',   shadow: 'shadow-[8px_8px_0_#FD6FDB]' },
+  orange: { bg: 'bg-somma-orange', border: 'border-somma-orange', text: 'text-somma-orange', shadow: 'shadow-[5px_5px_0_#FF4800]' },
+  yellow: { bg: 'bg-somma-yellow', border: 'border-somma-yellow', text: 'text-somma-yellow', shadow: 'shadow-[5px_5px_0_#FDB716]' },
+  blue:   { bg: 'bg-somma-blue',   border: 'border-somma-blue',   text: 'text-somma-blue',   shadow: 'shadow-[5px_5px_0_#005EFF]' },
+  pink:   { bg: 'bg-somma-pink',   border: 'border-somma-pink',   text: 'text-somma-pink',   shadow: 'shadow-[5px_5px_0_#FD6FDB]' },
 }
 
 interface Props {
@@ -20,10 +20,10 @@ export default function CotaCard({ cota, valor, recomendada, whatsappUrl }: Prop
   const c = COLORS[cota.cor]
 
   return (
-    <div className={`relative flex flex-col rounded-3xl border-4 border-somma-black bg-somma-cream ${recomendada ? 'shadow-[12px_12px_0_#FF4800] ring-4 ring-somma-orange/30' : c.shadow}`}>
+    <div className={`relative flex flex-col rounded-2xl border-4 border-somma-black bg-somma-cream sm:rounded-3xl ${recomendada ? 'shadow-[6px_6px_0_#FF4800] ring-4 ring-somma-orange/30 sm:shadow-[12px_12px_0_#FF4800]' : c.shadow}`}>
       {recomendada && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full border-4 border-somma-black bg-somma-orange px-5 py-1 font-bebas text-sm tracking-widest text-somma-cream shadow-[3px_3px_0_#0a0a0a]">
-          ★ RECOMENDADA PARA VOCÊ
+        <div className="absolute -top-4 left-1/2 w-[calc(100%-2rem)] -translate-x-1/2 rounded-full border-4 border-somma-black bg-somma-orange px-4 py-1 text-center font-bebas text-xs tracking-widest text-somma-cream shadow-[3px_3px_0_#0a0a0a] sm:w-auto sm:px-5 sm:text-sm">
+          RECOMENDADA PARA VOCE
         </div>
       )}
 
@@ -37,7 +37,7 @@ export default function CotaCard({ cota, valor, recomendada, whatsappUrl }: Prop
       {/* Valor */}
       <div className="border-b-2 border-dashed border-somma-black/15 px-6 py-5">
         <p className="font-dm text-[11px] font-bold uppercase tracking-[0.25em] text-somma-black/50">Investimento</p>
-        <p className={`font-bebas text-4xl leading-none ${c.text}`}>
+        <p className={`font-bebas text-3xl leading-none sm:text-4xl ${c.text}`}>
           {formatBRL(valor)}
         </p>
       </div>
@@ -67,7 +67,7 @@ export default function CotaCard({ cota, valor, recomendada, whatsappUrl }: Prop
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full rounded-2xl border-4 border-somma-black bg-somma-black py-3.5 text-center font-bebas text-lg tracking-widest text-somma-cream shadow-[5px_5px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-somma-orange hover:shadow-[3px_3px_0_#0a0a0a]"
+          className="block w-full rounded-2xl border-4 border-somma-black bg-somma-black px-3 py-3.5 text-center font-bebas text-base tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-somma-orange hover:shadow-[3px_3px_0_#0a0a0a] sm:text-lg sm:shadow-[5px_5px_0_#0a0a0a]"
         >
           Quero a cota {cota.nome}
         </a>

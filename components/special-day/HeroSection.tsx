@@ -81,22 +81,22 @@ export default function HeroSection() {
   }, [])
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 py-12 md:py-24 overflow-hidden bg-somma-cream">
+    <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-somma-cream px-4 py-10 sm:py-14 md:min-h-screen md:py-24">
       <FloatingElement src="/elemento-relogio.svg" alt="" speed={0.85} rotate={-12}
-        className="top-[5%] left-[2%] w-24 md:w-40 lg:w-48 opacity-90" />
+        className="top-[5%] left-[2%] w-16 opacity-50 sm:w-24 md:w-40 lg:w-48 md:opacity-90" />
       <FloatingElement src="/elemento-tenis.svg" alt="" speed={1.15} rotate={8}
         className="hidden md:block bottom-[8%] left-[4%] w-32 md:w-44 lg:w-56" />
       <FloatingElement src="/elemento-corredor.svg" alt="" speed={1.2} rotate={-6}
-        className="bottom-[6%] right-[3%] w-24 md:w-40 lg:w-52" />
+        className="bottom-[4%] right-[-4%] w-20 opacity-60 sm:right-[3%] sm:w-24 md:w-40 lg:w-52 md:opacity-100" />
 
-      <Star className="hero-sticker sticker w-10 top-[12%] left-[8%]"  color="#FF4800" />
-      <Star className="hero-sticker sticker w-8 top-[18%] right-[12%]" color="#005EFF" />
+      <Star className="hero-sticker sticker hidden w-10 top-[12%] left-[8%] sm:block"  color="#FF4800" />
+      <Star className="hero-sticker sticker w-7 top-[14%] right-[8%] sm:w-8 sm:top-[18%] sm:right-[12%]" color="#005EFF" />
       <Bolt className="hero-sticker sticker hidden md:block w-12 top-[35%] left-[14%] rotate-12" color="#FDB716" />
       <Bolt className="hero-sticker sticker w-10 bottom-[20%] right-[10%] -rotate-12" color="#FF4800" />
       <Star className="hero-sticker sticker hidden md:block w-6 bottom-[12%] left-[20%]" color="#FD6FDB" />
       <Star className="hero-sticker sticker w-10 top-[8%] left-[48%]"   color="#FDB716" />
 
-      <div ref={titleRef} className="relative w-full max-w-[90vw] sm:max-w-md md:max-w-2xl lg:max-w-3xl px-4">
+      <div ref={titleRef} className="relative w-full max-w-[19rem] px-2 sm:max-w-md md:max-w-2xl lg:max-w-3xl md:px-4">
         <Image
           src="/logo-special-day.svg"
           alt="Somma Special Day"
@@ -107,14 +107,14 @@ export default function HeroSection() {
         />
       </div>
 
-      <div ref={countdownRef} className="mt-8 md:mt-12 bg-somma-blue rounded-3xl px-4 py-4 md:px-8 md:py-6 shadow-2xl max-w-[95vw]">
+      <div ref={countdownRef} className="mt-7 max-w-[95vw] rounded-2xl bg-somma-blue px-5 py-3 shadow-xl md:mt-12 md:rounded-3xl md:px-8 md:py-6 md:shadow-2xl">
         <Countdown />
       </div>
 
       <a
         ref={ctaRef}
         href="#formulario"
-        className="mt-10 inline-block w-full sm:w-auto bg-somma-orange hover:bg-somma-orange/90 text-somma-cream font-bebas text-xl md:text-2xl lg:text-3xl tracking-widest px-6 sm:px-8 py-4 md:px-12 md:py-5 rounded-full shadow-[4px_4px_0_#0a0a0a] md:shadow-[6px_6px_0_#0a0a0a] hover:shadow-[3px_3px_0_#0a0a0a] hover:translate-x-[3px] hover:translate-y-[3px] transition-all text-center"
+        className="mt-8 inline-flex w-full max-w-[22rem] items-center justify-center rounded-full bg-somma-orange px-5 py-4 text-center font-bebas text-xl tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-somma-orange/90 hover:shadow-[3px_3px_0_#0a0a0a] sm:w-auto sm:max-w-none sm:px-8 md:mt-10 md:px-12 md:py-5 md:text-2xl md:shadow-[6px_6px_0_#0a0a0a] lg:text-3xl"
       >
         Quero entrar na Lista VIP
       </a>

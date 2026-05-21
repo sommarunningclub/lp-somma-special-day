@@ -2,9 +2,9 @@ import Image from 'next/image'
 
 export default function FooterSection() {
   return (
-    <footer className="bg-somma-black pt-16 pb-8 border-t-4 border-somma-orange">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
+    <footer className="border-t-4 border-somma-orange bg-somma-black pb-8 pt-14 sm:pt-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-14 grid grid-cols-1 gap-10 md:grid-cols-2 lg:mb-16 lg:grid-cols-4 lg:gap-8">
           {/* Logo and Social */}
           <div className="space-y-6">
             <div className="flex items-center space-x-2">
@@ -51,7 +51,7 @@ export default function FooterSection() {
               <li>
                 <a href="mailto:contato@sommaclub.com.br" className="hover:text-somma-orange transition-colors flex items-center gap-3">
                   <svg className="h-5 w-5 flex-shrink-0 text-somma-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                  contato@sommaclub.com.br
+                  <span className="break-all">contato@sommaclub.com.br</span>
                 </a>
               </li>
               <li>

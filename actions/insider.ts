@@ -1,25 +1,23 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-import { findInsiderByCPF, createInsiderSession, destroyInsiderSession } from '@/lib/insider'
+import { createListaVipAccessSession, destroyInsiderSession, findListaVipAccess } from '@/lib/insider'
 
 type ValidarResult = { success: false; error: string }
 
 export async function validarInsider(formData: FormData): Promise<ValidarResult> {
-  const cpf = String(formData.get('cpf') ?? '')
-  const digits = cpf.replace(/\D/g, '')
+  const identificador = String(formData.get('identificador') ?? formData.get('cpf') ?? '').trim()
 
-  if (digits.length !== 11) {
-    return { success: false, error: 'Digite um CPF válido (11 dígitos).' }
+  if (!identificador) {
+    return { success: false, error: 'Digite seu CPF, e-mail ou código VIP.' }
   }
 
-  const autorizado = await findInsiderByCPF(cpf)
+  const autorizado = await findListaVipAccess(identificador)
   if (!autorizado) {
-    // CPF não está na lista de insiders → vai para a Lista VIP
     redirect('/listavip')
   }
 
-  await createInsiderSession(cpf)
+  await createListaVipAccessSession(identificador)
   redirect('/')
 }
 

@@ -16,6 +16,7 @@ const dm = DM_Sans({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://1-ano-sommaday.vercel.app'),
   title: 'Somma Special Day — 18 de Julho 2026 | Lista VIP',
   description:
     'O evento de aniversario de 1 ano do Somma Club. 400 vagas. 8km de percurso inedito, samba, Red Bull e muito mais.',

@@ -80,10 +80,11 @@ npm install gsap @supabase/supabase-js react-hook-form @hookform/resolvers zod
 Criar `/Users/alexrodriguesdossantos/Projetos/1-ano-SommaDay/.env.local`:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://riqfjewvygqsbuokvsjw.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpcWZqZXd2eWdxc2J1b2t2c2p3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwOTcwOTcsImV4cCI6MjA4NDY3MzA5N30.hH-1Asj9p7HT9xRmFy-ahd_NGT7uLwve6_4_eLqE6Hg
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpcWZqZXd2eWdxc2J1b2t2c2p3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTA5NzA5NywiZXhwIjoyMDg0NjczMDk3fQ._Arl-kqytQehbwVo-KzJHDWCLNZVtT11sNAGoDrkgI0
-ADMIN_SECRET_KEY=somma-admin-2026
+NEXT_PUBLIC_SUPABASE_URL=<supabase-project-url>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<supabase-anon-key>
+SUPABASE_SERVICE_ROLE_KEY=<supabase-service-role-key>
+ADMIN_SECRET_KEY=<strong-random-admin-key>
+SESSION_SECRET=<strong-random-session-secret>
 ```
 
 - [ ] **Step 4: Adicionar `.env.local` ao `.gitignore`**
@@ -1306,7 +1307,7 @@ npm run dev
 
 Acessar:
 - `http://localhost:3000` — LP completa
-- `http://localhost:3000/admin?key=somma-admin-2026` — painel admin
+- `http://localhost:3000/login-admin` — painel admin
 
 - [ ] **Step 4: Commit final**
 

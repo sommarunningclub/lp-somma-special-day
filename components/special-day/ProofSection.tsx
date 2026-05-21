@@ -8,7 +8,7 @@ import FloatingElement from './FloatingElement'
 gsap.registerPlugin(ScrollTrigger)
 
 const STATS = [
-  { value: 5000, suffix: '+',     label: 'Mais de 5.000 mil membros no Somma Club',  color: 'text-somma-orange' },
+  { value: 5000, suffix: '+',     label: 'Mais de 5.000 membros no Somma Club',  color: 'text-somma-orange' },
   { value: 400,  suffix: '',      label: 'vagas no evento',         color: 'text-somma-blue'   },
   { value: 1,    suffix: ' ANO',  label: 'de historia e corrida',   color: 'text-somma-pink'   },
 ]
@@ -37,18 +37,18 @@ export default function ProofSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden py-16 md:py-32 px-4 bg-somma-cream">
+    <section ref={sectionRef} className="relative overflow-hidden bg-somma-cream px-4 py-14 sm:py-16 md:py-32">
       <FloatingElement src="/elemento-corredor.svg" alt="" speed={0.75} rotate={12}
         className="hidden md:block top-[10%] left-[5%] w-28 md:w-36 opacity-90" />
       <FloatingElement src="/elemento-tenis.svg" alt="" speed={1.25} rotate={-10}
         className="hidden md:block bottom-[5%] right-[5%] w-32 md:w-40 opacity-95" />
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 text-center">
+      <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 text-center sm:grid-cols-3 md:gap-12">
         {STATS.map((stat, i) => (
           <div key={stat.label}>
-            <p id={`stat-${i}`} className={`font-bebas text-[12vw] md:text-[7vw] leading-none ${stat.color} drop-shadow-[2px_2px_0_#0a0a0a] md:drop-shadow-[3px_3px_0_#0a0a0a]`}>
+            <p id={`stat-${i}`} className={`font-bebas text-6xl leading-none sm:text-5xl md:text-[7vw] ${stat.color} drop-shadow-[2px_2px_0_#0a0a0a] md:drop-shadow-[3px_3px_0_#0a0a0a]`}>
               0{stat.suffix}
             </p>
-            <p className="font-dm text-somma-black/70 mt-4 text-sm tracking-widest uppercase">
+            <p className="mt-3 font-dm text-xs uppercase tracking-widest text-somma-black/70 md:mt-4 md:text-sm">
               {stat.label}
             </p>
           </div>

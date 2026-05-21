@@ -26,6 +26,18 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env.*
+!.env.example
+.envrc
+.vercel/.env*
+
+# secret material
+*.key
+*.p12
+*.pfx
+*.crt
+*.csr
+*.mobileprovision
 
 # local-only asset originals (served copies live in public/)
 /assets/

@@ -5,10 +5,10 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import gsap from 'gsap'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { listaVipSchema, type ListaVipInput } from '@/lib/validations/lista-vip'
 import { submitListaVip } from '@/actions/lista-vip'
 import FloatingElement from '@/components/special-day/FloatingElement'
-import FormSuccess from '@/components/special-day/FormSuccess'
 
 function formatCPF(value: string) {
   return value
@@ -29,9 +29,9 @@ function formatPhone(value: string) {
 
 export default function ListaVipHero() {
   const sectionRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [serverError, setServerError] = useState<string | null>(null)
-  const [successData, setSuccessData] = useState<{nome: string, email: string} | null>(null)
 
   const {
     register,
@@ -58,7 +58,7 @@ export default function ListaVipHero() {
     startTransition(async () => {
       const result = await submitListaVip(data)
       if (result.success) {
-        setSuccessData({ nome: data.nome, email: data.email })
+        router.push(`/listavip/obrigado?codigo=${encodeURIComponent(result.data.codigoUnico)}`)
       } else {
         setServerError(result.error)
       }
@@ -68,7 +68,7 @@ export default function ListaVipHero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen w-full overflow-hidden bg-somma-black px-4 py-16 md:py-24"
+      className="relative min-h-[100svh] w-full overflow-hidden bg-somma-black px-4 py-10 sm:py-14 md:min-h-screen md:py-24"
     >
       {/* Floating decorative elements */}
       <FloatingElement
@@ -76,7 +76,7 @@ export default function ListaVipHero() {
         alt=""
         speed={0.8}
         rotate={-15}
-        className="top-[5%] left-[3%] w-20 md:w-32 opacity-30"
+        className="top-[3%] left-[2%] w-14 opacity-20 sm:w-20 md:w-32 md:opacity-30"
       />
       <FloatingElement
         src="/elemento-tenis.svg"
@@ -90,14 +90,14 @@ export default function ListaVipHero() {
         alt=""
         speed={1.1}
         rotate={10}
-        className="bottom-[6%] left-[4%] w-24 md:w-36 opacity-25"
+        className="bottom-[4%] left-[-6%] w-20 opacity-15 sm:left-[4%] sm:w-24 md:w-36 md:opacity-25"
       />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-20">
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-20">
         {/* COLUNA ESQUERDA — Branding + storytelling */}
         <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
           {/* Logo */}
-          <div className="lv-anim mb-8 w-56 md:w-72 lg:w-full lg:max-w-md">
+          <div className="lv-anim mb-7 w-48 sm:w-56 md:w-72 lg:w-full lg:max-w-md">
             <Image
               src="/logo-special-day.svg"
               alt="Somma Special Day"
@@ -118,13 +118,13 @@ export default function ListaVipHero() {
 
           {/* Title */}
           <h1 className="lv-anim mb-5 font-bebas leading-[0.9] tracking-wide">
-            <span className="block text-5xl text-somma-cream sm:text-6xl md:text-7xl lg:text-6xl xl:text-7xl">
+            <span className="block text-4xl text-somma-cream sm:text-6xl md:text-7xl lg:text-6xl xl:text-7xl">
               EM BREVE,
             </span>
-            <span className="block text-5xl text-somma-yellow sm:text-6xl md:text-7xl lg:text-6xl xl:text-7xl">
+            <span className="block text-4xl text-somma-yellow sm:text-6xl md:text-7xl lg:text-6xl xl:text-7xl">
               SEJA O PRIMEIRO
             </span>
-            <span className="block text-5xl text-somma-cream sm:text-6xl md:text-7xl lg:text-6xl xl:text-7xl">
+            <span className="block text-4xl text-somma-cream sm:text-6xl md:text-7xl lg:text-6xl xl:text-7xl">
               A SABER.
             </span>
           </h1>
@@ -138,20 +138,20 @@ export default function ListaVipHero() {
           </p>
 
           {/* Save the date */}
-          <div className="lv-anim flex w-full max-w-md items-center gap-4 rounded-2xl border-4 border-somma-yellow bg-somma-yellow/10 px-5 py-4 shadow-[6px_6px_0_#FDB716]">
+          <div className="lv-anim flex w-full max-w-md items-center gap-3 rounded-2xl border-4 border-somma-yellow bg-somma-yellow/10 px-4 py-4 shadow-[4px_4px_0_#FDB716] sm:gap-4 sm:px-5 sm:shadow-[6px_6px_0_#FDB716]">
             <div className="flex flex-col items-center justify-center rounded-xl bg-somma-yellow px-3 py-2 text-somma-black shadow-inner">
               <span className="font-dm text-[10px] font-bold uppercase tracking-widest">Julho</span>
               <span className="font-bebas text-3xl leading-none">18</span>
               <span className="font-dm text-[10px] font-bold uppercase tracking-widest">2026</span>
             </div>
-            <div className="flex flex-1 flex-col text-left">
+            <div className="flex min-w-0 flex-1 flex-col text-left">
               <span className="font-bebas text-xl tracking-widest text-somma-yellow">
                 Reserve a data
               </span>
-              <span className="font-dm text-xs text-somma-cream/80">
+              <span className="font-dm text-xs leading-snug text-somma-cream/80">
                 18 de julho de 2026 · Brasília · DF
               </span>
-              <span className="mt-1 font-dm text-[11px] text-somma-cream/60">
+              <span className="mt-1 font-dm text-[11px] leading-snug text-somma-cream/60">
                 Bloqueie sua agenda — você não vai querer ficar de fora.
               </span>
             </div>
@@ -160,11 +160,8 @@ export default function ListaVipHero() {
 
         {/* COLUNA DIREITA — Apenas o formulário */}
         <div className="lv-anim w-full justify-self-center lg:justify-self-end">
-          <div className="w-full max-w-lg rounded-3xl border-4 border-somma-cream bg-somma-cream shadow-[8px_8px_0_#FF4800]">
-            {successData ? (
-              <FormSuccess userData={successData} />
-            ) : (
-              <div className="p-6 md:p-8 lg:p-10">
+          <div className="w-full max-w-lg rounded-2xl border-4 border-somma-cream bg-somma-cream shadow-[4px_4px_0_#FF4800] sm:rounded-3xl sm:shadow-[8px_8px_0_#FF4800]">
+            <div className="p-5 sm:p-6 md:p-8 lg:p-10">
                 {/* Header do form */}
                 <div className="mb-6 border-b-2 border-dashed border-somma-black/15 pb-5">
                   <p className="font-dm text-[11px] font-bold uppercase tracking-[0.25em] text-somma-orange">
@@ -278,17 +275,16 @@ export default function ListaVipHero() {
                   <button
                     type="submit"
                     disabled={isPending}
-                    className="mt-2 w-full rounded-2xl border-4 border-somma-black bg-somma-orange py-4 font-bebas text-xl tracking-widest text-somma-cream shadow-[5px_5px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-somma-orange/90 hover:shadow-[3px_3px_0_#0a0a0a] disabled:cursor-not-allowed disabled:opacity-60 md:text-2xl"
+                    className="mt-2 w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-3 py-4 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-somma-orange/90 hover:shadow-[3px_3px_0_#0a0a0a] disabled:cursor-not-allowed disabled:opacity-60 sm:text-xl md:text-2xl md:shadow-[5px_5px_0_#0a0a0a]"
                   >
                     {isPending ? 'ENVIANDO...' : 'QUERO ENTRAR NA LISTA VIP'}
                   </button>
 
                   <p className="text-center font-dm text-xs text-somma-black/50">
-                    🔒 Seus dados estão seguros. Não fazemos spam.
+                    Seus dados estão seguros. Não fazemos spam.
                   </p>
                 </form>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

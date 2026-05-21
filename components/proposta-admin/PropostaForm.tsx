@@ -95,8 +95,8 @@ export default function PropostaForm({ mode, initial }: Props) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-8">
       {/* Cliente */}
-      <section className="rounded-3xl border-4 border-somma-black bg-somma-black/50 p-6 shadow-[6px_6px_0_#005EFF]">
-        <h2 className="mb-5 font-bebas text-3xl tracking-widest text-somma-orange">Cliente</h2>
+      <section className="rounded-2xl border-4 border-somma-black bg-somma-black p-5 shadow-[4px_4px_0_#005EFF] sm:rounded-3xl sm:p-6 sm:shadow-[6px_6px_0_#005EFF]">
+        <h2 className="mb-5 font-bebas text-2xl tracking-widest text-somma-orange sm:text-3xl">Cliente</h2>
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div>
             <label className={labelClass}>Nome do cliente *</label>
@@ -109,7 +109,7 @@ export default function PropostaForm({ mode, initial }: Props) {
           </div>
           <div>
             <label className={labelClass}>Slug (URL pública) *</label>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <span className="font-bebas text-sm tracking-wider text-somma-cream/60">/proposta/</span>
               <input {...register('slug')} className={inputClass} placeholder="banco-bv" />
             </div>
@@ -140,8 +140,8 @@ export default function PropostaForm({ mode, initial }: Props) {
       </section>
 
       {/* Cotas */}
-      <section className="rounded-3xl border-4 border-somma-black bg-somma-black/50 p-6 shadow-[6px_6px_0_#FDB716]">
-        <h2 className="mb-5 font-bebas text-3xl tracking-widest text-somma-orange">Cotas exibidas</h2>
+      <section className="rounded-2xl border-4 border-somma-black bg-somma-black p-5 shadow-[4px_4px_0_#FDB716] sm:rounded-3xl sm:p-6 sm:shadow-[6px_6px_0_#FDB716]">
+        <h2 className="mb-5 font-bebas text-2xl tracking-widest text-somma-orange sm:text-3xl">Cotas exibidas</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
           {COTAS.map(cota => (
             <label key={cota.key} className="flex cursor-pointer items-center gap-3 rounded-2xl border-4 border-somma-black bg-somma-cream px-4 py-3 font-dm text-sm shadow-[3px_3px_0_#0a0a0a] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_#0a0a0a]">
@@ -191,8 +191,8 @@ export default function PropostaForm({ mode, initial }: Props) {
       </section>
 
       {/* Avulsas */}
-      <section className="rounded-3xl border-4 border-somma-black bg-somma-black/50 p-6 shadow-[6px_6px_0_#FF4800]">
-        <h2 className="mb-5 font-bebas text-3xl tracking-widest text-somma-orange">Cotas avulsas exibidas</h2>
+      <section className="rounded-2xl border-4 border-somma-black bg-somma-black p-5 shadow-[4px_4px_0_#FF4800] sm:rounded-3xl sm:p-6 sm:shadow-[6px_6px_0_#FF4800]">
+        <h2 className="mb-5 font-bebas text-2xl tracking-widest text-somma-orange sm:text-3xl">Cotas avulsas exibidas</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
           {AVULSAS.map(a => (
             <label key={a.key} className="flex cursor-pointer items-start gap-3 rounded-2xl border-4 border-somma-black bg-somma-cream px-4 py-3 font-dm text-sm shadow-[3px_3px_0_#0a0a0a] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_#0a0a0a]">
@@ -220,22 +220,22 @@ export default function PropostaForm({ mode, initial }: Props) {
       )}
 
       {/* Ações */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <button
           type="button"
           onClick={() => router.push('/admin')}
-          className="rounded-full border-4 border-somma-cream/30 px-6 py-3 font-bebas tracking-widest text-somma-cream transition-all hover:border-somma-cream hover:bg-somma-cream/10"
+          className="w-full rounded-full border-4 border-somma-cream/30 px-6 py-3 font-bebas tracking-widest text-somma-cream transition-all hover:border-somma-cream hover:bg-somma-cream/10 sm:w-auto"
         >
           Cancelar
         </button>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
           {mode === 'edit' && (
             <>
               <button
                 type="button"
                 onClick={copiarLink}
-                className="rounded-full border-4 border-somma-blue bg-somma-blue/20 px-6 py-3 font-bebas tracking-widest text-somma-blue shadow-[3px_3px_0_#005EFF] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_#005EFF]"
+                className="w-full rounded-full border-4 border-somma-blue bg-somma-blue/20 px-6 py-3 font-bebas tracking-widest text-somma-blue shadow-[3px_3px_0_#005EFF] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_#005EFF] sm:w-auto"
               >
                 Copiar link público
               </button>
@@ -243,7 +243,7 @@ export default function PropostaForm({ mode, initial }: Props) {
                 type="button"
                 onClick={onDelete}
                 disabled={isPending}
-                className="rounded-full border-4 border-somma-pink bg-somma-pink/20 px-6 py-3 font-bebas tracking-widest text-somma-pink shadow-[3px_3px_0_#FD6FDB] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_#FD6FDB] disabled:opacity-50"
+                className="w-full rounded-full border-4 border-somma-pink bg-somma-pink/20 px-6 py-3 font-bebas tracking-widest text-somma-pink shadow-[3px_3px_0_#FD6FDB] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_#FD6FDB] disabled:opacity-50 sm:w-auto"
               >
                 Excluir
               </button>
@@ -252,7 +252,7 @@ export default function PropostaForm({ mode, initial }: Props) {
           <button
             type="submit"
             disabled={isPending}
-            className="rounded-full border-4 border-somma-black bg-somma-orange px-8 py-3 font-bebas text-lg tracking-widest text-somma-cream shadow-[5px_5px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_#0a0a0a] disabled:opacity-60"
+            className="w-full rounded-full border-4 border-somma-black bg-somma-orange px-8 py-3 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_#0a0a0a] disabled:opacity-60 sm:w-auto sm:shadow-[5px_5px_0_#0a0a0a]"
           >
             {isPending ? 'Salvando...' : (mode === 'create' ? 'Criar proposta' : 'Salvar alterações')}
           </button>

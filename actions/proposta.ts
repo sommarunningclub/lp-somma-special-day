@@ -1,12 +1,24 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
+import { isAuthenticated } from '@/lib/auth'
 import { createServerClient } from '@/lib/supabase/server'
 import { propostaSchema, type PropostaInput } from '@/lib/validations/proposta'
 
 type ActionResult<T = void> =
   | { success: true; data: T }
   | { success: false; error: string }
+
+const idSchema = z.string().uuid('Proposta inválida')
+
+async function ensureAdmin(): Promise<ActionResult> {
+  if (await isAuthenticated()) {
+    return { success: true, data: undefined }
+  }
+
+  return { success: false, error: 'Sessão expirada. Faça login novamente.' }
+}
 
 function normalize(input: PropostaInput) {
   return {
@@ -25,6 +37,9 @@ function normalize(input: PropostaInput) {
 }
 
 export async function criarProposta(input: PropostaInput): Promise<ActionResult<{ slug: string }>> {
+  const auth = await ensureAdmin()
+  if (!auth.success) return auth
+
   const parsed = propostaSchema.safeParse(input)
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? 'Dados inválidos' }
@@ -46,6 +61,14 @@ export async function criarProposta(input: PropostaInput): Promise<ActionResult<
 }
 
 export async function atualizarProposta(id: string, input: PropostaInput): Promise<ActionResult> {
+  const auth = await ensureAdmin()
+  if (!auth.success) return auth
+
+  const parsedId = idSchema.safeParse(id)
+  if (!parsedId.success) {
+    return { success: false, error: parsedId.error.issues[0]?.message ?? 'Proposta inválida' }
+  }
+
   const parsed = propostaSchema.safeParse(input)
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? 'Dados inválidos' }
@@ -55,7 +78,7 @@ export async function atualizarProposta(id: string, input: PropostaInput): Promi
   const { error } = await supabase
     .from('propostas')
     .update({ ...normalize(parsed.data), updated_at: new Date().toISOString() })
-    .eq('id', id)
+    .eq('id', parsedId.data)
 
   if (error) {
     if (error.code === '23505') {
@@ -70,8 +93,16 @@ export async function atualizarProposta(id: string, input: PropostaInput): Promi
 }
 
 export async function excluirProposta(id: string): Promise<ActionResult> {
+  const auth = await ensureAdmin()
+  if (!auth.success) return auth
+
+  const parsedId = idSchema.safeParse(id)
+  if (!parsedId.success) {
+    return { success: false, error: parsedId.error.issues[0]?.message ?? 'Proposta inválida' }
+  }
+
   const supabase = createServerClient()
-  const { error } = await supabase.from('propostas').delete().eq('id', id)
+  const { error } = await supabase.from('propostas').delete().eq('id', parsedId.data)
   if (error) return { success: false, error: error.message }
   revalidatePath('/admin')
   return { success: true, data: undefined }

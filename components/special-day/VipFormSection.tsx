@@ -97,7 +97,7 @@ export default function VipFormSection() {
   }
 
   return (
-    <section id="formulario" className="relative py-16 md:py-32 px-4 overflow-hidden">
+    <section id="formulario" className="relative overflow-hidden px-4 py-14 sm:py-16 md:py-32">
       <ElasticStringsBackground />
       <FloatingElement src="/elemento-corredor.svg" alt="" speed={0.8} rotate={-15}
         className="hidden lg:block top-[8%] left-[4%] w-32 opacity-80" />
@@ -107,7 +107,7 @@ export default function VipFormSection() {
       <div className="hidden md:block absolute bottom-10 right-[8%] text-8xl -rotate-12 opacity-40 select-none z-10 pointer-events-none">⭐</div>
 
       <div className="relative max-w-xl mx-auto z-10">
-        <div ref={cardRef} className="bg-somma-cream border-4 border-somma-black rounded-3xl p-4 sm:p-6 md:p-12 shadow-[6px_6px_0_#0a0a0a] md:shadow-[10px_10px_0_#0a0a0a]">
+        <div ref={cardRef} className="rounded-2xl border-4 border-somma-black bg-somma-cream p-4 shadow-[4px_4px_0_#0a0a0a] sm:rounded-3xl sm:p-6 sm:shadow-[6px_6px_0_#0a0a0a] md:p-12 md:shadow-[10px_10px_0_#0a0a0a]">
           {submittedData ? (
             <FormSuccess userData={submittedData} />
           ) : (
@@ -115,7 +115,7 @@ export default function VipFormSection() {
               <p className="font-dm text-somma-blue text-xs tracking-[0.3em] uppercase text-center mb-2">
                 Acesso antecipado + desconto no 1º lote
               </p>
-              <h2 className="font-bebas text-5xl md:text-6xl text-somma-black text-center tracking-tight mb-8 leading-none">
+              <h2 className="mb-7 text-center font-bebas text-4xl leading-none tracking-tight text-somma-black sm:text-5xl md:mb-8 md:text-6xl">
                 ENTRA NA<br/>
                 <span className="text-somma-orange">LISTA VIP</span>
               </h2>
@@ -154,7 +154,7 @@ export default function VipFormSection() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-somma-orange hover:bg-somma-orange/90 disabled:opacity-60 disabled:cursor-not-allowed text-somma-cream font-bebas text-2xl tracking-widest py-4 rounded-full border-4 border-somma-black shadow-[6px_6px_0_#0a0a0a] hover:shadow-[3px_3px_0_#0a0a0a] hover:translate-x-[3px] hover:translate-y-[3px] transition-all mt-2"
+                  className="mt-2 w-full rounded-full border-4 border-somma-black bg-somma-orange py-4 font-bebas text-xl tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-somma-orange/90 hover:shadow-[3px_3px_0_#0a0a0a] disabled:cursor-not-allowed disabled:opacity-60 sm:text-2xl sm:shadow-[6px_6px_0_#0a0a0a]"
                 >
                   {isSubmitting ? 'Garantindo seu lugar...' : 'Garantir meu lugar'}
                 </button>
