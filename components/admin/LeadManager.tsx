@@ -91,6 +91,58 @@ export default function LeadManager({ leads }: Props) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  function exportarCSV() {
+    if (orderedLeads.length === 0) return
+
+    const sexoLabel: Record<string, string> = { M: 'Masculino', F: 'Feminino', Outro: 'Outro' }
+    const headers = [
+      'Nome',
+      'E-mail',
+      'CPF',
+      'Telefone',
+      'Sexo',
+      'Cupom',
+      'Status do cupom',
+      'Qtd. de usos',
+      'Data de expiracao',
+      'Data de cadastro',
+    ]
+
+    // Aspas duplicadas e wrap para campos que possam conter virgula/quebra de linha.
+    const cell = (value: unknown) => {
+      const text = value === null || value === undefined ? '' : String(value)
+      return `"${text.replace(/"/g, '""')}"`
+    }
+
+    const rows = orderedLeads.map((lead) =>
+      [
+        lead.nome,
+        lead.email,
+        lead.cpf,
+        lead.telefone,
+        sexoLabel[lead.sexo] ?? lead.sexo,
+        lead.codigo_unico ?? codeFromLeadId(lead.id),
+        lead.status_cupom ?? 'ativo',
+        lead.quantidade_usos ?? 0,
+        lead.data_expiracao ? new Date(lead.data_expiracao).toLocaleString('pt-BR') : '',
+        new Date(lead.created_at).toLocaleString('pt-BR'),
+      ]
+        .map(cell)
+        .join(',')
+    )
+
+    // BOM para o Excel reconhecer acentuacao UTF-8 corretamente.
+    const csv = '﻿' + [headers.map(cell).join(','), ...rows].join('\r\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    const data = new Date().toISOString().slice(0, 10)
+    link.href = url
+    link.download = `lista-vip-cupons-${data}.csv`
+    link.click()
+    URL.revokeObjectURL(url)
+  }
+
   function onSubmit(data: ListaVipInput) {
     setServerMsg(null)
     startTransition(async () => {
@@ -217,6 +269,20 @@ export default function LeadManager({ leads }: Props) {
           </button>
         </div>
       </form>
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="font-bebas text-2xl tracking-widest text-somma-yellow">
+          {orderedLeads.length} lead{orderedLeads.length !== 1 ? 's' : ''} na lista
+        </p>
+        <button
+          type="button"
+          onClick={exportarCSV}
+          disabled={orderedLeads.length === 0}
+          className="w-full rounded-full border-4 border-somma-blue bg-somma-blue/20 px-6 py-3 font-bebas tracking-widest text-somma-blue transition-all hover:bg-somma-blue hover:text-somma-cream disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
+        >
+          ↓ Exportar CSV (dados + cupom)
+        </button>
+      </div>
 
       <div className="grid gap-4 md:hidden">
         {orderedLeads.map((lead) => (
