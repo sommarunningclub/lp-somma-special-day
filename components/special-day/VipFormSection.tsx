@@ -115,7 +115,7 @@ export default function VipFormSection() {
               <p className="font-dm text-somma-blue text-xs tracking-[0.3em] uppercase text-center mb-2">
                 Acesso antecipado + desconto no 1º lote
               </p>
-              <h2 className="mb-7 text-center font-bebas text-4xl leading-none tracking-tight text-somma-black sm:text-5xl md:mb-8 md:text-6xl">
+              <h2 className="mb-7 text-center font-bebas text-4xl leading-[1.05] tracking-tight text-somma-black sm:text-5xl md:mb-8 md:text-6xl">
                 ENTRA NA<br/>
                 <span className="text-somma-orange">LISTA VIP</span>
               </h2>

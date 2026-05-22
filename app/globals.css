@@ -83,3 +83,12 @@ button, [role="button"], input, select, textarea {
   from { transform: translateX(0); }
   to   { transform: translateX(-33.333%); }
 }
+
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ativacao-logo { animation: none !important; }
+}

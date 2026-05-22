@@ -47,12 +47,12 @@ export default function AttractionsSection() {
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_20%_30%,#FDB716,transparent_50%),radial-gradient(circle_at_80%_70%,#FD6FDB,transparent_50%)]" />
 
       <div className="relative max-w-6xl mx-auto">
-        <p data-speed="1.15" className="font-dm text-somma-yellow text-xs tracking-[0.3em] uppercase text-center mb-4">
+        <p className="mb-3 text-center font-dm text-xs uppercase tracking-[0.3em] text-somma-yellow sm:text-sm">
           O que vai rolar
         </p>
-        <h2 data-speed="1.1" className="mb-10 text-center font-bebas text-4xl leading-none tracking-tight text-somma-cream sm:text-6xl md:mb-20 md:text-8xl lg:text-9xl">
-          Um sabado inteiro<br/>
-          <span className="text-somma-yellow">de celebracao</span>
+        <h2 className="mb-12 text-center font-bebas text-4xl leading-[1.05] tracking-tight text-somma-cream sm:mb-16 sm:text-6xl md:mb-20 md:text-8xl lg:text-9xl">
+          Um sabado inteiro{' '}
+          <span className="block text-somma-yellow sm:mt-1">de celebracao</span>
         </h2>
 
         <div ref={containerRef} className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">

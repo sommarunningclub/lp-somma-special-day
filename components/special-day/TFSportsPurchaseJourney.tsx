@@ -84,9 +84,9 @@ export default function TFSportsPurchaseJourney() {
   }, [])
 
   return (
-    <section className="relative overflow-hidden bg-somma-black px-4 py-14 sm:py-16 md:py-32">
+    <section id="tfsports" className="relative overflow-hidden bg-[#0053ff] px-4 py-14 sm:py-16 md:py-32 scroll-mt-20">
       {/* fundo sutil */}
-      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_10%_50%,#FF4800,transparent_45%),radial-gradient(circle_at_90%_50%,#005EFF,transparent_45%)]" />
+      <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_10%_50%,#FF4800,transparent_45%),radial-gradient(circle_at_90%_50%,#FFFFFF,transparent_40%)]" />
 
       <div className="relative max-w-6xl mx-auto">
         {/* Cabeçalho */}
@@ -99,15 +99,19 @@ export default function TFSportsPurchaseJourney() {
             className="h-[8.75rem] w-auto object-contain sm:h-[11.25rem]"
           />
         </div>
-        <p className="font-dm text-somma-orange text-xs tracking-[0.3em] uppercase text-center mb-4">
-          Garanta sua vaga
-        </p>
-        <h2 className="mb-4 text-center font-bebas text-4xl leading-none tracking-tight text-somma-cream sm:text-6xl md:text-7xl">
-          Como comprar sua inscrição<br />
-          <span className="text-somma-yellow">pelo app TFSports</span>
+        <div className="mb-4 flex justify-center">
+          <span className="inline-flex items-center gap-2 rounded-full border-2 border-somma-orange bg-somma-orange/15 px-4 py-1.5 font-dm text-[11px] font-bold uppercase tracking-[0.2em] text-somma-orange sm:text-xs">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-somma-orange" />
+            Inscrições exclusivamente pelo app
+          </span>
+        </div>
+        <h2 className="mb-4 text-center font-bebas text-4xl leading-[1.05] tracking-tight text-somma-cream sm:text-6xl md:text-7xl">
+          A venda acontece{' '}
+          <span className="block text-somma-yellow sm:mt-1">no app da Track&amp;Field</span>
         </h2>
-        <p className="mx-auto mb-10 max-w-xl text-center font-dm text-sm leading-relaxed text-somma-cream/60 md:mb-14 md:text-base">
-          A inscrição do evento acontece dentro do app oficial da Track&amp;Field Experience. Veja o passo a passo para garantir sua vaga.
+        <p className="mx-auto mb-10 max-w-xl text-center font-dm text-sm leading-relaxed text-somma-cream/70 md:mb-14 md:text-base">
+          Não há inscrição por aqui nem em nenhum outro canal: sua vaga no Somma Special Day é garantida
+          dentro do app oficial <span className="font-semibold text-somma-cream">TFSports</span>. Veja o passo a passo abaixo.
         </p>
 
         {/* Grid de steps */}

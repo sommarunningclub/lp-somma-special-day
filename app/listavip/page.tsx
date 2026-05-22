@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import SmoothScroll from '@/components/SmoothScroll'
 import ListaVipHero from '@/components/lista-vip/ListaVipHero'
+import EventGallerySection from '@/components/special-day/EventGallerySection'
 
 export const metadata: Metadata = {
   title: 'Lista VIP — Somma Special Day',
@@ -11,6 +12,7 @@ export default function ListaVipPage() {
   return (
     <SmoothScroll>
       <ListaVipHero />
+      <EventGallerySection />
     </SmoothScroll>
   )
 }
