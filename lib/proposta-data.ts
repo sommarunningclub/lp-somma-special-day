@@ -39,7 +39,7 @@ export const COTAS: Cota[] = [
       {
         title: 'Benefícios exclusivos',
         items: [
-          'Naming co-branded: "Somma Special Day apresenta [SUA MARCA]"',
+          'Naming co-branded: "Somma Special Day apresenta [SUA MARCA] dentro da ativação da gincana"',
           'Exclusividade total no seu segmento de atuação',
           'Marca em destaque máximo em todas as peças',
         ],
@@ -47,10 +47,10 @@ export const COTAS: Cota[] = [
       {
         title: 'Ativação da marca',
         items: [
-          'Espaço de 60m² no clube para ativação (tenda, decoração e operação por conta da marca)',
+          'Espaço para ativação (tenda, decoração e operação por conta da marca)',
           'Inserção de produto/brinde no kit oficial dos 400 atletas',
           'Distribuição livre de materiais durante o evento',
-          '2 cortesias para uso de relacionamento',
+          '10 cortesias para uso de relacionamento',
         ],
       },
       {
@@ -69,7 +69,6 @@ export const COTAS: Cota[] = [
           'Destaque em todas as peças digitais de divulgação',
           'Rodapé de todos os e-mails da campanha',
           'Camiseta oficial do atleta (Thermodry Track&Field)',
-          'Sacola Gym Bag do kit',
           'Backdrop principal',
           'Painel cenográfico de chegada',
           'Sinalização do percurso',
@@ -99,7 +98,7 @@ export const COTAS: Cota[] = [
           'Espaço para ativação (tenda, decoração e operação por conta da marca)',
           'Inserção de produto/brinde no kit oficial dos 400 atletas',
           'Distribuição livre de materiais durante o evento',
-          '30 cortesias para uso de relacionamento',
+          '05 cortesias para uso de relacionamento',
         ],
       },
       {
@@ -115,7 +114,6 @@ export const COTAS: Cota[] = [
           'Logo no site do evento',
           'Peças digitais de divulgação',
           'Camiseta oficial do atleta',
-          'Sacola Gym Bag do kit',
           'Backdrop principal',
           'Entrada do evento',
         ],
@@ -141,7 +139,8 @@ export const COTAS: Cota[] = [
         items: [
           'Espaço para ativação (tenda, decoração e operação por conta da marca)',
           'Inserção de produto/brinde no kit oficial',
-          '15 cortesias para relacionamento',
+          'Distribuição livre de materiais durante o evento',
+          '03 cortesias para relacionamento',
         ],
       },
       {
@@ -149,7 +148,6 @@ export const COTAS: Cota[] = [
         items: [
           'Logo no site do evento',
           'Peças digitais de divulgação',
-          'Sacola Gym Bag do kit',
           'Backdrop de fotos',
         ],
       },
@@ -166,14 +164,15 @@ export const COTAS: Cota[] = [
         title: 'Benefícios exclusivos',
         items: [
           'Presença institucional na comunidade Somma',
-          'Branding leve e relacionamento',
+          'Branding e relacionamento',
         ],
       },
       {
         title: 'Ativação da marca',
         items: [
           'Espaço de 6m² para ativação (estrutura por conta da marca)',
-          '3 cortesias para relacionamento',
+          '03 cortesias para relacionamento',
+          'Distribuição livre de materiais durante o evento',
         ],
       },
       {
