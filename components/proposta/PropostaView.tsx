@@ -98,6 +98,17 @@ export default function PropostaView({ proposta }: Props) {
           <p className="mt-8 font-bebas text-xl tracking-widest text-somma-black/80 md:text-2xl">
             Onde a comunidade encontra a marca.
           </p>
+
+          <button
+            type="button"
+            onClick={() => {
+              document.getElementById('cotas')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }}
+            className="mt-10 inline-flex items-center gap-3 rounded-full border-4 border-somma-black bg-somma-orange px-8 py-4 font-bebas text-lg tracking-widest text-somma-cream shadow-[6px_6px_0_#0a0a0a] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-somma-black hover:shadow-[3px_3px_0_#0a0a0a] md:text-xl"
+          >
+            Veja nossas cotas
+            <span aria-hidden="true">↓</span>
+          </button>
         </div>
       </section>
 
@@ -254,7 +265,7 @@ export default function PropostaView({ proposta }: Props) {
 
       {/* ====== COTAS ====== */}
       {cotasVisiveis.length > 0 && (
-        <section className="bg-somma-black px-4 py-16 text-somma-cream md:py-24">
+        <section id="cotas" className="scroll-mt-8 bg-somma-black px-4 py-16 text-somma-cream md:py-24">
           <div className="mx-auto max-w-7xl">
             <div className="text-center">
               <p className="fade-up font-dm text-xs uppercase tracking-[0.3em] text-somma-yellow md:text-sm">Cotas de patrocínio</p>
