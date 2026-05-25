@@ -121,6 +121,38 @@ export default function PropostaView({ proposta }: Props) {
         </div>
       </section>
 
+      {/* ====== GALERIA EDIÇÃO ANTERIOR ====== */}
+      <section className="bg-somma-cream px-4 py-16 md:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center">
+            <p className="fade-up font-dm text-xs uppercase tracking-[0.3em] text-somma-orange md:text-sm">Edição anterior</p>
+            <h2 className="fade-up mt-3 font-bebas text-4xl tracking-wide md:text-6xl">
+              UM EVENTO QUE <span className="text-somma-orange">JÁ ACONTECEU</span>.
+            </h2>
+            <p className="fade-up mx-auto mt-4 max-w-2xl font-dm text-sm text-somma-black/70 md:text-base">
+              Não é projeção. É registro. Veja como foi a última edição — e imagine sua marca dentro desse cenário.
+            </p>
+          </div>
+
+          <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6">
+            {[1, 2, 3, 4, 5, 6].map((n) => (
+              <div
+                key={n}
+                className="fade-up group relative aspect-[4/5] overflow-hidden rounded-2xl border-4 border-somma-black bg-somma-black shadow-[5px_5px_0_#0a0a0a] transition-all duration-300 hover:-translate-y-1 hover:shadow-[7px_7px_0_#FF4800] md:rounded-3xl md:shadow-[6px_6px_0_#0a0a0a]"
+              >
+                <Image
+                  src={`/evento-2025-${n}.jpg`}
+                  alt={`Somma Special Day edição anterior — foto ${n}`}
+                  fill
+                  sizes="(min-width: 768px) 33vw, 50vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ====== AUDIÊNCIA ====== */}
       <section className="px-4 py-16 md:py-24">
         <div className="mx-auto max-w-6xl">
