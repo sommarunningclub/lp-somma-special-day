@@ -48,7 +48,7 @@ export const COTAS: Cota[] = [
         title: 'Ativação da marca',
         items: [
           'Espaço para ativação (tenda, decoração e operação por conta da marca)',
-          'Inserção de produto/brinde no kit oficial dos 400 atletas',
+          'Inclusão de até 1 brinde no pré-kit da corrida (a critério da marca)',
           'Distribuição livre de materiais durante o evento',
           '10 cortesias para uso de relacionamento',
         ],
@@ -96,7 +96,7 @@ export const COTAS: Cota[] = [
         title: 'Ativação da marca',
         items: [
           'Espaço para ativação (tenda, decoração e operação por conta da marca)',
-          'Inserção de produto/brinde no kit oficial dos 400 atletas',
+          'Inclusão de até 1 brinde no pré-kit da corrida (a critério da marca)',
           'Distribuição livre de materiais durante o evento',
           '05 cortesias para uso de relacionamento',
         ],
@@ -138,7 +138,7 @@ export const COTAS: Cota[] = [
         title: 'Ativação da marca',
         items: [
           'Espaço para ativação (tenda, decoração e operação por conta da marca)',
-          'Inserção de produto/brinde no kit oficial',
+          'Inclusão de até 1 brinde no pré-kit da corrida (a critério da marca)',
           'Distribuição livre de materiais durante o evento',
           '03 cortesias para relacionamento',
         ],
@@ -171,6 +171,7 @@ export const COTAS: Cota[] = [
         title: 'Ativação da marca',
         items: [
           'Espaço de 6m² para ativação (estrutura por conta da marca)',
+          'Inclusão de até 1 brinde no pré-kit da corrida (a critério da marca)',
           '03 cortesias para relacionamento',
           'Distribuição livre de materiais durante o evento',
         ],

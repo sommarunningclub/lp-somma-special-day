@@ -26,7 +26,7 @@ interface ComparativoRow {
 const COMPARATIVO_ROWS: ComparativoRow[] = [
   { label: 'Exclusividade por segmento', values: { master: 'Sim', ouro: 'Não', prata: 'Não', apoio: 'Não' } },
   { label: 'Espaço de ativação',         values: { master: '60m²', ouro: 'Livre', prata: 'Livre', apoio: '6m²' } },
-  { label: 'Brinde no kit',              values: { master: 'Sim', ouro: 'Sim', prata: 'Sim', apoio: 'Não' } },
+  { label: 'Brinde no pré-kit',          values: { master: 'Até 1', ouro: 'Até 1', prata: 'Até 1', apoio: 'Até 1' } },
   { label: 'Camiseta do atleta',         values: { master: 'Sim', ouro: 'Sim', prata: 'Não', apoio: 'Não' } },
   { label: 'Sacola Gym Bag',             values: { master: 'Sim', ouro: 'Sim', prata: 'Sim', apoio: 'Não' } },
   { label: 'Backdrop',                   values: { master: 'Sim', ouro: 'Sim', prata: 'Sim', apoio: 'Não' } },
