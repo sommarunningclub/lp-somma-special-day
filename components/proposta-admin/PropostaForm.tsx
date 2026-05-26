@@ -144,17 +144,28 @@ export default function PropostaForm({ mode, initial }: Props) {
         <h2 className="mb-5 font-bebas text-2xl tracking-widest text-somma-orange sm:text-3xl">Cotas exibidas</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
           {COTAS.map(cota => (
-            <label key={cota.key} className="flex cursor-pointer items-center gap-3 rounded-2xl border-4 border-somma-black bg-somma-cream px-4 py-3 font-dm text-sm shadow-[3px_3px_0_#0a0a0a] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_#0a0a0a]">
+            <label key={cota.key} className={`flex cursor-pointer items-center gap-3 rounded-2xl border-4 border-somma-black px-4 py-3 font-dm text-sm shadow-[3px_3px_0_#0a0a0a] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_#0a0a0a] ${cota.fechada ? 'bg-somma-black/40' : 'bg-somma-cream'}`}>
               <input
                 type="checkbox"
                 value={cota.key}
                 {...register('cotas_visiveis')}
                 className="h-5 w-5 accent-somma-orange"
               />
-              <span className="font-bebas text-lg tracking-wider text-somma-black">{cota.nome}</span>
+              <div className="flex flex-col gap-0.5">
+                <span className="font-bebas text-lg tracking-wider text-somma-black">{cota.nome}</span>
+                {cota.fechada && (
+                  <span className="inline-block rounded-full bg-somma-pink px-2 py-0.5 font-dm text-[10px] font-bold uppercase tracking-widest text-white">
+                    VAGAS ESGOTADAS
+                  </span>
+                )}
+              </div>
             </label>
           ))}
         </div>
+
+        <p className="mt-3 font-dm text-xs text-somma-cream/50">
+          Para abrir ou fechar vagas de uma cota, edite o campo <code className="rounded bg-somma-black/40 px-1">fechada</code> em <code className="rounded bg-somma-black/40 px-1">lib/proposta-data.ts</code>.
+        </p>
 
         <div className="mt-6">
           <label className={labelClass}>Cota recomendada (destaque)</label>

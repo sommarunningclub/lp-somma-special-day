@@ -19,6 +19,7 @@ export interface Cota {
   vagas: string
   cor: 'orange' | 'yellow' | 'blue' | 'pink'
   sections: CotaSection[]
+  fechada?: boolean
 }
 
 export interface Avulsa {
@@ -35,6 +36,7 @@ export const COTAS: Cota[] = [
     valor: 40000,
     vagas: '1 vaga · exclusividade por segmento',
     cor: 'orange',
+    fechada: true,
     sections: [
       {
         title: 'Benefícios exclusivos',

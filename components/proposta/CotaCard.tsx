@@ -18,10 +18,19 @@ interface Props {
 
 export default function CotaCard({ cota, valor, recomendada, whatsappUrl }: Props) {
   const c = COLORS[cota.cor]
+  const fechada = !!cota.fechada
 
   return (
-    <div className={`relative flex flex-col rounded-2xl border-4 border-somma-black bg-somma-cream sm:rounded-3xl ${recomendada ? 'shadow-[6px_6px_0_#FF4800] ring-4 ring-somma-orange/30 sm:shadow-[12px_12px_0_#FF4800]' : c.shadow}`}>
-      {recomendada && (
+    <div className={`relative flex flex-col rounded-2xl border-4 border-somma-black bg-somma-cream sm:rounded-3xl ${fechada ? 'opacity-70 grayscale shadow-[5px_5px_0_#0a0a0a]' : recomendada ? 'shadow-[6px_6px_0_#FF4800] ring-4 ring-somma-orange/30 sm:shadow-[12px_12px_0_#FF4800]' : c.shadow}`}>
+      {fechada && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-2xl bg-somma-black/60 sm:rounded-3xl">
+          <span className="rotate-[-12deg] rounded-2xl border-4 border-somma-cream bg-somma-black px-6 py-3 font-bebas text-2xl tracking-widest text-somma-cream shadow-[4px_4px_0_#FF4800] sm:text-3xl">
+            VAGAS ESGOTADAS
+          </span>
+        </div>
+      )}
+
+      {!fechada && recomendada && (
         <div className="absolute -top-4 left-1/2 w-[calc(100%-2rem)] -translate-x-1/2 rounded-full border-4 border-somma-black bg-somma-orange px-4 py-1 text-center font-bebas text-xs tracking-widest text-somma-cream shadow-[3px_3px_0_#0a0a0a] sm:w-auto sm:px-5 sm:text-sm">
           RECOMENDADA PARA VOCE
         </div>
@@ -63,14 +72,20 @@ export default function CotaCard({ cota, valor, recomendada, whatsappUrl }: Prop
 
       {/* CTA */}
       <div className="px-6 pb-6">
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block w-full rounded-2xl border-4 border-somma-black bg-somma-black px-3 py-3.5 text-center font-bebas text-base tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-somma-orange hover:shadow-[3px_3px_0_#0a0a0a] sm:text-lg sm:shadow-[5px_5px_0_#0a0a0a]"
-        >
-          Quero a cota {cota.nome}
-        </a>
+        {fechada ? (
+          <div className="block w-full rounded-2xl border-4 border-somma-black/30 bg-somma-black/30 px-3 py-3.5 text-center font-bebas text-base tracking-widest text-somma-cream/40 sm:text-lg">
+            Cota indisponível
+          </div>
+        ) : (
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full rounded-2xl border-4 border-somma-black bg-somma-black px-3 py-3.5 text-center font-bebas text-base tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-somma-orange hover:shadow-[3px_3px_0_#0a0a0a] sm:text-lg sm:shadow-[5px_5px_0_#0a0a0a]"
+          >
+            Quero a cota {cota.nome}
+          </a>
+        )}
       </div>
     </div>
   )
