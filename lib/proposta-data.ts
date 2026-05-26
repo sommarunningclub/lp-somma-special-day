@@ -50,7 +50,7 @@ export const COTAS: Cota[] = [
           'Espaço para ativação (tenda, decoração e operação por conta da marca)',
           'Inclusão de até 1 brinde no pré-kit da corrida (a critério da marca)',
           'Distribuição livre de materiais durante o evento',
-          '10 cortesias para uso de relacionamento',
+          '05 cortesias para uso de relacionamento',
         ],
       },
       {
@@ -98,7 +98,7 @@ export const COTAS: Cota[] = [
           'Espaço para ativação (tenda, decoração e operação por conta da marca)',
           'Inclusão de até 1 brinde no pré-kit da corrida (a critério da marca)',
           'Distribuição livre de materiais durante o evento',
-          '05 cortesias para uso de relacionamento',
+          '03 cortesias para uso de relacionamento',
         ],
       },
       {
@@ -140,7 +140,7 @@ export const COTAS: Cota[] = [
           'Espaço para ativação (tenda, decoração e operação por conta da marca)',
           'Inclusão de até 1 brinde no pré-kit da corrida (a critério da marca)',
           'Distribuição livre de materiais durante o evento',
-          '03 cortesias para relacionamento',
+          '02 cortesias para relacionamento',
         ],
       },
       {
@@ -172,7 +172,7 @@ export const COTAS: Cota[] = [
         items: [
           'Espaço de 6m² para ativação (estrutura por conta da marca)',
           'Inclusão de até 1 brinde no pré-kit da corrida (a critério da marca)',
-          '03 cortesias para relacionamento',
+          '01 cortesia para relacionamento',
           'Distribuição livre de materiais durante o evento',
         ],
       },
