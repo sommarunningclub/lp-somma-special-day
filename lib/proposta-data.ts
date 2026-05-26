@@ -68,7 +68,6 @@ export const COTAS: Cota[] = [
           'Logo principal no site do evento',
           'Destaque em todas as peças digitais de divulgação',
           'Rodapé de todos os e-mails da campanha',
-          'Camiseta oficial do atleta (Thermodry Track&Field)',
           'Backdrop principal',
           'Painel cenográfico de chegada',
           'Sinalização do percurso',
@@ -113,7 +112,6 @@ export const COTAS: Cota[] = [
         items: [
           'Logo no site do evento',
           'Peças digitais de divulgação',
-          'Camiseta oficial do atleta',
           'Backdrop principal',
           'Entrada do evento',
         ],
