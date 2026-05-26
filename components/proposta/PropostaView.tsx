@@ -35,7 +35,7 @@ const COMPARATIVO_ROWS: ComparativoRow[] = [
   { label: 'Fala no evento',             values: { master: 'Sim', ouro: 'Não', prata: 'Não', apoio: 'Não' } },
   { label: 'Entrega de premiação',       values: { master: 'Sim', ouro: 'Sim', prata: 'Não', apoio: 'Não' } },
   { label: 'Vídeo institucional',        values: { master: '30s', ouro: '15s', prata: 'Não', apoio: 'Não' } },
-  { label: 'Cortesias',                  values: { master: '2', ouro: '30', prata: '15', apoio: '3' } },
+  { label: 'Cortesias',                  values: { master: '5', ouro: '3', prata: '2', apoio: '1' } },
 ]
 
 export default function PropostaView({ proposta }: Props) {
