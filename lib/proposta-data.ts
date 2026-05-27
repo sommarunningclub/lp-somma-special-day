@@ -36,7 +36,6 @@ export const COTAS: Cota[] = [
     valor: 40000,
     vagas: '1 vaga · exclusividade por segmento',
     cor: 'orange',
-    fechada: true,
     sections: [
       {
         title: 'Benefícios exclusivos',
