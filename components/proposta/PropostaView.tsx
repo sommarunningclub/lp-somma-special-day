@@ -24,16 +24,17 @@ interface ComparativoRow {
 }
 
 const COMPARATIVO_ROWS: ComparativoRow[] = [
-  { label: 'Exclusividade por segmento', values: { master: 'Sim', ouro: 'Não', prata: 'Não', apoio: 'Não' } },
-  { label: 'Brinde no pré-kit',          values: { master: 'Até 1', ouro: 'Até 1', prata: 'Até 1', apoio: 'Até 1' } },
-  { label: 'Sacola Gym Bag',             values: { master: 'Sim', ouro: 'Sim', prata: 'Sim', apoio: 'Não' } },
-  { label: 'Backdrop',                   values: { master: 'Sim', ouro: 'Sim', prata: 'Sim', apoio: 'Não' } },
-  { label: 'Site do evento',             values: { master: 'Sim', ouro: 'Sim', prata: 'Sim', apoio: 'Sim' } },
-  { label: 'Peças digitais',             values: { master: 'Sim', ouro: 'Sim', prata: 'Sim', apoio: 'Não' } },
-  { label: 'Fala no evento',             values: { master: 'Sim', ouro: 'Não', prata: 'Não', apoio: 'Não' } },
-  { label: 'Entrega de premiação',       values: { master: 'Sim', ouro: 'Sim', prata: 'Não', apoio: 'Não' } },
-  { label: 'Vídeo institucional',        values: { master: '30s', ouro: '15s', prata: 'Não', apoio: 'Não' } },
-  { label: 'Cortesias',                  values: { master: '5', ouro: '3', prata: '2', apoio: '1' } },
+  { label: 'Exclusividade por segmento',       values: { master: 'Sim',   ouro: 'Não',   prata: 'Não',   apoio: 'Não'   } },
+  { label: 'Espaço de ativação',               values: { master: 'Sim',   ouro: 'Sim',   prata: 'Sim',   apoio: '6m²'   } },
+  { label: 'Brinde no pré-kit',                values: { master: 'Até 1', ouro: 'Até 1', prata: 'Até 1', apoio: 'Até 1' } },
+  { label: 'Distribuição de materiais',        values: { master: 'Sim',   ouro: 'Sim',   prata: 'Sim',   apoio: 'Sim'   } },
+  { label: 'Backdrop',                         values: { master: 'Sim',   ouro: 'Sim',   prata: 'Sim',   apoio: 'Não'   } },
+  { label: 'Site do evento',                   values: { master: 'Sim',   ouro: 'Sim',   prata: 'Sim',   apoio: 'Sim'   } },
+  { label: 'Peças digitais',                   values: { master: 'Sim',   ouro: 'Sim',   prata: 'Sim',   apoio: 'Não'   } },
+  { label: 'Fala no evento',                   values: { master: 'Sim',   ouro: 'Não',   prata: 'Não',   apoio: 'Não'   } },
+  { label: 'Entrega de premiação',             values: { master: 'Sim',   ouro: 'Sim',   prata: 'Não',   apoio: 'Não'   } },
+  { label: 'Vídeo institucional',              values: { master: '30s',   ouro: '15s',   prata: 'Não',   apoio: 'Não'   } },
+  { label: 'Cortesias',                        values: { master: '5',     ouro: '3',     prata: '2',     apoio: '1'     } },
 ]
 
 export default function PropostaView({ proposta }: Props) {
