@@ -4,6 +4,8 @@ import { isAuthenticated } from '@/lib/auth'
 import { createServerClient } from '@/lib/supabase/server'
 import LeadManager, { type ListaVipLead } from '@/components/admin/LeadManager'
 import LogoutButton from '@/components/admin/LogoutButton'
+import PresaleControl from '@/components/admin/PresaleControl'
+import { getPresaleStatus } from '@/lib/presale'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,6 +21,7 @@ export default async function LeadsPage() {
     .order('created_at', { ascending: false })
 
   const rows = (leads ?? []) as ListaVipLead[]
+  const presale = await getPresaleStatus()
 
   return (
     <main className="min-h-screen bg-somma-cream px-4 py-8 font-dm text-somma-black md:px-8 md:py-12">
@@ -38,6 +41,8 @@ export default async function LeadsPage() {
             <LogoutButton />
           </div>
         </div>
+
+        <PresaleControl limit={presale.limit} count={presale.count} />
 
         <LeadManager leads={rows} />
       </div>

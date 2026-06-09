@@ -4,12 +4,17 @@ import { createServerClient } from '@/lib/supabase/server'
 import { codeFromLeadId, createRandomVipCode } from '@/lib/lista-vip-code'
 import { listaVipSchema, type ListaVipInput } from '@/lib/validations/lista-vip'
 import { sendVipTicketEmail } from '@/lib/emails/send-vip-email'
+import { getPresaleStatus } from '@/lib/presale'
+import { PRESALE } from '@/lib/presale-constants'
 
 type ActionResult =
   | { success: true; data: { codigoUnico: string } }
-  | { success: false; error: string; fields?: Record<string, string[]> }
+  | { success: false; error: string; closed?: boolean; fields?: Record<string, string[]> }
 
 const MAX_CODE_ATTEMPTS = 8
+
+const PRESALE_CLOSED_MESSAGE =
+  'As 100 vagas da pré-venda VIP se esgotaram. Fique de olho nas nossas redes: em breve teremos novidades.'
 
 function normalize({ nome, email, cpf, telefone, sexo }: ListaVipInput) {
   return {
@@ -32,22 +37,42 @@ export async function submitListaVip(formData: unknown): Promise<ActionResult> {
     }
   }
 
+  // Trava de vagas: ao atingir o limite real (com folga oculta), encerra a pré-venda.
+  const status = await getPresaleStatus()
+  if (status.closed) {
+    return { success: false, error: PRESALE_CLOSED_MESSAGE, closed: true }
+  }
+
   try {
     const supabase = createServerClient()
     const lead = normalize(parsed.data)
 
+    // A coluna cupom só existe após a migration 005; cai para insert sem cupom se faltar.
+    let incluirCupom = true
+
     for (let attempt = 0; attempt < MAX_CODE_ATTEMPTS; attempt += 1) {
       const codigoUnico = createRandomVipCode()
+      const payload = incluirCupom
+        ? { ...lead, codigo_unico: codigoUnico, cupom: PRESALE.cupom }
+        : { ...lead, codigo_unico: codigoUnico }
+
       const { data, error } = await supabase
         .from('lista_vip')
-        .insert({ ...lead, codigo_unico: codigoUnico })
+        .insert(payload)
         .select('id, codigo_unico')
         .single()
 
       if (!error) {
         const finalCode = data.codigo_unico ?? codigoUnico
-        await dispatchVipEmail(lead.nome, lead.email, finalCode)
+        await dispatchVipEmail(lead.nome, lead.email)
         return { success: true, data: { codigoUnico: finalCode } }
+      }
+
+      // Coluna cupom inexistente: tenta de novo sem ela (não consome tentativa).
+      if ((error.code === '42703' || error.code === 'PGRST204') && incluirCupom) {
+        incluirCupom = false
+        attempt -= 1
+        continue
       }
 
       if (error.code === '23505') {
@@ -76,16 +101,16 @@ export async function submitListaVip(formData: unknown): Promise<ActionResult> {
     }
 
     const fallbackCode = codeFromLeadId(data.id)
-    await dispatchVipEmail(lead.nome, lead.email, fallbackCode)
+    await dispatchVipEmail(lead.nome, lead.email)
     return { success: true, data: { codigoUnico: fallbackCode } }
   } catch {
     return { success: false, error: 'Ocorreu um erro. Tente novamente.' }
   }
 }
 
-async function dispatchVipEmail(nome: string, email: string, codigoUnico: string): Promise<void> {
+async function dispatchVipEmail(nome: string, email: string): Promise<void> {
   try {
-    await sendVipTicketEmail({ nome, email, codigoUnico })
+    await sendVipTicketEmail({ nome, email, cupom: PRESALE.cupom })
   } catch (error) {
     console.error('[lista-vip] Erro ao disparar e-mail VIP:', error)
   }

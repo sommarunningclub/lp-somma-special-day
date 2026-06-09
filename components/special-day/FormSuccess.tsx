@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import gsap from 'gsap'
 import TicketLoader from './TicketLoader'
+import { PRESALE, PRESALE_PASSOS } from '@/lib/presale-constants'
 
 export type FormSuccessProps = {
   userData?: {
@@ -89,9 +90,14 @@ function SuccessModal({ userData }: FormSuccessProps) {
                   )}
 
                   <div className="col-span-2 flex flex-col">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-somma-black/50">Cupom da pre-venda</span>
-                    <h3 className="mt-1 break-all font-bebas text-4xl leading-none tracking-widest text-somma-orange">{userData?.codigoUnico ?? 'VIP'}</h3>
-                    <p className="mt-2 text-xs text-somma-black/60">Use este código no app TF Sports para liberar seu benefício VIP.</p>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-somma-black/50">Cupom da pré-venda</span>
+                    <h3 className="mt-1 break-all font-bebas text-4xl leading-none tracking-widest text-somma-orange">{PRESALE.cupom}</h3>
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-xs text-somma-black/40 line-through">De {PRESALE.precoDe}</span>
+                      <span className="text-sm font-bold text-green-600">Por {PRESALE.precoPor}</span>
+                      <span className="rounded bg-green-600/10 px-1.5 py-0.5 text-[10px] font-bold text-green-700">-{PRESALE.descontoPct}</span>
+                    </div>
+                    <p className="mt-2 text-xs text-somma-black/60">Use o cupom <strong>{PRESALE.cupom}</strong> no app TF Sports para liberar o valor da pré-venda.</p>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-somma-black/50">Data e Hora</span>
@@ -125,8 +131,46 @@ function SuccessModal({ userData }: FormSuccessProps) {
                   Salve ou tire print do seu ticket.
                 </p>
                 <p className="mt-2 font-dm text-sm leading-relaxed text-somma-cream/90">
-                  Este é o seu comprovante de vaga VIP. Guarde a imagem agora para usar seu código na pré-venda pelo app TF Sports.
+                  Enviamos o cupom <strong className="text-somma-yellow">{PRESALE.cupom}</strong> e este passo a passo também no seu e-mail. A inscrição é feita pelo app TF Sports.
                 </p>
+              </div>
+
+              {/* Passo a passo */}
+              <div className="mt-5 rounded-2xl border-2 border-somma-cream/20 bg-somma-black/40 px-5 py-4 text-left backdrop-blur-sm">
+                <p className="mb-3 font-bebas text-lg tracking-widest text-somma-cream">
+                  Como ativar seu cupom
+                </p>
+                <ol className="space-y-2.5">
+                  {PRESALE_PASSOS.map((p) => (
+                    <li key={p.n} className="flex gap-3">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-somma-orange font-dm text-xs font-bold text-white">
+                        {p.n}
+                      </span>
+                      <div>
+                        <p className="font-dm text-sm font-bold leading-tight text-somma-cream">{p.titulo}</p>
+                        <p className="mt-0.5 font-dm text-xs leading-snug text-somma-cream/70">{p.texto}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+
+              {/* CTA principal: abrir evento no app */}
+              <a
+                href={PRESALE.eventoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 block w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-5 py-4 text-center font-bebas text-xl tracking-widest text-somma-cream shadow-[5px_5px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_#0a0a0a]"
+              >
+                Comprar minha inscrição
+              </a>
+              <div className="mt-3 flex gap-3">
+                <a href={PRESALE.appStoreUrl} target="_blank" rel="noopener noreferrer" className="flex-1 rounded-xl border-2 border-somma-cream/30 px-3 py-2.5 text-center font-dm text-xs font-bold text-somma-cream transition-colors hover:bg-somma-cream/10">
+                  Baixar (iPhone)
+                </a>
+                <a href={PRESALE.playStoreUrl} target="_blank" rel="noopener noreferrer" className="flex-1 rounded-xl border-2 border-somma-cream/30 px-3 py-2.5 text-center font-dm text-xs font-bold text-somma-cream transition-colors hover:bg-somma-cream/10">
+                  Baixar (Android)
+                </a>
               </div>
 
               <div className="mt-5 flex flex-col gap-3 sm:flex-row lg:justify-start">

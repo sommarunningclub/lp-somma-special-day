@@ -27,7 +27,7 @@ function formatPhone(value: string) {
     .replace(/(\d{5})(\d{1,4})$/, '$1-$2')
 }
 
-export default function ListaVipHero() {
+export default function ListaVipHero({ closed = false }: { closed?: boolean }) {
   const sectionRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -151,8 +151,8 @@ export default function ListaVipHero() {
               <span className="font-dm text-xs leading-snug text-somma-cream/80">
                 18 de julho de 2026 · Brasília · DF
               </span>
-              <span className="mt-1 font-dm text-[11px] leading-snug text-somma-cream/60">
-                Bloqueie sua agenda — você não vai querer ficar de fora.
+              <span className="mt-1 inline-flex w-fit items-center gap-1.5 rounded-full bg-somma-orange/20 px-2.5 py-1 font-dm text-[11px] font-bold uppercase tracking-wide text-somma-orange">
+                Apenas 100 vagas na pré-venda
               </span>
             </div>
           </div>
@@ -162,6 +162,29 @@ export default function ListaVipHero() {
         <div className="lv-anim w-full justify-self-center lg:justify-self-end">
           <div className="w-full max-w-lg rounded-2xl border-4 border-somma-cream bg-somma-cream shadow-[4px_4px_0_#FF4800] sm:rounded-3xl sm:shadow-[8px_8px_0_#FF4800]">
             <div className="p-5 sm:p-6 md:p-8 lg:p-10">
+              {closed ? (
+                <div className="flex flex-col items-center py-6 text-center">
+                  <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-somma-orange/15 px-4 py-2 font-dm text-xs font-bold uppercase tracking-widest text-somma-orange">
+                    Pré-venda encerrada
+                  </span>
+                  <h2 className="font-bebas text-4xl leading-tight tracking-wide text-somma-black md:text-5xl">
+                    As 100 vagas esgotaram
+                  </h2>
+                  <p className="mt-3 max-w-sm font-dm text-sm leading-relaxed text-somma-black/60">
+                    A pré-venda VIP do Somma Special Day foi um sucesso e todas as vagas já foram preenchidas.
+                    Fique de olho nas nossas redes: em breve abrimos as inscrições para todo mundo.
+                  </p>
+                  <a
+                    href="https://www.instagram.com/sommaclub"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-6 w-full rounded-2xl border-4 border-somma-black bg-somma-blue px-3 py-4 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] sm:w-auto sm:px-8"
+                  >
+                    Seguir o Somma no Instagram
+                  </a>
+                </div>
+              ) : (
+              <>
                 {/* Header do form */}
                 <div className="mb-6 border-b-2 border-dashed border-somma-black/15 pb-5">
                   <p className="font-dm text-[11px] font-bold uppercase tracking-[0.25em] text-somma-orange">
@@ -284,6 +307,8 @@ export default function ListaVipHero() {
                     Seus dados estão seguros. Não fazemos spam.
                   </p>
                 </form>
+              </>
+              )}
             </div>
           </div>
         </div>

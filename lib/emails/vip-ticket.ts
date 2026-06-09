@@ -1,7 +1,9 @@
+import { PRESALE, PRESALE_PASSOS } from '@/lib/presale-constants'
+
 interface VipTicketEmailData {
   nome: string
   email: string
-  codigoUnico: string
+  cupom: string
 }
 
 const COLORS = {
@@ -10,49 +12,15 @@ const COLORS = {
   orange: '#FF4800',
   blue: '#005EFF',
   yellow: '#FDB716',
+  green: '#1faa59',
 }
 
-// URL pública absoluta — clientes de e-mail não carregam caminhos relativos nem SVG.
-// PNG com fundo transparente servido pelo nosso domínio (o PNG do Shopify vinha com fundo branco).
 const LOGO_URL = 'https://1-ano-sommaday.vercel.app/logo-special-day.png'
-const APP_STORE_URL = 'https://apps.apple.com/br/app/tfsports/id1251078517'
-const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=br.com.tfsports.customer&hl=pt_BR'
 
-const PASSOS = [
-  {
-    n: '1',
-    titulo: 'Baixe o app TFSports',
-    texto: 'Disponível para iPhone (App Store) e Android (Google Play). É gratuito.',
-  },
-  {
-    n: '2',
-    titulo: 'Crie sua conta ou faça login',
-    texto: 'Abra o app, toque em Entrar e, se ainda não tiver cadastro, selecione "Não tenho conta".',
-  },
-  {
-    n: '3',
-    titulo: 'Encontre o Somma Special Day',
-    texto: 'Acesse a aba TFSports dentro do app e procure pelo nosso evento.',
-  },
-  {
-    n: '4',
-    titulo: 'Escolha sua inscrição',
-    texto: 'Selecione a modalidade (4 km ou 8 km), o kit e o tamanho da camiseta.',
-  },
-  {
-    n: '5',
-    titulo: 'Aplique o seu cupom VIP',
-    texto: 'Na confirmação, toque em "Inserir cupom" e use o código que está logo abaixo neste e-mail.',
-  },
-  {
-    n: '6',
-    titulo: 'Finalize o pagamento',
-    texto: 'Pague com Pix ou cartão. Com o Cartão Porto Bank, você pode ter ainda mais desconto.',
-  },
-]
+export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): string {
+  const codigo = cupom || PRESALE.cupom
 
-export function renderVipTicketEmail({ nome, email, codigoUnico }: VipTicketEmailData): string {
-  const passosHtml = PASSOS.map(
+  const passosHtml = PRESALE_PASSOS.map(
     (p) => `
       <tr>
         <td valign="top" style="padding:0 0 16px 0;">
@@ -62,8 +30,8 @@ export function renderVipTicketEmail({ nome, email, codigoUnico }: VipTicketEmai
                 <div style="width:30px;height:30px;border-radius:8px;background-color:${COLORS.orange};color:#ffffff;font-size:15px;font-weight:bold;text-align:center;line-height:30px;">${p.n}</div>
               </td>
               <td valign="top" style="padding-left:12px;">
-                <p style="margin:0;font-size:15px;font-weight:bold;color:${COLORS.black};">${p.titulo}</p>
-                <p style="margin:3px 0 0;font-size:13px;line-height:1.5;color:#0a0a0a99;">${p.texto}</p>
+                <p style="margin:0;font-size:15px;font-weight:bold;color:${COLORS.black};">${escapeHtml(p.titulo)}</p>
+                <p style="margin:3px 0 0;font-size:13px;line-height:1.5;color:#0a0a0a99;">${escapeHtml(p.texto)}</p>
               </td>
             </tr>
           </table>
@@ -76,7 +44,7 @@ export function renderVipTicketEmail({ nome, email, codigoUnico }: VipTicketEmai
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Seu cupom VIP — Somma Special Day</title>
+  <title>Seu cupom ${escapeHtml(codigo)} — Somma Special Day</title>
 </head>
 <body style="margin:0;padding:0;background-color:${COLORS.blue};font-family:Arial,Helvetica,sans-serif;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.blue};padding:32px 16px;">
@@ -94,33 +62,55 @@ export function renderVipTicketEmail({ nome, email, codigoUnico }: VipTicketEmai
           <tr>
             <td align="center" style="padding-bottom:24px;">
               <h1 style="margin:0;color:${COLORS.cream};font-size:24px;letter-spacing:2px;text-transform:uppercase;">
-                Você está na Lista VIP! 🎉
+                Você está na Lista VIP!
               </h1>
               <p style="margin:8px 0 0;color:#ffffffcc;font-size:14px;line-height:1.5;">
-                Olá, ${escapeHtml(nome.split(' ')[0])}! Seu acesso antecipado ao Somma Special Day está garantido. Veja abaixo como usá-lo.
+                Olá, ${escapeHtml(nome.split(' ')[0])}! Seu cupom da pré-venda do Somma Special Day está garantido. Veja abaixo como usar passo a passo.
               </p>
             </td>
           </tr>
 
-          <!-- O que é o cupom -->
+          <!-- Cupom + preço -->
           <tr>
             <td>
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.cream};border-radius:20px;overflow:hidden;">
                 <tr>
                   <td style="padding:28px;">
-                    <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.orange};">O que é isso?</p>
+                    <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.orange};">Seu benefício VIP</p>
                     <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:${COLORS.black};">
-                      O código abaixo é o seu <strong>cupom VIP de pré-venda</strong>. Ele garante seu acesso antecipado
-                      e o benefício exclusivo de quem entrou na lista. A inscrição do evento acontece
-                      <strong>exclusivamente dentro do app da Track&amp;Field (TFSports)</strong> e é lá que você
-                      vai usar este cupom para comprar sua vaga antes de todo mundo.
+                      A inscrição acontece <strong>dentro do app TF Sports</strong>. Use o cupom abaixo na hora de pagar
+                      e garanta o valor da pré-venda. São <strong>apenas 100 vagas</strong>.
                     </p>
 
                     <!-- Cupom em destaque -->
                     <div style="margin-top:20px;border:2px dashed ${COLORS.orange};border-radius:14px;padding:18px;text-align:center;">
-                      <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:#0a0a0a80;">Seu cupom de pré-venda</p>
-                      <p style="margin:6px 0 0;font-size:38px;font-weight:bold;letter-spacing:4px;color:${COLORS.orange};line-height:1;">${escapeHtml(codigoUnico)}</p>
+                      <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:#0a0a0a80;">Cupom da pré-venda</p>
+                      <p style="margin:6px 0 0;font-size:40px;font-weight:bold;letter-spacing:5px;color:${COLORS.orange};line-height:1;">${escapeHtml(codigo)}</p>
                     </div>
+
+                    <!-- Preço de / por -->
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;">
+                      <tr>
+                        <td align="center" style="padding:14px;background-color:#0a0a0a08;border-radius:12px;">
+                          <span style="font-size:13px;color:#0a0a0a80;text-decoration:line-through;">De ${escapeHtml(PRESALE.precoDe)}</span>
+                          <span style="display:inline-block;margin:0 6px;color:#0a0a0a40;">&rarr;</span>
+                          <span style="font-size:22px;font-weight:bold;color:${COLORS.green};">Por ${escapeHtml(PRESALE.precoPor)}</span>
+                          <p style="margin:6px 0 0;font-size:12px;font-weight:bold;color:${COLORS.green};">Você economiza ${escapeHtml(PRESALE.economia)} (${escapeHtml(PRESALE.descontoPct)} de desconto)</p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Botão: abrir evento no app -->
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;">
+                      <tr>
+                        <td align="center">
+                          <a href="${PRESALE.eventoUrl}" style="display:block;background-color:${COLORS.orange};color:#ffffff;text-decoration:none;text-align:center;font-size:16px;font-weight:bold;padding:16px;border-radius:12px;">
+                            Comprar minha inscrição
+                          </a>
+                          <p style="margin:8px 0 0;font-size:11px;color:#0a0a0a80;">Abre direto a página do evento no app TF Sports.</p>
+                        </td>
+                      </tr>
+                    </table>
                   </td>
                 </tr>
               </table>
@@ -134,7 +124,7 @@ export function renderVipTicketEmail({ nome, email, codigoUnico }: VipTicketEmai
                 <tr>
                   <td style="padding:28px;">
                     <p style="margin:0 0 18px;font-size:18px;font-weight:bold;color:${COLORS.black};">
-                      Como comprar sua inscrição
+                      Como ativar o seu cupom
                     </p>
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                       ${passosHtml}
@@ -144,10 +134,10 @@ export function renderVipTicketEmail({ nome, email, codigoUnico }: VipTicketEmai
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px;">
                       <tr>
                         <td style="padding:4px;">
-                          <a href="${APP_STORE_URL}" style="display:block;background-color:${COLORS.black};color:#ffffff;text-decoration:none;text-align:center;font-size:14px;font-weight:bold;padding:12px;border-radius:10px;">App Store</a>
+                          <a href="${PRESALE.appStoreUrl}" style="display:block;background-color:${COLORS.black};color:#ffffff;text-decoration:none;text-align:center;font-size:14px;font-weight:bold;padding:12px;border-radius:10px;">Baixar (iPhone)</a>
                         </td>
                         <td style="padding:4px;">
-                          <a href="${PLAY_STORE_URL}" style="display:block;background-color:${COLORS.orange};color:#ffffff;text-decoration:none;text-align:center;font-size:14px;font-weight:bold;padding:12px;border-radius:10px;">Google Play</a>
+                          <a href="${PRESALE.playStoreUrl}" style="display:block;background-color:${COLORS.black};color:#ffffff;text-decoration:none;text-align:center;font-size:14px;font-weight:bold;padding:12px;border-radius:10px;">Baixar (Android)</a>
                         </td>
                       </tr>
                     </table>
@@ -180,10 +170,10 @@ export function renderVipTicketEmail({ nome, email, codigoUnico }: VipTicketEmai
             <td style="padding-top:20px;">
               <div style="border:3px solid ${COLORS.yellow};border-radius:14px;background-color:#0a0a0a40;padding:16px 20px;">
                 <p style="margin:0;font-size:15px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.yellow};">
-                  📸 Guarde este e-mail!
+                  Guarde este e-mail
                 </p>
                 <p style="margin:6px 0 0;font-size:13px;color:#ffffffe6;line-height:1.5;">
-                  Este é o seu comprovante de vaga VIP. Você vai precisar do cupom <strong>${escapeHtml(codigoUnico)}</strong> na hora de comprar a inscrição no app.
+                  Você vai precisar do cupom <strong>${escapeHtml(codigo)}</strong> na hora de comprar a inscrição no app. As vagas são limitadas.
                 </p>
               </div>
             </td>

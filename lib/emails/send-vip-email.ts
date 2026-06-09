@@ -1,13 +1,14 @@
 import { Resend } from 'resend'
 import { renderVipTicketEmail } from './vip-ticket'
+import { PRESALE } from '@/lib/presale-constants'
 
 interface SendVipEmailArgs {
   nome: string
   email: string
-  codigoUnico: string
+  cupom?: string
 }
 
-export async function sendVipTicketEmail({ nome, email, codigoUnico }: SendVipEmailArgs): Promise<void> {
+export async function sendVipTicketEmail({ nome, email, cupom = PRESALE.cupom }: SendVipEmailArgs): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY
   const from = process.env.VIP_EMAIL_FROM
 
@@ -21,8 +22,8 @@ export async function sendVipTicketEmail({ nome, email, codigoUnico }: SendVipEm
   const { error } = await resend.emails.send({
     from,
     to: email,
-    subject: `Seu cupom VIP ${codigoUnico} — Somma Special Day`,
-    html: renderVipTicketEmail({ nome, email, codigoUnico }),
+    subject: `Seu cupom ${cupom} chegou — pré-venda Somma Special Day`,
+    html: renderVipTicketEmail({ nome, email, cupom }),
   })
 
   if (error) {
