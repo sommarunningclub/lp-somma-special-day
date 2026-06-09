@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from 'react'
 import { updatePresaleLimit } from '@/actions/presale'
-import { PRESALE } from '@/lib/presale-constants'
 
 type Props = {
   limit: number
@@ -14,9 +13,9 @@ export default function PresaleControl({ limit, count }: Props) {
   const [isPending, startTransition] = useTransition()
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
 
-  const restantes = Math.max(0, limit - count)
-  const closed = count >= limit
-  const folga = Math.max(0, limit - PRESALE.vagasPublicas)
+  const ilimitado = limit <= 0
+  const restantes = ilimitado ? null : Math.max(0, limit - count)
+  const closed = !ilimitado && count >= limit
 
   function handleSave() {
     setMsg(null)
@@ -35,9 +34,9 @@ export default function PresaleControl({ limit, count }: Props) {
     <div className="mb-8 rounded-2xl border-4 border-somma-blue/30 bg-white p-5 md:p-6">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-bebas text-2xl tracking-wider text-somma-blue">Pré-venda · Vagas</h2>
+          <h2 className="font-bebas text-2xl tracking-wider text-somma-blue">Pré-venda · Cadastros</h2>
           <p className="mt-0.5 text-sm text-somma-black/60">
-            O público sempre vê <strong>{PRESALE.vagasPublicas} vagas</strong>. O limite real abaixo inclui a folga e não aparece para o usuário.
+            Vagas <strong>ilimitadas</strong> (controle por virada de lote no app). Use <strong>0</strong> para manter sem limite, ou defina um número para travar o cadastro.
           </p>
         </div>
         <span
@@ -50,17 +49,16 @@ export default function PresaleControl({ limit, count }: Props) {
         </span>
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mt-5 grid grid-cols-3 gap-3">
         <Stat label="Cadastros" value={String(count)} />
-        <Stat label="Limite real" value={String(limit)} />
-        <Stat label="Restantes" value={String(restantes)} />
-        <Stat label="Folga oculta" value={`+${folga}`} />
+        <Stat label="Limite" value={ilimitado ? 'Ilimitado' : String(limit)} />
+        <Stat label="Restantes" value={restantes === null ? '∞' : String(restantes)} />
       </div>
 
       <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-end">
         <div className="flex-1">
           <label className="mb-1.5 block font-dm text-xs font-bold uppercase tracking-widest text-somma-black/70">
-            Limite real de vagas (com folga)
+            Limite de vagas (0 = ilimitado)
           </label>
           <input
             type="number"

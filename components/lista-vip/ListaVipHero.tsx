@@ -152,7 +152,7 @@ export default function ListaVipHero({ closed = false }: { closed?: boolean }) {
                 18 de julho de 2026 · Brasília · DF
               </span>
               <span className="mt-1 inline-flex w-fit items-center gap-1.5 rounded-full bg-somma-orange/20 px-2.5 py-1 font-dm text-[11px] font-bold uppercase tracking-wide text-somma-orange">
-                Apenas 100 vagas na pré-venda
+                1º lote aberto · o preço sobe na virada
               </span>
             </div>
           </div>

@@ -10,8 +10,8 @@ export const PRESALE = {
   economia: 'R$ 22,00',
   descontoPct: '18,49%',
 
-  // Vagas mostradas ao público (a folga real fica no admin, oculta).
-  vagasPublicas: 100,
+  // Lote atual (a virada de lote é controlada no app da TF Sports).
+  loteLabel: '1º lote',
 
   // Link que abre direto a página do evento no app TF Sports.
   eventoUrl:
@@ -24,6 +24,7 @@ export const PRESALE = {
 } as const
 
 // Passo a passo de como comprar com o cupom (usado no e-mail e na tela de obrigado).
+// Fiel ao fluxo real do app TF Sports.
 export const PRESALE_PASSOS = [
   {
     n: '1',
@@ -38,21 +39,26 @@ export const PRESALE_PASSOS = [
   {
     n: '3',
     titulo: 'Abra a página do evento',
-    texto: 'Toque no botão "Comprar minha inscrição" deste e-mail ou procure pelo Somma Special Day dentro do app.',
+    texto: 'Toque no botão "Comprar minha inscrição" deste e-mail ou procure por "Somma Special Day" dentro do app.',
   },
   {
     n: '4',
-    titulo: 'Escolha sua inscrição',
-    texto: 'Selecione a modalidade, o kit e o tamanho da camiseta.',
+    titulo: 'Etapa Atletas',
+    texto: 'Confirme você mesmo (Eu mesmo), marque o aceite do Regulamento e dos Termos e toque em Continuar.',
   },
   {
     n: '5',
     titulo: `Aplique o cupom ${PRESALE.cupom}`,
-    texto: `Na tela de pagamento, toque em "Inserir cupom" e digite ${PRESALE.cupom}. O valor cai de ${PRESALE.precoDe} para ${PRESALE.precoPor}.`,
+    texto: `Na etapa Preferências, toque em "Aplicar cupom" e digite ${PRESALE.cupom}. O valor cai de ${PRESALE.precoDe} para ${PRESALE.precoPor}.`,
   },
   {
     n: '6',
+    titulo: 'Escolha turma, kit e tamanho',
+    texto: 'Selecione a turma "Somma day", o Kit Experience e o tamanho da camiseta (Baby Look, P, M, G ou GG).',
+  },
+  {
+    n: '7',
     titulo: 'Finalize o pagamento',
-    texto: 'Pague com Pix ou cartão e pronto: sua vaga na pré-venda está garantida.',
+    texto: `Na confirmação aparece ${PRESALE.precoPor} + taxa de serviço. Pague com Pix ou cartão e pronto: sua vaga está garantida.`,
   },
 ] as const

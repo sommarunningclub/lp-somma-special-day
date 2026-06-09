@@ -17,10 +17,10 @@ CREATE POLICY "Service role full access settings" ON public.app_settings
   USING (true)
   WITH CHECK (true);
 
--- 2) Limite REAL da pré-venda (inclui a folga oculta). O público sempre vê "100 vagas".
---    Comece com folga: 110. Ajuste no admin quando quiser.
+-- 2) Limite de vagas. 0 = ILIMITADO (sem cap; controle apenas por virada de lote no app).
+--    Se um dia quiser travar em um número, é só editar no admin.
 INSERT INTO public.app_settings (key, value)
-VALUES ('presale_limit', '110')
+VALUES ('presale_limit', '0')
 ON CONFLICT (key) DO NOTHING;
 
 -- 3) Marco zero da contagem. Cadastros anteriores a este instante NÃO contam para as vagas.

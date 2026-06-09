@@ -79,7 +79,7 @@ export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): strin
                     <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.orange};">Seu benefício VIP</p>
                     <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:${COLORS.black};">
                       A inscrição acontece <strong>dentro do app TF Sports</strong>. Use o cupom abaixo na hora de pagar
-                      e garanta o valor da pré-venda. São <strong>apenas 100 vagas</strong>.
+                      e garanta o valor do <strong>${escapeHtml(PRESALE.loteLabel)}</strong>. Quando o lote virar, o preço sobe.
                     </p>
 
                     <!-- Cupom em destaque -->
@@ -173,7 +173,7 @@ export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): strin
                   Guarde este e-mail
                 </p>
                 <p style="margin:6px 0 0;font-size:13px;color:#ffffffe6;line-height:1.5;">
-                  Você vai precisar do cupom <strong>${escapeHtml(codigo)}</strong> na hora de comprar a inscrição no app. As vagas são limitadas.
+                  Você vai precisar do cupom <strong>${escapeHtml(codigo)}</strong> na hora de comprar a inscrição no app. Garanta o ${escapeHtml(PRESALE.loteLabel)} antes da virada.
                 </p>
               </div>
             </td>

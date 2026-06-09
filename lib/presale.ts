@@ -46,9 +46,9 @@ async function getCount(startAt: string | null): Promise<number> {
 export async function getPresaleStatus(): Promise<PresaleStatus> {
   const { limit, startAt } = await getSettings()
   const count = await getCount(startAt)
-  // Sem marco zero configurado (migration ainda não rodada) não dá para contar
-  // "do zero" de forma confiável — nesse caso a pré-venda fica aberta.
-  const closed = startAt !== null && count >= limit
+  // limit <= 0  => vagas ilimitadas (controle só por virada de lote no app da TF).
+  // Sem marco zero (migration não rodada) também não bloqueia.
+  const closed = startAt !== null && limit > 0 && count >= limit
   return {
     limit,
     startAt,
