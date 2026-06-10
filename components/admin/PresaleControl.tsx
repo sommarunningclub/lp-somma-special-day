@@ -1,21 +1,26 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { updatePresaleLimit } from '@/actions/presale'
+import { useRouter } from 'next/navigation'
+import { updatePresaleLimit, updatePresaleOpen } from '@/actions/presale'
 
 type Props = {
   limit: number
   count: number
+  manualOpen: boolean
 }
 
-export default function PresaleControl({ limit, count }: Props) {
+export default function PresaleControl({ limit, count, manualOpen }: Props) {
+  const router = useRouter()
   const [value, setValue] = useState(String(limit))
   const [isPending, startTransition] = useTransition()
+  const [isToggling, startToggle] = useTransition()
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
 
   const ilimitado = limit <= 0
   const restantes = ilimitado ? null : Math.max(0, limit - count)
-  const closed = !ilimitado && count >= limit
+  const closedByLimit = !ilimitado && count >= limit
+  const closed = !manualOpen || closedByLimit
 
   function handleSave() {
     setMsg(null)
@@ -24,6 +29,21 @@ export default function PresaleControl({ limit, count }: Props) {
       const res = await updatePresaleLimit(parsed)
       if (res.success) {
         setMsg({ type: 'ok', text: 'Limite atualizado!' })
+        router.refresh()
+      } else {
+        setMsg({ type: 'err', text: res.error })
+      }
+    })
+  }
+
+  function handleToggle() {
+    setMsg(null)
+    const abrir = !manualOpen
+    startToggle(async () => {
+      const res = await updatePresaleOpen(abrir)
+      if (res.success) {
+        setMsg({ type: 'ok', text: abrir ? 'Formulário ABERTO! A página já aceita cadastros.' : 'Formulário FECHADO. A página exibe "encerrado".' })
+        router.refresh()
       } else {
         setMsg({ type: 'err', text: res.error })
       }
@@ -36,7 +56,7 @@ export default function PresaleControl({ limit, count }: Props) {
         <div>
           <h2 className="font-bebas text-2xl tracking-wider text-somma-blue">Pré-venda · Cadastros</h2>
           <p className="mt-0.5 text-sm text-somma-black/60">
-            Vagas <strong>ilimitadas</strong> (controle por virada de lote no app). Use <strong>0</strong> para manter sem limite, ou defina um número para travar o cadastro.
+            Use o botão ao lado para <strong>abrir ou fechar o formulário</strong> da Lista VIP a qualquer momento.
           </p>
         </div>
         <span
@@ -47,6 +67,29 @@ export default function PresaleControl({ limit, count }: Props) {
           <span className={`h-2 w-2 rounded-full ${closed ? 'bg-red-500' : 'bg-green-500'}`} />
           {closed ? 'Encerrada' : 'Aberta'}
         </span>
+      </div>
+
+      {/* Interruptor manual do formulário */}
+      <div className={`mt-5 flex flex-col gap-3 rounded-xl border-2 p-4 sm:flex-row sm:items-center sm:justify-between ${manualOpen ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
+        <div>
+          <p className="font-dm text-sm font-bold text-somma-black">
+            Formulário da Lista VIP: {manualOpen ? 'ABERTO' : 'FECHADO'}
+          </p>
+          <p className="mt-0.5 font-dm text-xs text-somma-black/55">
+            {manualOpen
+              ? 'O público consegue se cadastrar normalmente em /listavip.'
+              : 'A página /listavip mostra "cadastro encerrado" e não aceita novos cadastros.'}
+          </p>
+        </div>
+        <button
+          onClick={handleToggle}
+          disabled={isToggling}
+          className={`shrink-0 rounded-xl border-4 border-somma-black px-6 py-3 font-bebas text-lg tracking-widest text-white shadow-[3px_3px_0_#0a0a0a] transition-all hover:translate-x-[1px] hover:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-60 ${
+            manualOpen ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
+          }`}
+        >
+          {isToggling ? 'SALVANDO...' : manualOpen ? 'FECHAR FORMULÁRIO' : 'ABRIR FORMULÁRIO'}
+        </button>
       </div>
 
       <div className="mt-5 grid grid-cols-3 gap-3">

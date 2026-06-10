@@ -165,14 +165,14 @@ export default function ListaVipHero({ closed = false }: { closed?: boolean }) {
               {closed ? (
                 <div className="flex flex-col items-center py-6 text-center">
                   <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-somma-orange/15 px-4 py-2 font-dm text-xs font-bold uppercase tracking-widest text-somma-orange">
-                    Pré-venda encerrada
+                    Cadastro encerrado
                   </span>
                   <h2 className="font-bebas text-4xl leading-tight tracking-wide text-somma-black md:text-5xl">
-                    As 100 vagas esgotaram
+                    A lista VIP fechou
                   </h2>
                   <p className="mt-3 max-w-sm font-dm text-sm leading-relaxed text-somma-black/60">
-                    A pré-venda VIP do Somma Special Day foi um sucesso e todas as vagas já foram preenchidas.
-                    Fique de olho nas nossas redes: em breve abrimos as inscrições para todo mundo.
+                    O cadastro da Lista VIP do Somma Special Day está encerrado por enquanto.
+                    Fique de olho nas nossas redes: novidades chegam em breve.
                   </p>
                   <a
                     href="https://www.instagram.com/sommaclub"

@@ -18,7 +18,13 @@ export async function login(formData: FormData): Promise<LoginResult> {
     return { success: false, error: 'Chave administrativa inválida.' }
   }
 
-  const autorizado = await findInsiderByCPF(cpf)
+  // CPFs autorizados via env ADMIN_CPFS (lista separada por vírgula) ou tabela dados_insiders.
+  const allowlist = (process.env.ADMIN_CPFS ?? '')
+    .split(',')
+    .map((c) => c.replace(/\D/g, ''))
+    .filter((c) => c.length === 11)
+
+  const autorizado = allowlist.includes(digits) || (await findInsiderByCPF(cpf))
   if (!autorizado) {
     return { success: false, error: 'CPF não autorizado para acesso administrativo.' }
   }

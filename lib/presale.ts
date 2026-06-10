@@ -8,15 +8,17 @@ export type PresaleStatus = {
   count: number
   closed: boolean
   restantes: number
+  /** Interruptor manual do formulário: false = admin fechou o cadastro. */
+  manualOpen: boolean
 }
 
-async function getSettings(): Promise<{ limit: number; startAt: string | null }> {
+async function getSettings(): Promise<{ limit: number; startAt: string | null; manualOpen: boolean }> {
   try {
     const supabase = createServerClient()
     const { data } = await supabase
       .from('app_settings')
       .select('key, value')
-      .in('key', ['presale_limit', 'presale_start_at'])
+      .in('key', ['presale_limit', 'presale_start_at', 'presale_open'])
 
     const map = new Map((data ?? []).map((r) => [r.key as string, r.value as string]))
     const parsedLimit = Number.parseInt(map.get('presale_limit') ?? '', 10)
@@ -24,9 +26,11 @@ async function getSettings(): Promise<{ limit: number; startAt: string | null }>
     return {
       limit: Number.isFinite(parsedLimit) && parsedLimit > 0 ? parsedLimit : DEFAULT_LIMIT,
       startAt: map.get('presale_start_at') ?? null,
+      // Sem a chave no banco, o formulário fica aberto.
+      manualOpen: (map.get('presale_open') ?? 'true') !== 'false',
     }
   } catch {
-    return { limit: DEFAULT_LIMIT, startAt: null }
+    return { limit: DEFAULT_LIMIT, startAt: null, manualOpen: true }
   }
 }
 
@@ -42,19 +46,20 @@ async function getCount(startAt: string | null): Promise<number> {
   }
 }
 
-/** Status atual da pré-venda (limite real, contagem e se esgotou). */
+/** Status atual da pré-venda (interruptor manual, limite, contagem). */
 export async function getPresaleStatus(): Promise<PresaleStatus> {
-  const { limit, startAt } = await getSettings()
+  const { limit, startAt, manualOpen } = await getSettings()
   const count = await getCount(startAt)
-  // limit <= 0  => vagas ilimitadas (controle só por virada de lote no app da TF).
-  // Sem marco zero (migration não rodada) também não bloqueia.
-  const closed = startAt !== null && limit > 0 && count >= limit
+  // Fechada se: o admin fechou manualmente, OU há limite (> 0) atingido.
+  const closedByLimit = startAt !== null && limit > 0 && count >= limit
+  const closed = !manualOpen || closedByLimit
   return {
     limit,
     startAt,
     count,
     closed,
     restantes: Math.max(0, limit - count),
+    manualOpen,
   }
 }
 
@@ -66,6 +71,19 @@ export async function setPresaleLimit(limit: number): Promise<boolean> {
     const { error } = await supabase
       .from('app_settings')
       .upsert({ key: 'presale_limit', value: String(Math.floor(limit)), updated_at: new Date().toISOString() })
+    return !error
+  } catch {
+    return false
+  }
+}
+
+/** Abre/fecha o formulário da lista VIP manualmente (interruptor do admin). */
+export async function setPresaleOpen(open: boolean): Promise<boolean> {
+  try {
+    const supabase = createServerClient()
+    const { error } = await supabase
+      .from('app_settings')
+      .upsert({ key: 'presale_open', value: open ? 'true' : 'false', updated_at: new Date().toISOString() })
     return !error
   } catch {
     return false

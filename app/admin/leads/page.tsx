@@ -68,7 +68,7 @@ export default async function LeadsPage() {
           </div>
         </div>
 
-        <PresaleControl limit={presale.limit} count={presale.count} />
+        <PresaleControl limit={presale.limit} count={presale.count} manualOpen={presale.manualOpen} />
 
         <EmailStatsDashboard leads={rows} />
 

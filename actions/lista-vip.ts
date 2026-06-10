@@ -14,7 +14,7 @@ type ActionResult =
 const MAX_CODE_ATTEMPTS = 8
 
 const PRESALE_CLOSED_MESSAGE =
-  'As 100 vagas da pré-venda VIP se esgotaram. Fique de olho nas nossas redes: em breve teremos novidades.'
+  'O cadastro da Lista VIP está encerrado no momento. Fique de olho nas nossas redes: em breve teremos novidades.'
 
 function normalize({ nome, email, cpf, telefone, sexo }: ListaVipInput) {
   return {
