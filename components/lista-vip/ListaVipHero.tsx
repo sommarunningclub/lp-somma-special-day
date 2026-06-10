@@ -175,7 +175,7 @@ export default function ListaVipHero({ closed = false }: { closed?: boolean }) {
                     Fique de olho nas nossas redes: novidades chegam em breve.
                   </p>
                   <a
-                    href="https://www.instagram.com/sommaclub"
+                    href="https://www.instagram.com/somma.club/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-6 w-full rounded-2xl border-4 border-somma-black bg-somma-blue px-3 py-4 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] sm:w-auto sm:px-8"
