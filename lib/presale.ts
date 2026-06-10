@@ -1,6 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server'
 
-const DEFAULT_LIMIT = 110
+const DEFAULT_LIMIT = 0 // 0 = ilimitado (padrão enquanto não há config no banco)
 
 export type PresaleStatus = {
   limit: number
