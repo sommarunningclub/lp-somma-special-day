@@ -6,6 +6,7 @@ import LeadManager, { type ListaVipLead } from '@/components/admin/LeadManager'
 import LogoutButton from '@/components/admin/LogoutButton'
 import PresaleControl from '@/components/admin/PresaleControl'
 import EmailStatsDashboard from '@/components/admin/EmailStatsDashboard'
+import EmailActivity, { type EmailActivityItem } from '@/components/admin/EmailActivity'
 import { getPresaleStatus } from '@/lib/presale'
 
 export const dynamic = 'force-dynamic'
@@ -23,6 +24,28 @@ export default async function LeadsPage() {
 
   const rows = (leads ?? []) as ListaVipLead[]
   const presale = await getPresaleStatus()
+
+  // Atividade recente de e-mail (aberturas/cliques). Tolerante caso a migration 006 ainda não tenha rodado.
+  let activity: EmailActivityItem[] = []
+  try {
+    const { data: events } = await supabase
+      .from('email_events')
+      .select('id, type, link, email, created_at, lista_vip(nome)')
+      .in('type', ['opened', 'clicked'])
+      .order('created_at', { ascending: false })
+      .limit(50)
+
+    activity = (events ?? []).map((e: Record<string, unknown>) => ({
+      id: String(e.id),
+      type: String(e.type),
+      link: (e.link as string) ?? null,
+      email: (e.email as string) ?? null,
+      created_at: String(e.created_at),
+      nome: (e.lista_vip as { nome?: string } | null)?.nome ?? null,
+    }))
+  } catch {
+    activity = []
+  }
 
   return (
     <main className="min-h-screen bg-somma-cream px-4 py-8 font-dm text-somma-black md:px-8 md:py-12">
@@ -46,6 +69,8 @@ export default async function LeadsPage() {
         <PresaleControl limit={presale.limit} count={presale.count} />
 
         <EmailStatsDashboard leads={rows} />
+
+        <EmailActivity items={activity} />
 
         <LeadManager leads={rows} />
       </div>
