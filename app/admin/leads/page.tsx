@@ -5,6 +5,7 @@ import { createServerClient } from '@/lib/supabase/server'
 import LeadManager, { type ListaVipLead } from '@/components/admin/LeadManager'
 import LogoutButton from '@/components/admin/LogoutButton'
 import PresaleControl from '@/components/admin/PresaleControl'
+import EmailStatsDashboard from '@/components/admin/EmailStatsDashboard'
 import { getPresaleStatus } from '@/lib/presale'
 
 export const dynamic = 'force-dynamic'
@@ -43,6 +44,8 @@ export default async function LeadsPage() {
         </div>
 
         <PresaleControl limit={presale.limit} count={presale.count} />
+
+        <EmailStatsDashboard leads={rows} />
 
         <LeadManager leads={rows} />
       </div>

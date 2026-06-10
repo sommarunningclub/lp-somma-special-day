@@ -8,18 +8,18 @@ interface SendVipEmailArgs {
   cupom?: string
 }
 
-export async function sendVipTicketEmail({ nome, email, cupom = PRESALE.cupom }: SendVipEmailArgs): Promise<void> {
+export async function sendVipTicketEmail({ nome, email, cupom = PRESALE.cupom }: SendVipEmailArgs): Promise<string | null> {
   const apiKey = process.env.RESEND_API_KEY
   const from = process.env.VIP_EMAIL_FROM
 
   if (!apiKey || !from) {
     console.error('[vip-email] RESEND_API_KEY ou VIP_EMAIL_FROM não configurados.')
-    return
+    return null
   }
 
   const resend = new Resend(apiKey)
 
-  const { error } = await resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from,
     to: email,
     subject: `Seu cupom ${cupom} chegou — pré-venda Somma Special Day`,
@@ -28,5 +28,8 @@ export async function sendVipTicketEmail({ nome, email, cupom = PRESALE.cupom }:
 
   if (error) {
     console.error('[vip-email] Falha ao enviar e-mail:', error)
+    return null
   }
+
+  return data?.id ?? null
 }

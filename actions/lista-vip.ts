@@ -64,7 +64,7 @@ export async function submitListaVip(formData: unknown): Promise<ActionResult> {
 
       if (!error) {
         const finalCode = data.codigo_unico ?? codigoUnico
-        await dispatchVipEmail(lead.nome, lead.email)
+        await dispatchVipEmail(lead.nome, lead.email, data.id)
         return { success: true, data: { codigoUnico: finalCode } }
       }
 
@@ -101,16 +101,24 @@ export async function submitListaVip(formData: unknown): Promise<ActionResult> {
     }
 
     const fallbackCode = codeFromLeadId(data.id)
-    await dispatchVipEmail(lead.nome, lead.email)
+    await dispatchVipEmail(lead.nome, lead.email, data.id)
     return { success: true, data: { codigoUnico: fallbackCode } }
   } catch {
     return { success: false, error: 'Ocorreu um erro. Tente novamente.' }
   }
 }
 
-async function dispatchVipEmail(nome: string, email: string): Promise<void> {
+async function dispatchVipEmail(nome: string, email: string, leadId: string): Promise<void> {
   try {
-    await sendVipTicketEmail({ nome, email, cupom: PRESALE.cupom })
+    const resendId = await sendVipTicketEmail({ nome, email, cupom: PRESALE.cupom })
+    if (resendId) {
+      // Marca como enviado já no cadastro; o webhook completa entregue/aberto/clicado.
+      const supabase = createServerClient()
+      await supabase
+        .from('lista_vip')
+        .update({ resend_email_id: resendId, email_status: 'sent', email_sent_at: new Date().toISOString() })
+        .eq('id', leadId)
+    }
   } catch (error) {
     console.error('[lista-vip] Erro ao disparar e-mail VIP:', error)
   }

@@ -19,10 +19,46 @@ export interface ListaVipLead {
   quantidade_usos?: number
   data_expiracao?: string | null
   created_at: string
+  // Rastreamento de e-mail (Resend)
+  email_status?: string | null
+  email_sent_at?: string | null
+  email_delivered_at?: string | null
+  email_opened_at?: string | null
+  email_clicked_at?: string | null
+  email_open_count?: number | null
+  email_click_count?: number | null
 }
 
 interface Props {
   leads: ListaVipLead[]
+}
+
+const EMAIL_BADGE: Record<string, { label: string; cls: string }> = {
+  clicked: { label: 'Clicou', cls: 'border-purple-400 bg-purple-400/15 text-purple-300' },
+  opened: { label: 'Abriu', cls: 'border-somma-orange bg-somma-orange/15 text-somma-orange' },
+  delivered: { label: 'Entregue', cls: 'border-green-400 bg-green-400/15 text-green-300' },
+  sent: { label: 'Enviado', cls: 'border-somma-blue bg-somma-blue/15 text-somma-blue' },
+  bounced: { label: 'Bounce', cls: 'border-red-400 bg-red-400/15 text-red-300' },
+  complained: { label: 'Spam', cls: 'border-red-400 bg-red-400/15 text-red-300' },
+  failed: { label: 'Falhou', cls: 'border-red-400 bg-red-400/15 text-red-300' },
+}
+
+function emailStatusOf(lead: ListaVipLead): string {
+  if (lead.email_clicked_at) return 'clicked'
+  if (lead.email_opened_at) return 'opened'
+  if (lead.email_delivered_at) return 'delivered'
+  if (lead.email_status) return lead.email_status
+  if (lead.email_sent_at) return 'sent'
+  return 'none'
+}
+
+function EmailBadge({ lead }: { lead: ListaVipLead }) {
+  const key = emailStatusOf(lead)
+  if (key === 'none') {
+    return <span className="rounded-full border-2 border-somma-cream/20 px-2.5 py-0.5 font-bebas text-xs tracking-widest text-somma-cream/40">—</span>
+  }
+  const badge = EMAIL_BADGE[key] ?? { label: key, cls: 'border-somma-cream/30 bg-somma-cream/10 text-somma-cream/70' }
+  return <span className={`rounded-full border-2 px-2.5 py-0.5 font-bebas text-xs tracking-widest ${badge.cls}`}>{badge.label}</span>
 }
 
 const emptyValues: ListaVipInput = {
@@ -64,6 +100,8 @@ export default function LeadManager({ leads }: Props) {
   const [editingLead, setEditingLead] = useState<ListaVipLead | null>(null)
   const [serverMsg, setServerMsg] = useState<{ type: 'error' | 'success'; text: string } | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [query, setQuery] = useState('')
+  const [emailFilter, setEmailFilter] = useState<'all' | 'opened' | 'clicked' | 'delivered' | 'sent' | 'none'>('all')
 
   const {
     register,
@@ -76,7 +114,22 @@ export default function LeadManager({ leads }: Props) {
     defaultValues: emptyValues,
   })
 
-  const orderedLeads = useMemo(() => leads, [leads])
+  const orderedLeads = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    const onlyDigits = q.replace(/\D/g, '')
+    return leads.filter((lead) => {
+      if (emailFilter !== 'all' && emailStatusOf(lead) !== emailFilter) return false
+      if (!q) return true
+      const matchText =
+        lead.nome.toLowerCase().includes(q) ||
+        lead.email.toLowerCase().includes(q) ||
+        (lead.codigo_unico ?? '').toLowerCase().includes(q)
+      const matchDigits =
+        onlyDigits.length > 0 &&
+        (lead.cpf.replace(/\D/g, '').includes(onlyDigits) || lead.telefone.replace(/\D/g, '').includes(onlyDigits))
+      return matchText || matchDigits
+    })
+  }, [leads, query, emailFilter])
 
   function startCreate() {
     setEditingLead(null)
@@ -270,9 +323,42 @@ export default function LeadManager({ leads }: Props) {
         </div>
       </form>
 
+      {/* Busca + filtros */}
+      <div className="rounded-2xl border-4 border-somma-black bg-somma-black/60 p-4 md:p-5">
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Buscar por nome, e-mail, CPF, telefone ou cupom..."
+          className="w-full rounded-2xl border-4 border-somma-black bg-somma-cream px-4 py-3 font-dm text-sm text-somma-black shadow-[3px_3px_0_#005EFF] placeholder:text-somma-black/40 focus:shadow-[3px_3px_0_#FF4800] focus:outline-none"
+        />
+        <div className="mt-3 flex flex-wrap gap-2">
+          {([
+            ['all', 'Todos'],
+            ['sent', 'Enviados'],
+            ['delivered', 'Entregues'],
+            ['opened', 'Abriram'],
+            ['clicked', 'Clicaram'],
+            ['none', 'Sem e-mail'],
+          ] as const).map(([key, label]) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setEmailFilter(key)}
+              className={`rounded-full border-2 px-3 py-1 font-bebas text-sm tracking-widest transition-all ${
+                emailFilter === key
+                  ? 'border-somma-orange bg-somma-orange text-somma-cream'
+                  : 'border-somma-cream/25 text-somma-cream/70 hover:border-somma-cream/60'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="font-bebas text-2xl tracking-widest text-somma-yellow">
-          {orderedLeads.length} lead{orderedLeads.length !== 1 ? 's' : ''} na lista
+          {orderedLeads.length} de {leads.length} lead{leads.length !== 1 ? 's' : ''}
         </p>
         <button
           type="button"
@@ -292,9 +378,7 @@ export default function LeadManager({ leads }: Props) {
                 <h3 className="break-words font-bebas text-2xl tracking-wider text-somma-cream">{lead.nome}</h3>
                 <p className="mt-1 break-all text-xs text-somma-cream/60">{lead.email}</p>
               </div>
-              <span className="shrink-0 rounded-full border-2 border-somma-yellow bg-somma-yellow/10 px-3 py-1 font-bebas text-xs tracking-widest text-somma-yellow">
-                {lead.status_cupom ?? 'ativo'}
-              </span>
+              <EmailBadge lead={lead} />
             </div>
             <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-somma-cream/65">
               <div>
@@ -330,7 +414,7 @@ export default function LeadManager({ leads }: Props) {
         <table className="w-full min-w-[1120px] text-sm">
           <thead className="bg-somma-blue font-bebas text-base tracking-widest text-somma-cream">
             <tr>
-              {['Nome', 'E-mail', 'CPF', 'Telefone', 'Sexo', 'Código', 'Status', 'Usos', 'Data', 'Ações'].map((heading) => (
+              {['Nome', 'E-mail', 'Status e-mail', 'CPF', 'Telefone', 'Sexo', 'Código', 'Data', 'Ações'].map((heading) => (
                 <th key={heading} className={`px-5 py-4 text-left ${heading === 'Ações' ? 'text-right' : ''}`}>
                   {heading}
                 </th>
@@ -342,12 +426,11 @@ export default function LeadManager({ leads }: Props) {
               <tr key={lead.id} className={index % 2 === 0 ? 'bg-somma-black' : 'bg-somma-blue/10'}>
                 <td className="px-5 py-4 font-semibold text-somma-cream">{lead.nome}</td>
                 <td className="px-5 py-4 text-somma-cream/75">{lead.email}</td>
+                <td className="px-5 py-4"><EmailBadge lead={lead} /></td>
                 <td className="px-5 py-4 text-somma-cream/75">{lead.cpf}</td>
                 <td className="px-5 py-4 text-somma-cream/75">{lead.telefone}</td>
                 <td className="px-5 py-4 text-somma-cream/75">{lead.sexo}</td>
                 <td className="px-5 py-4 font-bebas text-lg tracking-widest text-somma-yellow">{lead.codigo_unico ?? codeFromLeadId(lead.id)}</td>
-                <td className="px-5 py-4 text-somma-cream/75">{lead.status_cupom ?? 'ativo'}</td>
-                <td className="px-5 py-4 text-somma-cream/75">{lead.quantidade_usos ?? 0}</td>
                 <td className="px-5 py-4 text-somma-cream/50">{new Date(lead.created_at).toLocaleString('pt-BR')}</td>
                 <td className="px-5 py-4 text-right">
                   <button
@@ -362,8 +445,8 @@ export default function LeadManager({ leads }: Props) {
             ))}
             {orderedLeads.length === 0 && (
               <tr>
-                <td colSpan={10} className="px-5 py-16 text-center text-somma-cream/40">
-                  Nenhum lead ainda. Use o formulário acima para adicionar o primeiro.
+                <td colSpan={9} className="px-5 py-16 text-center text-somma-cream/40">
+                  Nenhum lead encontrado com esses filtros.
                 </td>
               </tr>
             )}
