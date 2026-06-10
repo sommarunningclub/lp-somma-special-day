@@ -4,6 +4,7 @@ import { isAuthenticated } from '@/lib/auth'
 import { createServerClient } from '@/lib/supabase/server'
 import LeadManager, { type ListaVipLead } from '@/components/admin/LeadManager'
 import LogoutButton from '@/components/admin/LogoutButton'
+import RefreshButton from '@/components/admin/RefreshButton'
 import PresaleControl from '@/components/admin/PresaleControl'
 import EmailStatsDashboard from '@/components/admin/EmailStatsDashboard'
 import EmailActivity, { type EmailActivityItem } from '@/components/admin/EmailActivity'
@@ -56,6 +57,7 @@ export default async function LeadsPage() {
             <p className="mt-1 text-sm text-somma-black/60">{rows.length} pessoa{rows.length !== 1 ? 's' : ''} na lista</p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <RefreshButton />
             <Link href="/admin" className="w-full rounded-full border-4 border-somma-black/20 px-5 py-2.5 text-center font-bebas tracking-widest text-somma-black transition-all hover:border-somma-black hover:bg-somma-black/10 sm:w-auto">
               Propostas
             </Link>
