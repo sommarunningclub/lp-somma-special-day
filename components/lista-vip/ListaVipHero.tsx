@@ -168,7 +168,7 @@ export default function ListaVipHero({ closed = false }: { closed?: boolean }) {
                     Cadastro encerrado
                   </span>
                   <h2 className="font-bebas text-4xl leading-tight tracking-wide text-somma-black md:text-5xl">
-                    A lista VIP fechou
+                    A lista VIP fechada
                   </h2>
                   <p className="mt-3 max-w-sm font-dm text-sm leading-relaxed text-somma-black/60">
                     O cadastro da Lista VIP do Somma Special Day está encerrado por enquanto.
