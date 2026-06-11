@@ -39,6 +39,8 @@ export default function PropostaForm({ mode, initial }: Props) {
       valores_personalizados: initial?.valores_personalizados ?? {},
       whatsapp_telefone: initial?.whatsapp_telefone ?? '',
       contato_responsavel: initial?.contato_responsavel ?? '',
+      ocultar_avulsas: initial?.ocultar_avulsas ?? false,
+      ocultar_comparativo: initial?.ocultar_comparativo ?? false,
     },
   })
 
@@ -198,6 +200,28 @@ export default function PropostaForm({ mode, initial }: Props) {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Seções da proposta */}
+      <section className="rounded-2xl border-4 border-somma-black bg-somma-black p-5 shadow-[4px_4px_0_#FD6FDB] sm:rounded-3xl sm:p-6 sm:shadow-[6px_6px_0_#FD6FDB]">
+        <h2 className="mb-2 font-bebas text-2xl tracking-widest text-somma-orange sm:text-3xl">Seções da proposta</h2>
+        <p className="mb-5 font-dm text-xs text-somma-cream/50">Escolha quais blocos aparecem na proposta pública.</p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border-4 border-somma-black bg-somma-cream px-4 py-3 font-dm text-sm shadow-[3px_3px_0_#0a0a0a] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_#0a0a0a]">
+            <input type="checkbox" {...register('ocultar_comparativo')} className="mt-0.5 h-5 w-5 accent-somma-pink" />
+            <div className="flex flex-col gap-0.5">
+              <span className="font-bebas text-base tracking-wider text-somma-black">Ocultar "Comparativo · Resumo lado a lado"</span>
+              <span className="font-dm text-[11px] text-somma-black/60">A tabela comparativa entre as cotas não será exibida.</span>
+            </div>
+          </label>
+          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border-4 border-somma-black bg-somma-cream px-4 py-3 font-dm text-sm shadow-[3px_3px_0_#0a0a0a] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_#0a0a0a]">
+            <input type="checkbox" {...register('ocultar_avulsas')} className="mt-0.5 h-5 w-5 accent-somma-pink" />
+            <div className="flex flex-col gap-0.5">
+              <span className="font-bebas text-base tracking-wider text-somma-black">Ocultar "Cotas avulsas de experiência"</span>
+              <span className="font-dm text-[11px] text-somma-black/60">A seção de entregas pontuais (camiseta, hidratação, café, etc.) não será exibida.</span>
+            </div>
+          </label>
         </div>
       </section>
 

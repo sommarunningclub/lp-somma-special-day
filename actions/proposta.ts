@@ -33,6 +33,8 @@ function normalize(input: PropostaInput) {
     valores_personalizados: input.valores_personalizados ?? {},
     whatsapp_telefone: input.whatsapp_telefone?.trim() || null,
     contato_responsavel: input.contato_responsavel?.trim() || null,
+    ocultar_avulsas: input.ocultar_avulsas ?? false,
+    ocultar_comparativo: input.ocultar_comparativo ?? false,
   }
 }
 

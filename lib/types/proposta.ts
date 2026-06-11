@@ -13,6 +13,8 @@ export interface Proposta {
   valores_personalizados: Partial<Record<CotaKey, number>>
   whatsapp_telefone: string | null
   contato_responsavel: string | null
+  ocultar_avulsas: boolean
+  ocultar_comparativo: boolean
   created_at: string
   updated_at: string
 }

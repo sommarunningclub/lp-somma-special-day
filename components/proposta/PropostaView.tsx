@@ -297,7 +297,7 @@ export default function PropostaView({ proposta }: Props) {
       )}
 
       {/* ====== COMPARATIVO ====== */}
-      {cotasVisiveis.length > 1 && (
+      {cotasVisiveis.length > 1 && !proposta.ocultar_comparativo && (
         <section className="px-4 py-16 md:py-24">
           <div className="mx-auto max-w-6xl">
             <div className="text-center">
@@ -341,7 +341,7 @@ export default function PropostaView({ proposta }: Props) {
       )}
 
       {/* ====== AVULSAS ====== */}
-      {avulsasVisiveis.length > 0 && (
+      {avulsasVisiveis.length > 0 && !proposta.ocultar_avulsas && (
         <section className="bg-somma-yellow/20 px-4 py-16 md:py-24">
           <div className="mx-auto max-w-5xl">
             <div className="text-center">

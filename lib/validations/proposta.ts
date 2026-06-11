@@ -22,6 +22,8 @@ export const propostaSchema = z.object({
   valores_personalizados: z.record(cotaKeyEnum, z.number().nonnegative()).optional(),
   whatsapp_telefone: z.string().optional().or(z.literal('')),
   contato_responsavel: z.string().optional().or(z.literal('')),
+  ocultar_avulsas: z.boolean(),
+  ocultar_comparativo: z.boolean(),
 })
 
 export type PropostaInput = z.infer<typeof propostaSchema>
