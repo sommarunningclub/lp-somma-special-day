@@ -18,6 +18,7 @@ import {
   getFinalStep,
   type NutricaoStepKey,
 } from './nutricao-steps'
+import { resolveStep, resolveAllSteps } from './nutricao-store'
 
 export const SITE_URL = 'https://specialday.sommaclub.com.br'
 
@@ -64,17 +65,21 @@ function hoursSince(iso: string): number {
 }
 
 /** Determina qual passo deve ser enviado AGORA, ou null se nenhum. */
-function pickStep(lead: LeadRow, already: Set<NutricaoStepKey>): NutricaoStepKey | null {
+function pickStep(
+  lead: LeadRow,
+  already: Set<NutricaoStepKey>,
+  enabledSet: Set<NutricaoStepKey>,
+): NutricaoStepKey | null {
   // Branching: clicou no CTA → vai direto pro final.
-  if (lead.jump_to_final && !already.has('d6_oferta_final')) {
+  if (lead.jump_to_final && !already.has('d6_oferta_final') && enabledSet.has('d6_oferta_final')) {
     return 'd6_oferta_final'
   }
 
   const elapsed = hoursSince(lead.created_at)
-  // Pega o passo mais avançado cujo offset já passou e que ainda não foi enviado.
+  // Pega o passo mais avançado cujo offset já passou, está habilitado e ainda não foi enviado.
   let candidate: NutricaoStepKey | null = null
   for (const s of NUTRICAO_STEPS) {
-    if (elapsed >= s.offsetHours && !already.has(s.step)) {
+    if (elapsed >= s.offsetHours && !already.has(s.step) && enabledSet.has(s.step)) {
       candidate = s.step
     }
   }
@@ -95,9 +100,11 @@ async function sendOne(
   lead: LeadRow,
   step: NutricaoStepKey,
 ): Promise<SendOutcome> {
+  const stepConfig = await resolveStep(step)
+  if (!stepConfig) return { leadId: lead.id, email: lead.email, step, error: 'Passo desconhecido' }
   const { subject, html } = renderNutricaoEmail({
     nome: lead.nome,
-    step,
+    stepConfig,
     unsubscribeUrl: unsubUrl(lead.id),
   })
   try {
@@ -151,12 +158,13 @@ export async function runNutricaoDispatch(): Promise<RunSummary> {
   if (!apiKey || !from) throw new Error('RESEND_API_KEY ou VIP_EMAIL_FROM não configurados.')
   const resend = new Resend(apiKey)
 
-  const leads = await getActiveLeads()
+  const [leads, resolvedSteps] = await Promise.all([getActiveLeads(), resolveAllSteps()])
+  const enabledSet = new Set(resolvedSteps.filter((s) => s.enabled).map((s) => s.step))
   const summary: RunSummary = { scanned: leads.length, sent: 0, failed: 0, details: [] }
 
   for (const lead of leads) {
     const already = await getSentSteps(lead.id)
-    const step = pickStep(lead, already)
+    const step = pickStep(lead, already, enabledSet)
     if (!step) continue
 
     const outcome = await sendOne(resend, from, lead, step)

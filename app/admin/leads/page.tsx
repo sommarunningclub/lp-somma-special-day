@@ -9,8 +9,10 @@ import PresaleControl from '@/components/admin/PresaleControl'
 import EmailStatsDashboard from '@/components/admin/EmailStatsDashboard'
 import EmailActivity, { type EmailActivityItem } from '@/components/admin/EmailActivity'
 import CampaignManager from '@/components/admin/CampaignManager'
+import NutricaoManager from '@/components/admin/NutricaoManager'
 import { getPresaleStatus } from '@/lib/presale'
 import { getCampaignView } from '@/lib/campaign/admin-view'
+import { getNutricaoAdminView, type NutricaoAdminView } from '@/lib/nutricao/admin-view'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,6 +36,14 @@ export default async function LeadsPage() {
     campaign = await getCampaignView()
   } catch {
     campaign = { steps: [], totalEligible: 0 }
+  }
+
+  let nutricao: NutricaoAdminView | null = null
+  try {
+    nutricao = await getNutricaoAdminView()
+  } catch (e) {
+    console.error('[admin] nutricao view falhou:', e)
+    nutricao = null
   }
 
   // Atividade recente de e-mail (aberturas/cliques). Tolerante caso a migration 006 ainda não tenha rodado.
@@ -85,6 +95,8 @@ export default async function LeadsPage() {
         <EmailActivity items={activity} />
 
         {campaign.steps.length > 0 && <CampaignManager steps={campaign.steps} totalEligible={campaign.totalEligible} />}
+
+        {nutricao && <NutricaoManager view={nutricao} />}
 
         <LeadManager leads={rows} />
       </div>

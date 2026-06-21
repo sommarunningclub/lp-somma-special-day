@@ -1,10 +1,10 @@
-import { getNutricaoStep, type NutricaoStepKey } from '@/lib/nutricao/nutricao-steps'
+import type { NutricaoStep } from '@/lib/nutricao/nutricao-steps'
 import { PRESALE } from '@/lib/presale-constants'
 import { howItWorksBlock } from './shared-blocks'
 
 interface NutricaoEmailData {
   nome: string
-  step: NutricaoStepKey
+  stepConfig: NutricaoStep
   unsubscribeUrl: string
 }
 
@@ -31,18 +31,15 @@ function bannerText(theme: 'normal' | 'alerta' | 'final'): string {
   return '#ffffff'
 }
 
-export function renderNutricaoEmail({ nome, step, unsubscribeUrl }: NutricaoEmailData): {
+export function renderNutricaoEmail({ nome, stepConfig: cfg, unsubscribeUrl }: NutricaoEmailData): {
   subject: string
   html: string
 } {
-  const cfg = getNutricaoStep(step)
-  if (!cfg) throw new Error(`Passo de nutrição desconhecido: ${step}`)
-
   const primeiroNome = escapeHtml((nome || '').split(' ')[0] || 'corredor')
   const banner = bannerColor(cfg.theme)
   const bannerTxt = bannerText(cfg.theme)
   // CTA aponta para a home com âncora da seção de inscrição (TFSports)
-  const ctaUrl = step === 'd6_oferta_final' ? PRESALE.eventoUrl : `${SITE_URL}/#tfsports`
+  const ctaUrl = cfg.step === 'd6_oferta_final' ? PRESALE.eventoUrl : `${SITE_URL}/#tfsports`
 
   const html = `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -117,7 +114,7 @@ export function renderNutricaoEmail({ nome, step, unsubscribeUrl }: NutricaoEmai
             </td>
           </tr>
 
-          ${howItWorksBlock(step === 'd6_oferta_final' ? PRESALE.cupom : undefined, {
+          ${howItWorksBlock(cfg.step === 'd6_oferta_final' ? PRESALE.cupom : undefined, {
             black: COLORS.black,
             cream: COLORS.cream,
             orange: COLORS.orange,
