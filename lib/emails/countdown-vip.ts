@@ -43,10 +43,10 @@ export function renderCountdownEmail({ nome, step, unsubscribeUrl }: CountdownEm
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${escapeHtml(cfg.subject)}</title>
 </head>
-<body style="margin:0;padding:0;background-color:${COLORS.black};font-family:Arial,Helvetica,sans-serif;">
+<body style="margin:0;padding:0;background-color:#ff4701;font-family:Arial,Helvetica,sans-serif;">
   <!-- preheader oculto -->
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Não perca: ${escapeHtml(cfg.countdown)} — cupom ${escapeHtml(PRESALE.cupom)} garante ${escapeHtml(PRESALE.precoPor)}.</div>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.black};padding:32px 16px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ff4701;padding:32px 16px;">
     <tr>
       <td align="center">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;">

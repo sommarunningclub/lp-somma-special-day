@@ -99,13 +99,13 @@ export const COUNTDOWN_STEPS: CountdownStep[] = [
   {
     step: 'd0_noite',
     sendAt: '2026-06-21T23:00:00Z',
-    subject: 'Acaba à meia-noite: garanta R$ 97 agora',
-    kicker: 'Última chamada',
-    headline: 'Acaba à meia-noite',
-    countdown: 'Últimas horas',
+    subject: '🎉 VOCÊ GANHOU! Sua vaga no Somma Special Day',
+    kicker: 'Você foi selecionado',
+    headline: 'VOCÊ GANHOU R$ 22 DE DESCONTO!',
+    countdown: 'Cupom liberado · acaba domingo 21/06',
     message:
-      'Faltam poucas horas para o fim do valor VIP. Depois da meia-noite, o cupom SOMMAVIP não vale mais e a inscrição passa a R$ 119. Garanta o seu R$ 97 enquanto dá tempo.',
-    cta: 'Garantir antes da meia-noite',
+      'Pode comemorar: você está na lista que vai pagar R$ 97 no Somma Special Day em vez de R$ 119 — sim, R$ 22 a menos só pra você. Agora vem o spoiler: dia 18/07 no COPMDF, das 6h às 14h, você vai correr 8km por um percurso fechado passando pelas embaixadas, atravessar a faixa de chegada com música ao vivo, tomar café da manhã na Big Box, brindar com drink-assinatura, descansar no Recovery Lounge, dançar samba na manhã e fechar a tarde com DJ no stage. Camiseta Thermodry oficial, kit de boas-vindas, fotos profissionais e uma das experiências mais aguardadas do ano em Brasília. 400 vagas. R$ 97. Cupom SOMMAVIP. Só até domingo.',
+    cta: 'QUERO MEU INGRESSO POR R$ 97',
     theme: 'final',
   },
 ]
