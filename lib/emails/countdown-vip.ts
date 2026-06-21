@@ -1,5 +1,6 @@
 import { PRESALE } from '@/lib/presale-constants'
 import { getCountdownStep, type CountdownStepKey } from '@/lib/campaign/vip-countdown-steps'
+import { howItWorksBlock } from './shared-blocks'
 
 interface CountdownEmailData {
   nome: string
@@ -124,6 +125,14 @@ export function renderCountdownEmail({ nome, step, unsubscribeUrl }: CountdownEm
               </table>
             </td>
           </tr>
+
+          ${howItWorksBlock(PRESALE.cupom, {
+            black: COLORS.black,
+            cream: COLORS.cream,
+            orange: COLORS.orange,
+            yellow: COLORS.yellow,
+            bg: 'dark',
+          })}
 
           <!-- Data e local -->
           <tr>

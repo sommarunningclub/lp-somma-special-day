@@ -1,4 +1,5 @@
-import { PRESALE, PRESALE_PASSOS } from '@/lib/presale-constants'
+import { PRESALE } from '@/lib/presale-constants'
+import { howItWorksBlock } from './shared-blocks'
 
 interface VipTicketEmailData {
   nome: string
@@ -19,25 +20,6 @@ const LOGO_URL = 'https://1-ano-sommaday.vercel.app/logo-special-day.png'
 
 export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): string {
   const codigo = cupom || PRESALE.cupom
-
-  const passosHtml = PRESALE_PASSOS.map(
-    (p) => `
-      <tr>
-        <td valign="top" style="padding:0 0 16px 0;">
-          <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
-            <tr>
-              <td valign="top" width="40">
-                <div style="width:30px;height:30px;border-radius:8px;background-color:${COLORS.orange};color:#ffffff;font-size:15px;font-weight:bold;text-align:center;line-height:30px;">${p.n}</div>
-              </td>
-              <td valign="top" style="padding-left:12px;">
-                <p style="margin:0;font-size:15px;font-weight:bold;color:${COLORS.black};">${escapeHtml(p.titulo)}</p>
-                <p style="margin:3px 0 0;font-size:13px;line-height:1.5;color:#0a0a0a99;">${escapeHtml(p.texto)}</p>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>`
-  ).join('')
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -130,35 +112,13 @@ export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): strin
             </td>
           </tr>
 
-          <!-- Passo a passo -->
-          <tr>
-            <td style="padding-top:20px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.cream};border-radius:20px;overflow:hidden;">
-                <tr>
-                  <td style="padding:28px;">
-                    <p style="margin:0 0 18px;font-size:18px;font-weight:bold;color:${COLORS.black};">
-                      Como ativar o seu cupom
-                    </p>
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                      ${passosHtml}
-                    </table>
-
-                    <!-- Botões das lojas -->
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px;">
-                      <tr>
-                        <td style="padding:4px;">
-                          <a href="${PRESALE.appStoreUrl}" style="display:block;background-color:${COLORS.black};color:#ffffff;text-decoration:none;text-align:center;font-size:14px;font-weight:bold;padding:12px;border-radius:10px;">Baixar (iPhone)</a>
-                        </td>
-                        <td style="padding:4px;">
-                          <a href="${PRESALE.playStoreUrl}" style="display:block;background-color:${COLORS.black};color:#ffffff;text-decoration:none;text-align:center;font-size:14px;font-weight:bold;padding:12px;border-radius:10px;">Baixar (Android)</a>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
+          ${howItWorksBlock(codigo, {
+            black: COLORS.black,
+            cream: COLORS.cream,
+            orange: COLORS.orange,
+            yellow: COLORS.yellow,
+            bg: 'dark',
+          })}
 
           <!-- Data e local -->
           <tr>

@@ -1,5 +1,6 @@
 import { getNutricaoStep, type NutricaoStepKey } from '@/lib/nutricao/nutricao-steps'
 import { PRESALE } from '@/lib/presale-constants'
+import { howItWorksBlock } from './shared-blocks'
 
 interface NutricaoEmailData {
   nome: string
@@ -115,6 +116,14 @@ export function renderNutricaoEmail({ nome, step, unsubscribeUrl }: NutricaoEmai
               </table>
             </td>
           </tr>
+
+          ${howItWorksBlock(step === 'd6_oferta_final' ? PRESALE.cupom : undefined, {
+            black: COLORS.black,
+            cream: COLORS.cream,
+            orange: COLORS.orange,
+            yellow: COLORS.yellow,
+            bg: 'light',
+          })}
 
           <!-- Data e local -->
           <tr>
