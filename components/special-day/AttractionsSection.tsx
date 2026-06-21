@@ -9,15 +9,15 @@ gsap.registerPlugin(ScrollTrigger)
 
 const ATTRACTIONS = [
   { emoji: '🏃', title: '8KM PERCURSO INEDITO', desc: 'Regiao das embaixadas com vista pro Lago Paranoa' },
-  { emoji: '🍳', title: 'CAFE BIG BOX', desc: 'Cafe especial pra todo mundo antes da largada' },
+  { emoji: '🍳', title: 'CAFE BIG BOX', desc: 'Cafe especial pra todo mundo pós-corre.' },
   { emoji: '🐂', title: 'RED BULL', desc: 'Coolers, ativacao e kit exclusivo' },
   { emoji: '💪', title: 'ACADEMIA EVOLVE', desc: 'Aulas exclusivas no evento' },
-  { emoji: '🥁', title: 'RODA DE SAMBA AO VIVO', desc: '08h as 11h. Comemore correndo e sambando' },
+  { emoji: '🥁', title: 'RODA DE SAMBA AO VIVO', desc: '08h as 11h. O nosso after vai ser diferente. Depois do corre tem show ao vivo.' },
   { emoji: '🎧', title: 'DJ ATE 15H', desc: 'A festa continua depois da chegada' },
   { emoji: '🏐', title: 'FUTEVOLEI + ALTINHA', desc: 'Atividades extras pra quem fica' },
   { emoji: '🎯', title: 'GINCANA SOMMA', desc: 'Competicao interna com premiacao' },
   { emoji: '👕', title: 'KIT EXCLUSIVO', desc: 'Camiseta Thermodry T&F + Gym Bag + brindes' },
-  { emoji: '🍺', title: 'BAR SOMMA', desc: 'Corona, Heineken, drinks e combos em baldes' },
+  { emoji: '🍺', title: 'BAR SOMMA', desc: 'Corona, Heineken e tudo que você curte pós-corre.' },
   { emoji: '🍽️', title: 'ALMOCO POPULAR', desc: 'Nao precisa sair com fome' },
 ]
 
