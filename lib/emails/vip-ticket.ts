@@ -44,10 +44,10 @@ export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): strin
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Seu cupom ${escapeHtml(codigo)} — Somma Special Day</title>
+  <title>Não perca: seu cupom ${escapeHtml(codigo)} está ativo — Somma Special Day</title>
 </head>
-<body style="margin:0;padding:0;background-color:${COLORS.blue};font-family:Arial,Helvetica,sans-serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.blue};padding:32px 16px;">
+<body style="margin:0;padding:0;background-color:${COLORS.black};font-family:Arial,Helvetica,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.black};padding:32px 16px;">
     <tr>
       <td align="center">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;">
@@ -58,14 +58,27 @@ export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): strin
             </td>
           </tr>
 
+          <!-- Faixa de urgência -->
+          <tr>
+            <td align="center" style="padding-bottom:16px;">
+              <table role="presentation" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background-color:${COLORS.orange};border-radius:999px;padding:8px 18px;">
+                    <span style="color:#ffffff;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;">Não perca · 18.07 · COPMDF</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
           <!-- Cabeçalho -->
           <tr>
             <td align="center" style="padding-bottom:24px;">
-              <h1 style="margin:0;color:${COLORS.cream};font-size:24px;letter-spacing:2px;text-transform:uppercase;">
-                Você está na Lista VIP!
+              <h1 style="margin:0;color:${COLORS.cream};font-size:26px;line-height:1.2;letter-spacing:2px;text-transform:uppercase;">
+                Sua vaga está garantida.
               </h1>
-              <p style="margin:8px 0 0;color:#ffffffcc;font-size:14px;line-height:1.5;">
-                Olá, ${escapeHtml(nome.split(' ')[0])}! Seu cupom da pré-venda do Somma Special Day está garantido. Veja abaixo como usar passo a passo.
+              <p style="margin:12px 0 0;color:#ffffffcc;font-size:14px;line-height:1.6;">
+                Olá, ${escapeHtml(nome.split(' ')[0])}! O cupom de pré-venda do Somma Special Day está liberado. Use ele no app TF Sports antes da virada de lote — depois disso o preço sobe.
               </p>
             </td>
           </tr>
@@ -76,7 +89,7 @@ export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): strin
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.cream};border-radius:20px;overflow:hidden;">
                 <tr>
                   <td style="padding:28px;">
-                    <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.orange};">Seu benefício VIP</p>
+                    <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.orange};">Seu cupom de pré-venda</p>
                     <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:${COLORS.black};">
                       A inscrição acontece <strong>dentro do app TF Sports</strong>. Use o cupom abaixo na hora de pagar
                       e garanta o valor do <strong>${escapeHtml(PRESALE.loteLabel)}</strong>. Quando o lote virar, o preço sobe.
@@ -168,12 +181,12 @@ export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): strin
           <!-- Aviso -->
           <tr>
             <td style="padding-top:20px;">
-              <div style="border:3px solid ${COLORS.yellow};border-radius:14px;background-color:#0a0a0a40;padding:16px 20px;">
+              <div style="border:3px solid ${COLORS.yellow};border-radius:14px;background-color:#ffffff14;padding:16px 20px;">
                 <p style="margin:0;font-size:15px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.yellow};">
-                  Guarde este e-mail
+                  Não perca o prazo
                 </p>
                 <p style="margin:6px 0 0;font-size:13px;color:#ffffffe6;line-height:1.5;">
-                  Você vai precisar do cupom <strong>${escapeHtml(codigo)}</strong> na hora de comprar a inscrição no app. Garanta o ${escapeHtml(PRESALE.loteLabel)} antes da virada.
+                  Use o cupom <strong>${escapeHtml(codigo)}</strong> dentro do app TF Sports para travar o ${escapeHtml(PRESALE.loteLabel)}. Quando o lote virar, o preço sobe e o cupom deixa de funcionar.
                 </p>
               </div>
             </td>
@@ -184,7 +197,7 @@ export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): strin
             <td align="center" style="padding-top:28px;">
               <p style="margin:0;font-size:12px;color:#ffffff99;line-height:1.6;">
                 Somma Running Club · Brasília · DF<br />
-                Você recebeu este e-mail porque entrou na Lista VIP do Somma Special Day.
+                Você recebeu este e-mail porque garantiu o cupom de pré-venda do Somma Special Day.
               </p>
             </td>
           </tr>

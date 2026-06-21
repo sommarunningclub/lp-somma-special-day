@@ -15,12 +15,12 @@ const GIFS = [
 
 const MESSAGES = [
   'Conferindo sua vibe...',
-  'Reservando sua vaga...',
+  'Liberando seu cupom...',
   'Avisando a galera...',
   'Aquecendo os tênis...',
   'Acelerando o ritmo...',
   'Quase lá...',
-  'Imprimindo seu ticket!',
+  'Cupom liberado!',
 ]
 
 const TOTAL_DURATION_MS = 9000
@@ -103,7 +103,7 @@ export default function TicketLoader({ onComplete }: { onComplete: () => void })
       <div className="flex w-full max-w-sm flex-col items-center justify-center gap-5 py-12">
         <div className="h-16 w-16 animate-spin rounded-full border-4 border-somma-cream/20 border-t-somma-orange" />
         <p className="font-bebas text-xl tracking-widest text-somma-cream md:text-2xl">
-          Preparando seu ticket...
+          Liberando seu cupom...
         </p>
       </div>
     )
@@ -130,7 +130,7 @@ export default function TicketLoader({ onComplete }: { onComplete: () => void })
         ))}
         {/* Sticker decorativo */}
         <div className="absolute -right-3 -top-3 z-10 rotate-12 rounded-full border-2 border-somma-black bg-somma-yellow px-3 py-1 font-bebas text-xs tracking-widest text-somma-black">
-          VIP
+          18.07
         </div>
       </div>
 

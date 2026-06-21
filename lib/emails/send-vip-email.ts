@@ -22,7 +22,7 @@ export async function sendVipTicketEmail({ nome, email, cupom = PRESALE.cupom }:
   const { data, error } = await resend.emails.send({
     from,
     to: email,
-    subject: `Seu cupom ${cupom} chegou — pré-venda Somma Special Day`,
+    subject: `Não perca: cupom ${cupom} ativo · Somma Special Day 18.07`,
     html: renderVipTicketEmail({ nome, email, cupom }),
   })
 

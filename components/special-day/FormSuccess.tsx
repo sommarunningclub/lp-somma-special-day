@@ -51,7 +51,7 @@ function SuccessModal({ userData }: FormSuccessProps) {
   }, [showTicket])
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : 'https://sommaclub.com.br'
-  const whatsappText = encodeURIComponent(`Vai ter o Somma Special Day dia 18/07! Entra na lista VIP: ${shareUrl}`)
+  const whatsappText = encodeURIComponent(`Vai ter o Somma Special Day dia 18/07! Não perca, garanta sua vaga: ${shareUrl}`)
 
   return (
     <div ref={overlayRef} className="fixed inset-0 z-[9999] overflow-y-auto bg-somma-blue px-4 py-6 sm:py-8">
@@ -59,7 +59,7 @@ function SuccessModal({ userData }: FormSuccessProps) {
         {!showTicket ? (
           <div className="flex w-full max-w-sm flex-col items-center">
             <h2 className="mb-4 text-center font-bebas text-2xl tracking-widest text-somma-cream md:text-3xl">
-              Preparando seu ticket VIP...
+              Garantindo sua vaga...
             </h2>
             <TicketLoader onComplete={() => setShowTicket(true)} />
           </div>
@@ -67,7 +67,7 @@ function SuccessModal({ userData }: FormSuccessProps) {
           <div ref={ticketRef} className="grid w-full items-center gap-6 lg:grid-cols-[minmax(320px,420px)_minmax(320px,430px)] lg:gap-10">
             <div className="mx-auto w-full max-w-[390px] lg:justify-self-end">
               <h1 className="mb-5 text-center font-bebas text-3xl leading-none tracking-widest text-somma-cream sm:text-4xl lg:hidden">
-                Seu ticket VIP foi gerado.
+                Não perca: sua vaga está garantida.
               </h1>
 
               <div className="rounded-t-[22px] border-x-2 border-t-2 border-dashed border-somma-black/20 bg-somma-cream p-5 text-left shadow-2xl sm:p-6">
@@ -76,14 +76,14 @@ function SuccessModal({ userData }: FormSuccessProps) {
                     <Image src="/logo-special-day.svg" alt="Somma Special Day" width={400} height={100} className="h-auto w-full" />
                   </div>
                   <div className="shrink-0 rounded bg-somma-orange px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white">
-                    VIP PASS
+                    CUPOM ATIVO
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-y-6 font-dm">
                   {userData && (
                     <div className="col-span-2 flex flex-col border-b-2 border-somma-black/5 pb-4">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-somma-black/50">Passageiro VIP</span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-somma-black/50">Inscrito</span>
                       <h3 className="mt-1 break-words text-lg font-bold leading-tight text-somma-black">{userData.nome}</h3>
                       <p className="mt-0.5 break-all text-xs text-somma-black/60">{userData.email}</p>
                     </div>
@@ -117,14 +117,14 @@ function SuccessModal({ userData }: FormSuccessProps) {
                 </div>
                 <div className="font-dm">
                   <h2 className="m-0 text-lg font-bold leading-tight text-somma-black">Código gerado!</h2>
-                  <p className="mt-1 text-xs text-somma-black/60">Acesso antecipado e cupom VIP</p>
+                  <p className="mt-1 text-xs text-somma-black/60">Cupom de pré-venda · Somma Special Day</p>
                 </div>
               </div>
             </div>
 
             <div className="mx-auto w-full max-w-[430px] text-center lg:justify-self-start lg:text-left">
               <h1 className="hidden font-bebas text-5xl leading-none tracking-widest text-somma-cream lg:block xl:text-6xl">
-                Seu ticket VIP foi gerado.
+                Não perca: sua vaga está garantida.
               </h1>
               <div className="rounded-2xl border-4 border-somma-yellow bg-somma-black/40 px-5 py-4 text-left shadow-[5px_5px_0_#FDB716] backdrop-blur-sm lg:mt-8">
                 <p className="font-bebas text-xl leading-tight tracking-widest text-somma-yellow">

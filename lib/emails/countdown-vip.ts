@@ -43,10 +43,10 @@ export function renderCountdownEmail({ nome, step, unsubscribeUrl }: CountdownEm
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${escapeHtml(cfg.subject)}</title>
 </head>
-<body style="margin:0;padding:0;background-color:${COLORS.blue};font-family:Arial,Helvetica,sans-serif;">
+<body style="margin:0;padding:0;background-color:${COLORS.black};font-family:Arial,Helvetica,sans-serif;">
   <!-- preheader oculto -->
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(cfg.countdown)} — cupom ${escapeHtml(PRESALE.cupom)} garante ${escapeHtml(PRESALE.precoPor)}.</div>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.blue};padding:32px 16px;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Não perca: ${escapeHtml(cfg.countdown)} — cupom ${escapeHtml(PRESALE.cupom)} garante ${escapeHtml(PRESALE.precoPor)}.</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.black};padding:32px 16px;">
     <tr>
       <td align="center">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;">
@@ -88,7 +88,7 @@ export function renderCountdownEmail({ nome, step, unsubscribeUrl }: CountdownEm
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.cream};border-radius:20px;overflow:hidden;">
                 <tr>
                   <td style="padding:28px;">
-                    <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.orange};">Seu benefício VIP — ${escapeHtml(PRESALE.loteLabel)}</p>
+                    <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.orange};">Seu cupom de pré-venda — ${escapeHtml(PRESALE.loteLabel)}</p>
 
                     <!-- Cupom -->
                     <div style="margin-top:16px;border:2px dashed ${COLORS.orange};border-radius:14px;padding:18px;text-align:center;">
@@ -148,7 +148,7 @@ export function renderCountdownEmail({ nome, step, unsubscribeUrl }: CountdownEm
             <td align="center" style="padding-top:28px;">
               <p style="margin:0;font-size:12px;color:#ffffff99;line-height:1.6;">
                 Somma Running Club · Brasília · DF<br />
-                Você recebeu este e-mail porque entrou na Lista VIP do Somma Special Day.
+                Você recebeu este e-mail porque garantiu o cupom de pré-venda do Somma Special Day.
               </p>
               <p style="margin:10px 0 0;font-size:12px;color:#ffffff99;">
                 <a href="${unsubscribeUrl}" style="color:#ffffffcc;text-decoration:underline;">Não quero mais receber estes e-mails</a>
