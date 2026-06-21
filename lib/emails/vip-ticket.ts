@@ -1,5 +1,5 @@
 import { PRESALE } from '@/lib/presale-constants'
-import { howItWorksBlock } from './shared-blocks'
+import { howItWorksBlock, addToCalendarBlock } from './shared-blocks'
 
 interface VipTicketEmailData {
   nome: string
@@ -113,6 +113,14 @@ export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): strin
           </tr>
 
           ${howItWorksBlock(codigo, {
+            black: COLORS.black,
+            cream: COLORS.cream,
+            orange: COLORS.orange,
+            yellow: COLORS.yellow,
+            bg: 'dark',
+          })}
+
+          ${addToCalendarBlock('email-ticket', {
             black: COLORS.black,
             cream: COLORS.cream,
             orange: COLORS.orange,

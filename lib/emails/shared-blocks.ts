@@ -4,6 +4,7 @@
  */
 
 import { PRESALE } from '@/lib/presale-constants'
+import { agendaUrl } from '@/lib/agenda-url'
 
 interface Palette {
   black: string
@@ -102,6 +103,95 @@ export function howItWorksBlock(cupom: string | undefined, colors: Palette): str
                   </td>
                   <td style="padding:4px;">
                     <a href="${PRESALE.playStoreUrl}" style="display:block;background-color:${colors.black};color:#ffffff;text-decoration:none;text-align:center;font-size:13px;font-weight:bold;padding:12px;border-radius:10px;">Baixar (Android)</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>`
+}
+
+/**
+ * Bloco "Adicione à sua agenda" — destaca o Special Day + curadoria Somma
+ * (todos os eventos do ano + corridas do DF) e leva pra agenda.sommaclub.com.br.
+ *
+ * @param ref Origem do clique (entra na query string ?ref=specialday-<ref>).
+ * @param colors Paleta do template para harmonizar com o tema.
+ */
+export function addToCalendarBlock(
+  ref: 'email-nutricao' | 'email-countdown' | 'email-ticket',
+  colors: Palette,
+): string {
+  const url = agendaUrl(ref)
+  const isDark = colors.bg === 'dark'
+  const cardBg = isDark ? '#ffffff' : '#ffffff'
+  const muted = '#0a0a0a99'
+
+  return `
+    <!-- ADICIONE NA SUA AGENDA -->
+    <tr>
+      <td style="padding-top:18px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${cardBg};border:4px solid ${colors.yellow};border-radius:18px;overflow:hidden;">
+          <tr>
+            <td style="background-color:${colors.yellow};padding:14px 22px;">
+              <span style="color:${colors.black};font-size:11px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;">
+                🗓 Bônus · Adicione na sua agenda
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:22px;">
+              <p style="margin:0;font-size:17px;font-weight:bold;color:${colors.black};line-height:1.3;">
+                Nunca mais perca um evento Somma.
+              </p>
+              <p style="margin:8px 0 0;font-size:13px;line-height:1.6;color:${muted};">
+                Assine a Agenda Somma Club uma única vez e seu calendário recebe automaticamente:
+              </p>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;">
+                <tr>
+                  <td valign="top" width="32" style="padding:6px 0;">
+                    <span style="display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;font-size:13px;">⭐</span>
+                  </td>
+                  <td valign="top" style="padding:6px 0;">
+                    <p style="margin:0;font-size:13px;line-height:1.5;color:${colors.black};">
+                      <strong style="color:${colors.orange};">Somma Special Day</strong> · 18 de julho · COPMDF
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top" width="32" style="padding:6px 0;">
+                    <span style="display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;font-size:13px;">📅</span>
+                  </td>
+                  <td valign="top" style="padding:6px 0;">
+                    <p style="margin:0;font-size:13px;line-height:1.5;color:${colors.black};">
+                      Todos os <strong>eventos Somma Club</strong> do ano inteiro
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top" width="32" style="padding:6px 0;">
+                    <span style="display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;font-size:13px;">🏁</span>
+                  </td>
+                  <td valign="top" style="padding:6px 0;">
+                    <p style="margin:0;font-size:13px;line-height:1.5;color:${colors.black};">
+                      Curadoria das <strong>principais corridas do DF</strong>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;">
+                <tr>
+                  <td align="center">
+                    <a href="${url}" style="display:block;background-color:${colors.black};color:#ffffff;text-decoration:none;text-align:center;font-size:15px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;padding:16px;border-radius:12px;">
+                      🗓 Assinar a Agenda Somma
+                    </a>
+                    <p style="margin:8px 0 0;font-size:11px;color:${muted};">
+                      iPhone · Mac · Google Calendar · Outlook
+                    </p>
                   </td>
                 </tr>
               </table>

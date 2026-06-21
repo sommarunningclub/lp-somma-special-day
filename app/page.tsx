@@ -11,6 +11,7 @@ import MarqueeSection from '@/components/special-day/MarqueeSection'
 import FooterSection from '@/components/special-day/FooterSection'
 import TFSportsPurchaseJourney from '@/components/special-day/TFSportsPurchaseJourney'
 import NutricaoCaptureSection from '@/components/special-day/NutricaoCaptureSection'
+import AddToCalendarSection from '@/components/special-day/AddToCalendarSection'
 import { getPresaleStatus } from '@/lib/presale'
 
 export const dynamic = 'force-dynamic'
@@ -30,6 +31,7 @@ export default async function Home() {
       <EventGallerySection />
       <MarqueeSection />
       <TFSportsPurchaseJourney />
+      <AddToCalendarSection />
       <NutricaoCaptureSection />
       <FooterSection />
     </SmoothScroll>
