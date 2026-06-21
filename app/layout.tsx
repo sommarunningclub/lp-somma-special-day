@@ -17,11 +17,11 @@ const dm = DM_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://1-ano-sommaday.vercel.app'),
-  title: 'Somma Special Day — 18 de Julho 2026 | Lista VIP',
+  title: 'Somma Special Day — 18 de Julho 2026 | Line-up',
   description:
     'O evento de aniversario de 1 ano do Somma Club. 400 vagas. 8km de percurso inedito, samba, Red Bull e muito mais.',
   openGraph: {
-    title: 'Somma Special Day — 18 de Julho 2026 | Lista VIP',
+    title: 'Somma Special Day — 18 de Julho 2026 | Line-up',
     description:
       'O evento de aniversario de 1 ano do Somma Club. 400 vagas. 8km de percurso inedito, samba, Red Bull e muito mais.',
     images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
