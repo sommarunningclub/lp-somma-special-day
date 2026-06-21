@@ -113,7 +113,7 @@ export default function HeroSection() {
 
       <a
         ref={ctaRef}
-        href="#tfsports"
+        href="#inscricao"
         className="mt-8 inline-flex w-full max-w-[22rem] items-center justify-center rounded-full bg-somma-orange px-5 py-4 text-center font-bebas text-xl tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-somma-orange/90 hover:shadow-[3px_3px_0_#0a0a0a] sm:w-auto sm:max-w-none sm:px-8 md:mt-10 md:px-12 md:py-5 md:text-2xl md:shadow-[6px_6px_0_#0a0a0a] lg:text-3xl"
       >
         Quero garantir minha vaga

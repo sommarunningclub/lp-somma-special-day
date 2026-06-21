@@ -1,4 +1,5 @@
 import { createServerClient } from '@/lib/supabase/server'
+import { PRESALE } from '@/lib/presale-constants'
 
 const DEFAULT_LIMIT = 0 // 0 = ilimitado (padrão enquanto não há config no banco)
 
@@ -10,6 +11,8 @@ export type PresaleStatus = {
   restantes: number
   /** Interruptor manual do formulário: false = admin fechou o cadastro. */
   manualOpen: boolean
+  /** Pré-venda passou do prazo (domingo 23h59 BRT). */
+  pastDeadline: boolean
 }
 
 async function getSettings(): Promise<{ limit: number; startAt: string | null; manualOpen: boolean }> {
@@ -50,9 +53,10 @@ async function getCount(startAt: string | null): Promise<number> {
 export async function getPresaleStatus(): Promise<PresaleStatus> {
   const { limit, startAt, manualOpen } = await getSettings()
   const count = await getCount(startAt)
-  // Fechada se: o admin fechou manualmente, OU há limite (> 0) atingido.
+  // Fechada se: o admin fechou manualmente, OU há limite (> 0) atingido, OU passou do prazo (dom 23h59).
   const closedByLimit = startAt !== null && limit > 0 && count >= limit
-  const closed = !manualOpen || closedByLimit
+  const pastDeadline = Date.now() > new Date(PRESALE.deadlineISO).getTime()
+  const closed = !manualOpen || closedByLimit || pastDeadline
   return {
     limit,
     startAt,
@@ -60,6 +64,7 @@ export async function getPresaleStatus(): Promise<PresaleStatus> {
     closed,
     restantes: Math.max(0, limit - count),
     manualOpen,
+    pastDeadline,
   }
 }
 

@@ -1,5 +1,7 @@
 import SmoothScroll from '@/components/SmoothScroll'
 import HeroSection from '@/components/special-day/HeroSection'
+import LotesSection from '@/components/special-day/LotesSection'
+import InscricaoSection from '@/components/special-day/InscricaoSection'
 import AttractionsSection from '@/components/special-day/AttractionsSection'
 import ScheduleSection from '@/components/special-day/ScheduleSection'
 import RouteSection from '@/components/special-day/RouteSection'
@@ -8,13 +10,18 @@ import EventGallerySection from '@/components/special-day/EventGallerySection'
 import MarqueeSection from '@/components/special-day/MarqueeSection'
 import FooterSection from '@/components/special-day/FooterSection'
 import TFSportsPurchaseJourney from '@/components/special-day/TFSportsPurchaseJourney'
+import { getPresaleStatus } from '@/lib/presale'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Home() {
+  const { closed } = await getPresaleStatus()
+
   return (
     <SmoothScroll>
       <HeroSection />
+      <LotesSection closed={closed} />
+      <InscricaoSection closed={closed} />
       <AttractionsSection />
       <ScheduleSection />
       <RouteSection />
