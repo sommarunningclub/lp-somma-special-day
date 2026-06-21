@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/vip-countdown",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/nutricao",
+      "schedule": "15 * * * *"
     }
   ]
 }

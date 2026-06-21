@@ -144,6 +144,67 @@ export async function POST(req: NextRequest) {
         await supabase.from('lista_vip').update(update).eq('id', lead.id)
       }
     }
+
+    // ===== NUTRIÇÃO (independente da lista_vip) =====
+    // Procura o lead em nutricao_leads pelo resend_email_id (último enviado)
+    // ou via nutricao_sends (qualquer envio anterior).
+    let nLead: { id: string; email_status: string | null; email_open_count: number; email_click_count: number; jump_to_final: boolean } | null = null
+
+    if (emailId) {
+      const { data } = await supabase
+        .from('nutricao_leads')
+        .select('id, email_status, email_open_count, email_click_count, jump_to_final')
+        .eq('resend_email_id', emailId)
+        .limit(1)
+        .maybeSingle()
+      nLead = data
+    }
+    if (!nLead && emailId) {
+      const { data: sendRow } = await supabase
+        .from('nutricao_sends')
+        .select('lead_id')
+        .eq('resend_email_id', emailId)
+        .limit(1)
+        .maybeSingle()
+      if (sendRow?.lead_id) {
+        const { data } = await supabase
+          .from('nutricao_leads')
+          .select('id, email_status, email_open_count, email_click_count, jump_to_final')
+          .eq('id', sendRow.lead_id)
+          .maybeSingle()
+        nLead = data
+      }
+    }
+    if (!nLead && email) {
+      const { data } = await supabase
+        .from('nutricao_leads')
+        .select('id, email_status, email_open_count, email_click_count, jump_to_final')
+        .eq('email', email)
+        .limit(1)
+        .maybeSingle()
+      nLead = data
+    }
+
+    if (nLead) {
+      const update: Record<string, unknown> = {}
+      if (type === 'opened') {
+        update.last_opened_at = at
+        update.email_open_count = (nLead.email_open_count ?? 0) + 1
+      }
+      if (type === 'clicked') {
+        update.last_clicked_at = at
+        update.email_click_count = (nLead.email_click_count ?? 0) + 1
+        // Branching: qualquer clique no CTA dispara o pulo pra oferta final.
+        if (!nLead.jump_to_final) update.jump_to_final = true
+      }
+      const currentRank = STATUS_RANK[nLead.email_status ?? ''] ?? 0
+      const newRank = STATUS_RANK[type] ?? 0
+      if (newRank > currentRank) update.email_status = type
+
+      if (Object.keys(update).length > 0) {
+        await supabase.from('nutricao_leads').update(update).eq('id', nLead.id)
+      }
+    }
   } catch (error) {
     console.error('[resend-webhook] erro ao processar evento:', error)
     // Retorna 200 mesmo assim para o Resend não ficar reenviando indefinidamente.
