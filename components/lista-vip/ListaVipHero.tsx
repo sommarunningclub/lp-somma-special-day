@@ -5,6 +5,7 @@ import gsap from 'gsap'
 import Image from 'next/image'
 import FloatingElement from '@/components/special-day/FloatingElement'
 import PresaleSignupForm from '@/components/special-day/PresaleSignupForm'
+import OfferCountdown from './OfferCountdown'
 
 export default function ListaVipHero({ closed = false }: { closed?: boolean }) {
   const sectionRef = useRef<HTMLDivElement>(null)
@@ -69,6 +70,10 @@ export default function ListaVipHero({ closed = false }: { closed?: boolean }) {
             <span className="font-dm text-xs font-semibold uppercase tracking-widest text-somma-orange">
               Algo grande está chegando
             </span>
+          </div>
+
+          <div className="mb-6 w-full max-w-md">
+            <OfferCountdown />
           </div>
 
           <h1 className="lv-anim mb-5 font-bebas leading-[0.9] tracking-wide">
