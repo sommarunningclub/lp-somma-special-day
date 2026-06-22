@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import SmoothScroll from '@/components/SmoothScroll'
 import FooterSection from '@/components/special-day/FooterSection'
 import EsquentaHero from '@/components/esquenta/EsquentaHero'
@@ -40,6 +40,16 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     images: ['/og-image.jpg'],
   },
+}
+
+// Experiência app/Apple: trava o zoom e usa as safe-areas (notch/home indicator).
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#005EFF',
 }
 
 export default function EsquentaJuninoPage() {

@@ -21,16 +21,23 @@ export default function EsquentaParceiros() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {PARCEIROS.map((p, i) => (
             <Reveal key={p.nome} delay={i * 60} className={p.destaque ? 'col-span-2 sm:col-span-2' : ''}>
-              <div className={`flex h-full min-h-[120px] flex-col items-center justify-center gap-2 rounded-2xl border-4 p-6 text-center ${
-                p.destaque ? 'border-somma-orange bg-white shadow-[6px_6px_0_#FF4800]' : 'border-somma-black/15 bg-white'
-              }`}>
+              <a
+                href={p.instagram ?? '#'}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Instagram de ${p.nome}`}
+                className={`group flex h-full min-h-[120px] flex-col items-center justify-center gap-2 rounded-2xl border-4 p-6 text-center transition-transform hover:-translate-y-0.5 ${
+                  p.destaque ? 'border-somma-orange bg-white shadow-[6px_6px_0_#FF4800]' : 'border-somma-black/15 bg-white hover:border-somma-black/40'
+                }`}
+              >
                 {p.tag && <span className="rounded-full bg-somma-orange/15 px-2.5 py-1 font-dm text-[10px] font-bold uppercase tracking-wide text-somma-orange">{p.tag}</span>}
                 {p.logo ? (
                   <Image src={p.logo} alt={p.nome} width={200} height={80} className="h-10 w-auto object-contain" />
                 ) : (
                   <span className="font-bebas text-2xl uppercase tracking-wide text-somma-black sm:text-3xl">{p.nome}</span>
                 )}
-              </div>
+                <span className="font-dm text-[11px] font-semibold text-somma-black/40 transition-colors group-hover:text-somma-orange">@ no Instagram ↗</span>
+              </a>
             </Reveal>
           ))}
         </div>

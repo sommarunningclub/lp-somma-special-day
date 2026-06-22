@@ -104,12 +104,13 @@ export const PROGRAMACAO: ProgramaItem[] = [
 
 // Parceiros. Array configurável (adicione/remova/reordene à vontade).
 // Use `logo` com o caminho do arquivo em /public quando tiver a arte; senão fica o nome.
-export type Parceiro = { nome: string; logo?: string; destaque?: boolean; tag?: string }
+export type Parceiro = { nome: string; logo?: string; destaque?: boolean; tag?: string; instagram?: string }
 export const PARCEIROS: Parceiro[] = [
-  { nome: 'Big Box', destaque: true, tag: 'Café da manhã é com eles' },
-  { nome: 'Red Bull' },
-  { nome: 'Evolve' },
-  { nome: 'Estamina Recovery' },
+  { nome: 'Big Box', destaque: true, tag: 'Café da manhã é com eles', instagram: 'https://www.instagram.com/bigboxsupermercados/' },
+  { nome: 'Red Bull', instagram: 'https://www.instagram.com/redbullbr/' },
+  { nome: 'Evolve', instagram: 'https://www.instagram.com/academiaevolve/' },
+  { nome: 'Estamina Recovery', instagram: 'https://www.instagram.com/estaminarecovery/' },
+  { nome: 'Frooty Brasil', instagram: 'https://www.instagram.com/frootybrasil/' },
 ]
 
 export const FAQ = [

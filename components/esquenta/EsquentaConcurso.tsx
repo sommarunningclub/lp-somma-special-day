@@ -1,6 +1,7 @@
 import { CONCURSO_PASSOS } from '@/lib/esquenta-constants'
 import Reveal from './Reveal'
 import { Bunting, JuninoIcon } from './JuninoIcons'
+import ConcursoVotacao from './ConcursoVotacao'
 
 export default function EsquentaConcurso() {
   return (
@@ -41,6 +42,11 @@ export default function EsquentaConcurso() {
           </ol>
         </Reveal>
       </div>
+
+      {/* Votação ao vivo + convite via WhatsApp */}
+      <Reveal delay={80} className="mx-auto mt-10 max-w-5xl">
+        <ConcursoVotacao />
+      </Reveal>
     </section>
   )
 }
