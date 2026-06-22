@@ -11,7 +11,7 @@ const labelCls = 'mb-1.5 block font-dm text-xs font-bold uppercase tracking-wide
 
 export default function EsquentaCorreio() {
   const [form, setForm] = useState({ nome: '', instagram: '', mensagem: '', contato: '' })
-  const [enviando, setEnviando] = useState(false)
+  const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [enviado, setEnviado] = useState(false)
 
@@ -22,20 +22,24 @@ export default function EsquentaCorreio() {
       setErro('Preencha nome, Instagram e mensagem.')
       return
     }
-    setEnviando(true)
+    setSalvando(true)
     try {
-      const res = await fetch('/api/correio', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, origem: 'site' }),
-      })
+      // Espera no mínimo 5s (experiência de "guardando a mensagem") + a gravação real.
+      const [res] = await Promise.all([
+        fetch('/api/correio', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...form, origem: 'site' }),
+        }),
+        new Promise((resolve) => setTimeout(resolve, 5000)),
+      ])
       const data = await res.json()
       if (res.ok) setEnviado(true)
       else setErro(data.error ?? 'Não foi possível enviar agora.')
     } catch {
       setErro('Erro de conexão. Tente novamente.')
     } finally {
-      setEnviando(false)
+      setSalvando(false)
     }
   }
 
@@ -74,7 +78,28 @@ export default function EsquentaCorreio() {
             <div className="rounded-3xl border-4 border-somma-cream bg-somma-cream p-6 shadow-[8px_8px_0_#FF4800] sm:p-8">
               <p className="font-dm text-[11px] font-bold uppercase tracking-[0.25em] text-somma-orange">Manda um correio</p>
               <h3 className="mt-1 font-bebas text-3xl uppercase tracking-wide text-somma-black">Deixe seu recado</h3>
-              {enviado ? (
+
+              {salvando ? (
+                /* Estado: guardando a mensagem (~5s) com GIF em loop */
+                <div className="flex flex-col items-center py-8 text-center">
+                  <div className="rounded-full p-[3px]" style={{ background: 'linear-gradient(45deg, #FF4800, #FDB716, #FD6FDB, #005EFF)' }}>
+                    <div className="rounded-full bg-somma-cream p-[3px]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/yas_correio_parabens.gif" alt="Guardando sua mensagem" className="h-28 w-28 rounded-full object-cover sm:h-32 sm:w-32" />
+                    </div>
+                  </div>
+                  <p className="mt-5 font-bebas text-2xl uppercase tracking-wide text-somma-black">Guardando sua mensagem…</p>
+                  <p className="mt-2 max-w-sm font-dm text-sm leading-relaxed text-somma-black/65">
+                    Estamos guardando sua mensagem e vamos divulgar ela no dia do evento. Vai dar certo, você será notado —
+                    tudo pra alinhar os paces. 🧡
+                  </p>
+                  <div className="mt-4 flex gap-1.5">
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-somma-orange [animation-delay:-0.2s]" />
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-somma-orange [animation-delay:-0.1s]" />
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-somma-orange" />
+                  </div>
+                </div>
+              ) : enviado ? (
                 <div className="mt-6 rounded-2xl border-2 border-dashed border-somma-orange/50 bg-somma-orange/[0.06] p-6 text-center">
                   <JuninoIcon name="correio" className="mx-auto h-9 w-9 text-somma-orange" />
                   <p className="mt-3 font-bebas text-2xl uppercase tracking-wide text-somma-black">Correio enviado! 💌</p>
@@ -108,8 +133,8 @@ export default function EsquentaCorreio() {
                     <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-center font-dm text-sm text-red-600">{erro}</p>
                   )}
 
-                  <button type="submit" disabled={enviando} className="w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-3 py-3.5 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#0a0a0a] disabled:cursor-not-allowed disabled:opacity-60">
-                    {enviando ? 'ENVIANDO...' : 'Enviar Correio Elegante'}
+                  <button type="submit" className="w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-3 py-3.5 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#0a0a0a]">
+                    Enviar Correio Elegante
                   </button>
                   <p className="text-center font-dm text-xs text-somma-black/45">Você pode mandar agora — e também lançar o seu no dia do evento.</p>
                 </form>
