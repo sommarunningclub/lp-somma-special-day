@@ -21,8 +21,8 @@ export default function EsquentaLocalizacao() {
 
         <Reveal delay={120}>
           <p className="mx-auto mb-8 max-w-2xl text-center font-dm text-base leading-relaxed text-somma-black/70">
-            O Esquenta SOMMA Special Day acontece na 106 Sul, em um ponto de encontro preparado para receber a comunidade,
-            as ativações das marcas, o café da manhã e toda a experiência junina.
+            É no Eixão, ali na altura da 106 Sul. Ponto de encontro preparado pra receber a galera, as ativações das
+            marcas, o café da manhã e todo o arraiá. Só chegar.
           </p>
         </Reveal>
 

@@ -15,12 +15,12 @@ export const ESQUENTA = {
   heroFoto: '/eixao_somma/eixao-01.jpg',
 
   // Dados para "adicionar na agenda" (Google Calendar / .ics).
-  // Horários em UTC (BRT = UTC-3): concentração 6h30 -> 09:30Z, fim ~9h30 -> 12:30Z.
+  // Horários em UTC (BRT = UTC-3): concentração 6h30 = 09:30Z, fim ~9h30 = 12:30Z.
   calendario: {
-    titulo: 'Esquenta Somma Special Day — Edição Junina',
+    titulo: 'Esquenta Somma Special Day · Edição Junina',
     descricao:
-      'Corre no Eixão, café da manhã, ativações e clima de arraiá. Concentração 6h30, início do corre 7h00. Detalhes: https://specialday.sommaclub.com.br/esquenta-junino',
-    local: 'Eixão — Brasília, DF',
+      'Corre no Eixão, café da manhã, ativações e muito arraiá. Concentração 6h30, corre começa 7h00. Cola lá: https://specialday.sommaclub.com.br/esquenta-junino',
+    local: 'Eixão, Brasília DF',
     startUtc: '20260628T093000Z',
     endUtc: '20260628T123000Z',
   },
@@ -30,26 +30,26 @@ export const ESQUENTA = {
 
   // Oferta de cupom da corrida da Live (no fim do check-in)
   liveCupom: {
-    pergunta: 'Quer cupom pra corrida da Live?',
-    descricao: 'Salve a agenda e resgate o cupom de 15% de desconto na corrida da Live.',
+    pergunta: 'Bora correr na Live também?',
+    descricao: 'Salva a agenda, resgata seu cupom e corre com 15% OFF na corrida da Live. Moleza.',
     cupom: 'SOMMALIVE15',
     agendaUrl: 'https://agenda.sommaclub.com.br/',
   },
   // CTA "Quero participar" → seção de check-in embutida
   participarHref: '#check-in',
 
-  // Evento criado na gestão (admin) — os check-ins gravam neste evento_id.
+  // Evento criado na gestão (admin). Os check-ins gravam neste evento_id.
   checkinEventoId: '83b744b2-e3a5-42fa-b5c4-09bdbcdf0d70',
 
   // Pelotões/distâncias do check-in (mesmas opções do check-in oficial).
   // Ajuste aqui se o Esquenta tiver distâncias diferentes.
   checkinPelotoes: [
-    { value: '4km', label: 'Ritmo Iniciante', desc: '4 km · ritmo leve' },
-    { value: '6km', label: 'Ritmo Moderado', desc: '6 km · ritmo médio' },
-    { value: '8km', label: 'Ritmo Avançado', desc: '8 km · ritmo forte' },
+    { value: '4km', label: 'No meu ritmo', desc: '4 km de boa' },
+    { value: '6km', label: 'Pegando firme', desc: '6 km no embalo' },
+    { value: '8km', label: 'Modo turbo', desc: '8 km com tudo' },
   ] as { value: string; label: string; desc: string }[],
 
-  // Localização (106 Sul, Brasília) — coordenadas e links de mapa configuráveis
+  // Localização (106 Sul, Brasília). Coordenadas e links de mapa configuráveis.
   coords: { lat: -15.8140469, lng: -47.8968315 },
   maps: {
     abrirNoMaps:
@@ -67,46 +67,46 @@ export const EIXAO_FOTOS: string[] = Array.from(
 )
 
 export const EXPERIENCIAS = [
-  { icone: 'corre', titulo: 'Corre no Eixão', texto: 'Um encontro especial para correr no ritmo da comunidade SOMMA.' },
-  { icone: 'cafe', titulo: 'Café da manhã Big Box', texto: 'Um café da manhã especial para recuperar a energia depois do corre.' },
-  { icone: 'milho', titulo: 'Comidas típicas', texto: 'Sabores de festa junina para completar a experiência.' },
-  { icone: 'marca', titulo: 'Ativações de marcas', texto: 'Experiências, desafios, brindes e parceiros especiais.' },
-  { icone: 'presente', titulo: 'Sorteios e surpresas', texto: 'Quem estiver presente poderá sair com presentes especiais.' },
-  { icone: 'correio', titulo: 'Correio Elegante SOMMA', texto: 'Mensagens, convites, elogios e encontros entre pessoas da comunidade.' },
+  { icone: 'corre', titulo: 'Corre no Eixão', texto: 'A gente toma o Eixão e corre junto, no ritmo da galera. Bora?' },
+  { icone: 'cafe', titulo: 'Café da Big Box', texto: 'Pós-corre merece café caprichado pra repor a energia. Por conta da Big Box.' },
+  { icone: 'milho', titulo: 'Comidas típicas', texto: 'Pamonha, milho, canjica e os clássicos de arraiá pra fechar com chave de ouro.' },
+  { icone: 'marca', titulo: 'Ativações das marcas', texto: 'Desafios, brindes e experiências dos parceiros que fazem essa festa rolar.' },
+  { icone: 'presente', titulo: 'Sorteios e surpresas', texto: 'Quem aparece pode sair com brinde. A sorte sorri pra quem dá o pé na estrada.' },
+  { icone: 'correio', titulo: 'Correio Elegante', texto: 'Manda aquele recado, elogio ou cantada. A gente entrega no dia. 💌' },
 ] as const
 
 export const CONCURSO_PASSOS = [
-  'Venha com sua caracterização junina.',
-  'Faça o check-in no evento.',
-  'Passe pelo ponto de avaliação.',
-  'Aguarde o resultado durante a programação.',
-  'A melhor produção recebe uma premiação especial.',
+  'Capricha no look junino e vem com tudo.',
+  'Faz seu check-in quando chegar no evento.',
+  'Dá um pulo no ponto de avaliação pra desfilar.',
+  'Curte a programação enquanto a gente confere os looks.',
+  'O visual mais arretado leva prêmio. Partiu?',
 ] as const
 
 export const CORREIO_EXEMPLOS = [
   'Seu pace é bonito, mas seu sorriso é mais.',
   'Te vi correndo e perdi o fôlego.',
-  'Vamos correr juntos no SOMMA Special Day?',
+  'Bora correr juntos no Somma Special Day?',
   'Você é meu PR favorito.',
 ] as const
 
 export type ProgramaItem = { hora: string; titulo: string; texto: string; cor: string; destaque?: boolean }
 export const PROGRAMACAO: ProgramaItem[] = [
-  { hora: '06h30', titulo: 'Concentração & check-in', texto: 'Recepção e ativações para começar a manhã.', cor: '#FF4800' },
-  { hora: '06h45', titulo: 'Aquecimento da comunidade', texto: 'Música, fotos, Correio Elegante e aquecimento.', cor: '#FDB716' },
-  { hora: '07h00', titulo: 'Início do corre junino', texto: 'A largada do corre especial junino.', cor: '#FF4800', destaque: true },
-  { hora: '07h45', titulo: 'Café da manhã Big Box', texto: 'Retorno do corre e abertura do café da manhã.', cor: '#005EFF' },
-  { hora: '08h00', titulo: 'Arraiá & ativações', texto: 'Comidas típicas, ativações, fotos e Correio Elegante.', cor: '#FD6FDB' },
-  { hora: '08h20', titulo: 'Sorteios & caracterização', texto: 'Sorteios e dinâmica da melhor caracterização junina.', cor: '#FDB716' },
-  { hora: '08h45', titulo: 'Premiação do look junino', texto: 'Premiação do look junino mais criativo.', cor: '#FF4800', destaque: true },
-  { hora: '09h00', titulo: 'Foto oficial & encerramento', texto: 'A foto oficial da comunidade e o encerramento.', cor: '#0a0a0a' },
+  { hora: '06h30', titulo: 'Chegada e check-in', texto: 'Cola cedo, faz o check-in e já entra no clima.', cor: '#FF4800' },
+  { hora: '06h45', titulo: 'Esquenta da galera', texto: 'Música, fotos, Correio Elegante e aquecimento pra soltar o corpo.', cor: '#FDB716' },
+  { hora: '07h00', titulo: 'Largada do corre', texto: 'A hora H. Todo mundo junto no Eixão.', cor: '#FF4800', destaque: true },
+  { hora: '07h45', titulo: 'Café da Big Box', texto: 'Voltou do corre? Café caprichado te esperando.', cor: '#005EFF' },
+  { hora: '08h00', titulo: 'Arraiá e ativações', texto: 'Comida típica, ativações, foto e os recados do Correio.', cor: '#FD6FDB' },
+  { hora: '08h20', titulo: 'Sorteios e desfile junino', texto: 'Sorteio de brindes e a hora dos looks brilharem.', cor: '#FDB716' },
+  { hora: '08h45', titulo: 'Premiação do look', texto: 'O visual mais arretado leva prêmio.', cor: '#FF4800', destaque: true },
+  { hora: '09h00', titulo: 'Foto oficial e até a próxima', texto: 'A foto da comunidade e aquele até breve.', cor: '#0a0a0a' },
 ]
 
-// Parceiros — array configurável (adicione/remova/reordene à vontade).
+// Parceiros. Array configurável (adicione/remova/reordene à vontade).
 // Use `logo` com o caminho do arquivo em /public quando tiver a arte; senão fica o nome.
 export type Parceiro = { nome: string; logo?: string; destaque?: boolean; tag?: string }
 export const PARCEIROS: Parceiro[] = [
-  { nome: 'Big Box', destaque: true, tag: 'Café da manhã oficial' },
+  { nome: 'Big Box', destaque: true, tag: 'Café da manhã é com eles' },
   { nome: 'Red Bull' },
   { nome: 'Evolve' },
   { nome: 'Estamina Recovery' },
@@ -114,23 +114,23 @@ export const PARCEIROS: Parceiro[] = [
 
 export const FAQ = [
   {
-    q: 'Preciso estar inscrito no SOMMA Special Day para participar?',
-    a: 'Não necessariamente. O Esquenta é uma experiência especial da comunidade SOMMA e também uma oportunidade para conhecer melhor o clima do SOMMA Special Day.',
+    q: 'Preciso estar inscrito no Somma Special Day pra participar?',
+    a: 'Não! O Esquenta é da comunidade e tá aberto pra geral. É também a chance perfeita de sentir o clima do Somma Special Day antes de todo mundo.',
   },
   {
-    q: 'Preciso correr para participar?',
-    a: 'Não. Você pode caminhar, acompanhar a comunidade, participar das ativações e aproveitar o café da manhã.',
+    q: 'Preciso correr pra participar?',
+    a: 'De jeito nenhum. Pode caminhar, vir só pra acompanhar, curtir as ativações e atacar o café da manhã. Tá liberado.',
   },
   {
     q: 'A caracterização junina é obrigatória?',
-    a: 'Não. Mas quem vier caracterizado participa do concurso de melhor look junino.',
+    a: 'Não, mas é muito mais divertido com ela. E quem vem caracterizado concorre ao prêmio de melhor look. Capricha!',
   },
   {
-    q: 'Posso levar amigos?',
-    a: 'Sim. A ideia é trazer mais gente para viver a experiência SOMMA.',
+    q: 'Posso levar a galera?',
+    a: 'Pode e deve! Quanto mais gente, melhor. Chama os amigos e bora.',
   },
   {
-    q: 'Onde será o encontro?',
-    a: 'Na 106 Sul, em Brasília DF.',
+    q: 'Onde é o encontro?',
+    a: 'No Eixão, ali na altura da 106 Sul, em Brasília. Te esperamos lá!',
   },
 ] as const

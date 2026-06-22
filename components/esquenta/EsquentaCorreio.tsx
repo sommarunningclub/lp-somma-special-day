@@ -54,9 +54,9 @@ export default function EsquentaCorreio() {
             Tem mensagem que merece chegar pessoalmente.
           </Reveal>
           <Reveal as="p" delay={120} className="mx-auto mt-5 max-w-2xl font-dm text-base leading-relaxed text-somma-cream/80">
-            Durante o Esquenta, teremos um ponto especial para você enviar mensagens para alguém da comunidade. Pode ser
-            elogio, brincadeira, convite para correr junto ou aquela mensagem que você não teria coragem de falar pessoalmente.
-            Manda agora ou lança o seu no dia do evento.
+            No dia do Esquenta vai ter um ponto só pra você mandar um recado pra alguém da comunidade. Elogio, zoeira,
+            convite pra correr junto ou aquela cantada que você não teria coragem de mandar pessoalmente. Solta agora ou
+            lança o seu no dia.
           </Reveal>
         </div>
 
@@ -90,8 +90,8 @@ export default function EsquentaCorreio() {
                   </div>
                   <p className="mt-5 font-bebas text-2xl uppercase tracking-wide text-somma-black">Guardando sua mensagem…</p>
                   <p className="mt-2 max-w-sm font-dm text-sm leading-relaxed text-somma-black/65">
-                    Estamos guardando sua mensagem e vamos divulgar ela no dia do evento. Vai dar certo, você será notado —
-                    tudo pra alinhar os paces. 🧡
+                    Guardando sua mensagem com carinho pra soltar no dia do evento. Relaxa que vai dar certo, você vai ser
+                    notado. Tudo pra alinhar os paces. 🧡
                   </p>
                   <div className="mt-4 flex gap-1.5">
                     <span className="h-2 w-2 animate-bounce rounded-full bg-somma-orange [animation-delay:-0.2s]" />
@@ -104,7 +104,7 @@ export default function EsquentaCorreio() {
                   <JuninoIcon name="correio" className="mx-auto h-9 w-9 text-somma-orange" />
                   <p className="mt-3 font-bebas text-2xl uppercase tracking-wide text-somma-black">Correio enviado! 💌</p>
                   <p className="mt-1 font-dm text-sm text-somma-black/65">
-                    Recebemos seu recado. No dia do Esquenta ele entra no nosso Correio Elegante. 🧡
+                    Anotado! No dia do Esquenta seu recado entra no Correio Elegante. 🧡
                   </p>
                   <button onClick={() => { setEnviado(false); setForm({ nome: '', instagram: '', mensagem: '', contato: '' }) }} className="mt-4 font-dm text-sm font-bold uppercase tracking-wide text-somma-orange underline-offset-2 hover:underline">
                     Mandar outro
@@ -126,7 +126,7 @@ export default function EsquentaCorreio() {
                   </div>
                   <div>
                     <label className={labelCls}>Contato <span className="font-normal text-somma-black/40">(opcional)</span></label>
-                    <input value={form.contato} onChange={(e) => setForm({ ...form, contato: e.target.value })} placeholder="WhatsApp ou @ — caso queiram te encontrar depois" className={inputCls} />
+                    <input value={form.contato} onChange={(e) => setForm({ ...form, contato: e.target.value })} placeholder="WhatsApp ou @, caso queiram te achar depois" className={inputCls} />
                   </div>
 
                   {erro && (
@@ -136,7 +136,7 @@ export default function EsquentaCorreio() {
                   <button type="submit" className="w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-3 py-3.5 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#0a0a0a]">
                     Enviar Correio Elegante
                   </button>
-                  <p className="text-center font-dm text-xs text-somma-black/45">Você pode mandar agora — e também lançar o seu no dia do evento.</p>
+                  <p className="text-center font-dm text-xs text-somma-black/45">Pode mandar agora e lançar o seu também no dia do evento.</p>
                 </form>
               )}
             </div>

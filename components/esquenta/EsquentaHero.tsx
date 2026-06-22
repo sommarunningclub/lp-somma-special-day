@@ -46,7 +46,7 @@ export default function EsquentaHero() {
         <Reveal delay={60} className="mb-5 inline-flex items-center gap-2 rounded-full border border-somma-orange/40 bg-somma-orange/10 px-4 py-2">
           <span className="h-2 w-2 animate-pulse rounded-full bg-somma-orange" />
           <span className="font-dm text-[11px] font-bold uppercase tracking-[0.2em] text-somma-orange sm:text-xs">
-            Esquenta oficial · Somma Special Day
+            O esquenta oficial do Somma Special Day
           </span>
         </Reveal>
 
@@ -55,8 +55,8 @@ export default function EsquentaHero() {
         </Reveal>
 
         <Reveal delay={180} as="p" className="mt-5 max-w-xl font-dm text-base leading-relaxed text-somma-cream/75 sm:text-lg">
-          Antes do SOMMA Special Day, a gente vai abrir a temporada do jeito que sabe fazer: com corre, comunidade,
-          ativações, café da manhã, comidas típicas, sorteios e muita energia.
+          Antes do Somma Special Day, a gente abre a temporada do nosso jeito: corre no Eixão, café da manhã,
+          ativações, comida de arraiá, sorteios e aquela energia que só a comunidade tem. Bora com a gente?
         </Reveal>
 
         {/* Informações rápidas */}

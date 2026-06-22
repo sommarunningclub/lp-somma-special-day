@@ -14,7 +14,7 @@ const METRO = [
 
 const CARRO = [
   { label: 'Chegue com antecedência', detail: 'Procure estacionar nas vias próximas à 106 Sul. Evite parar em áreas de circulação.' },
-  { label: 'Compartilhe a carona', detail: 'Considere vir com amigos da comunidade — menos carro, mais encontro.' },
+  { label: 'Dividam a carona', detail: 'Chama a galera e venham juntos. Menos carro, mais encontro.' },
   { label: 'Chegou! Local do evento', detail: 'Procure pela estrutura do SOMMA e pelo espaço do café da manhã.', tag: `${ESQUENTA.concentracao}`, destaque: true },
 ]
 
@@ -39,8 +39,8 @@ export default function EsquentaComoChegar() {
             Chegando na 106 Sul
           </Reveal>
           <Reveal as="p" delay={120} className="mt-4 max-w-lg font-dm text-sm leading-relaxed text-somma-cream/65 sm:text-base">
-            A concentração começa às {ESQUENTA.concentracao}. Planeje seu trajeto com antecedência para chegar com calma,
-            fazer o check-in, participar das ativações e entrar no clima antes do corre começar.
+            A concentração começa às {ESQUENTA.concentracao}. Se programa pra chegar com calma, fazer o check-in, curtir
+            as ativações e já entrar no clima antes do corre começar.
           </Reveal>
         </div>
 

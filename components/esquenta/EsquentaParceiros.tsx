@@ -14,7 +14,7 @@ export default function EsquentaParceiros() {
             Quem faz esse esquenta acontecer
           </Reveal>
           <Reveal as="p" delay={120} className="mx-auto mt-4 max-w-xl font-dm text-base leading-relaxed text-somma-black/65">
-            Marcas que acreditam no esporte, na comunidade e em experiências que aproximam pessoas.
+            As marcas que vestem a camisa do esporte, da comunidade e de juntar gente boa pra correr.
           </Reveal>
         </div>
 

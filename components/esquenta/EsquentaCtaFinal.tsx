@@ -8,10 +8,10 @@ export default function EsquentaCtaFinal() {
       <Bunting className="absolute left-0 top-0 h-7 w-full text-somma-black/25 sm:h-9" />
       <div className="relative mx-auto max-w-3xl pt-6 text-center">
         <Reveal as="h2" className="font-bebas text-4xl leading-[0.95] tracking-tight text-somma-cream sm:text-6xl md:text-7xl">
-          Vista seu xadrez. Chame sua galera. E venha viver esse corre.
+          Veste o xadrez. Chama a galera. E vem viver esse corre.
         </Reveal>
         <Reveal as="p" delay={80} className="mx-auto mt-5 max-w-xl font-dm text-base leading-relaxed text-somma-cream/90 sm:text-lg">
-          O Esquenta SOMMA Special Day é o encontro para começar o domingo com movimento, energia e clima de festa junina.
+          O Esquenta Somma Special Day é o encontro pra começar o domingo com movimento, energia e muito arraiá. Cola que vai ser bom demais.
         </Reveal>
 
         <Reveal delay={140} className="mx-auto mt-7 flex w-fit flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-2xl bg-somma-black/15 px-5 py-3 font-dm text-sm font-semibold text-somma-cream">

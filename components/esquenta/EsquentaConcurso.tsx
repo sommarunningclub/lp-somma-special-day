@@ -12,17 +12,17 @@ export default function EsquentaConcurso() {
             Concurso junino
           </Reveal>
           <Reveal as="h2" delay={60} className="font-bebas text-4xl leading-[1.02] tracking-tight text-somma-black sm:text-5xl md:text-6xl">
-            Capriche no look. A melhor caracterização leva prêmio.
+            Caprichou no look? O melhor arraiá leva prêmio.
           </Reveal>
           <Reveal as="p" delay={120} className="mt-5 max-w-xl font-dm text-base leading-relaxed text-somma-black/70 sm:text-lg">
-            Camisa xadrez, chapéu de palha, tranças, acessórios, bandeirinhas e criatividade estão liberados. Quem vier
-            caracterizado participa do concurso de melhor look junino do Esquenta SOMMA Special Day.
+            Camisa xadrez, chapéu de palha, trancinha, bigode pintado, bandeirinha no cabelo. O que vier é lucro. Quem
+            aparecer caracterizado entra no concurso de melhor look junino do Esquenta. Solta a criatividade!
           </Reveal>
 
           <Reveal delay={160} className="mt-6 flex items-start gap-3 rounded-2xl border-2 border-dashed border-somma-orange/50 bg-somma-orange/[0.06] p-4">
             <JuninoIcon name="chapeu" className="mt-0.5 h-6 w-6 shrink-0 text-somma-orange" />
             <p className="font-dm text-sm leading-relaxed text-somma-black/75">
-              A caracterização <strong>não é obrigatória</strong>, mas quem entra no clima vive uma experiência ainda mais especial.
+              Caracterização <strong>não é obrigatória</strong>, mas quem entra no clima curte muito mais. Fica a dica. 😉
             </p>
           </Reveal>
         </div>

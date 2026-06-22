@@ -13,7 +13,7 @@ export default function EsquentaGaleria() {
             O Eixão <span className="text-somma-yellow">é nosso</span>
           </Reveal>
           <Reveal as="p" delay={120} className="mx-auto mt-4 max-w-xl font-dm text-base leading-relaxed text-somma-cream/65">
-            Um pedacinho do que rola quando a comunidade SOMMA toma o Eixão. No Esquenta, é assim — só que com clima de arraiá.
+            Um gostinho do que rola quando a comunidade SOMMA toma o Eixão. No Esquenta é assim, só que com muito mais arraiá.
           </Reveal>
         </div>
 
@@ -24,7 +24,7 @@ export default function EsquentaGaleria() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={src}
-                alt={`Comunidade SOMMA correndo no Eixão — foto ${i + 1}`}
+                alt={`Comunidade SOMMA correndo no Eixão, foto ${i + 1}`}
                 loading="lazy"
                 decoding="async"
                 className="w-full transition-transform duration-500 hover:scale-[1.03]"

@@ -13,12 +13,12 @@ export default function EsquentaPosicionamento() {
             O Esquenta
           </Reveal>
           <Reveal as="h2" delay={60} className="font-bebas text-4xl leading-[1.02] tracking-tight text-somma-black sm:text-6xl md:text-7xl">
-            Não é só um corre.<br /><span className="text-somma-orange">É uma manhã para viver.</span>
+            Não é só um corre.<br /><span className="text-somma-orange">É a manhã do seu domingo.</span>
           </Reveal>
           <Reveal as="p" delay={120} className="mt-5 max-w-xl font-dm text-base leading-relaxed text-somma-black/70 sm:text-lg">
-            Antes do grande SOMMA Special Day, a comunidade se encontra para correr, celebrar e entrar no clima de festa
-            junina do nosso jeito. Pode vir para correr, caminhar, encontrar amigos, aproveitar as ativações ou
-            simplesmente viver uma manhã diferente em Brasília.
+            Antes do grande Somma Special Day, a comunidade se junta pra correr, celebrar e entrar no clima de arraiá
+            do nosso jeito. Vem correr, caminhar, rever os amigos, curtir as ativações ou só viver uma manhã diferente
+            em Brasília. Do seu jeito.
           </Reveal>
         </div>
 

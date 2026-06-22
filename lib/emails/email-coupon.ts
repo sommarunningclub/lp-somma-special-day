@@ -7,12 +7,12 @@
 export const EMAIL_COUPON = {
   cupom: 'SOMMA15',
 
-  /** Preco antes do cupom (base do 1º lote). */
-  precoDe: 'R$ 127,50',
-  /** Preco com cupom aplicado (15% off). */
-  precoPor: 'R$ 108,38',
+  /** Preco cheio (sem cupom). */
+  precoDe: 'R$ 150,00',
+  /** Preco com cupom aplicado (15% off em R$ 150). */
+  precoPor: 'R$ 127,50',
   /** Valor economizado em reais. */
-  economia: 'R$ 19,12',
+  economia: 'R$ 22,50',
   /** Percentual do cupom. */
   descontoPct: '15%',
 

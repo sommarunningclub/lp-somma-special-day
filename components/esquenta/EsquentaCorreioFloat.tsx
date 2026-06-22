@@ -24,7 +24,7 @@ export default function EsquentaCorreioFloat() {
       }`}
     >
       <div className="relative flex flex-col items-center">
-        <a href="#correio" aria-label="Correio Elegante — manda o seu" className="group block">
+        <a href="#correio" aria-label="Correio Elegante, manda o seu" className="group block">
           {/* Anel gradiente estilo stories */}
           <div
             className="rounded-full p-[3px] shadow-[0_6px_20px_rgba(0,0,0,0.35)] transition-transform group-hover:scale-105"

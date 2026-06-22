@@ -10,7 +10,7 @@ export default function EsquentaProgramacao() {
             Programação
           </Reveal>
           <Reveal as="h2" delay={60} className="font-bebas text-4xl leading-[1.02] tracking-tight text-somma-black sm:text-6xl md:text-7xl">
-            Como vai ser a manhã
+            Como a manhã vai rolar
           </Reveal>
         </div>
 

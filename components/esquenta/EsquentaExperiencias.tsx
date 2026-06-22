@@ -11,7 +11,7 @@ export default function EsquentaExperiencias() {
             Experiências
           </Reveal>
           <Reveal as="h2" delay={60} className="font-bebas text-4xl leading-[1.02] tracking-tight text-somma-cream sm:text-6xl md:text-7xl">
-            Uma manhã de corre,<br /><span className="text-somma-yellow">arraiá e comunidade</span>
+            Corre, arraiá e<br /><span className="text-somma-yellow">muita treta boa</span>
           </Reveal>
         </div>
 
