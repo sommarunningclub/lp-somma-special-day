@@ -5,11 +5,42 @@ import { CORREIO_EXEMPLOS } from '@/lib/esquenta-constants'
 import Reveal from './Reveal'
 import { JuninoIcon } from './JuninoIcons'
 
+const inputCls =
+  'w-full rounded-xl border-2 border-somma-black/15 bg-white px-4 py-3 font-dm text-somma-black placeholder:text-somma-black/30 focus:border-somma-blue focus:outline-none focus:ring-2 focus:ring-somma-blue/20'
+const labelCls = 'mb-1.5 block font-dm text-xs font-bold uppercase tracking-widest text-somma-black/70'
+
 export default function EsquentaCorreio() {
+  const [form, setForm] = useState({ nome: '', instagram: '', mensagem: '', contato: '' })
+  const [enviando, setEnviando] = useState(false)
+  const [erro, setErro] = useState<string | null>(null)
   const [enviado, setEnviado] = useState(false)
 
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setErro(null)
+    if (!form.nome || !form.instagram || !form.mensagem) {
+      setErro('Preencha nome, Instagram e mensagem.')
+      return
+    }
+    setEnviando(true)
+    try {
+      const res = await fetch('/api/correio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, origem: 'site' }),
+      })
+      const data = await res.json()
+      if (res.ok) setEnviado(true)
+      else setErro(data.error ?? 'Não foi possível enviar agora.')
+    } catch {
+      setErro('Erro de conexão. Tente novamente.')
+    } finally {
+      setEnviando(false)
+    }
+  }
+
   return (
-    <section className="bg-somma-blue px-4 py-16 sm:py-20 md:py-28">
+    <section id="correio" className="bg-somma-blue px-4 py-16 sm:py-20 md:py-28">
       <div className="mx-auto max-w-5xl">
         <div className="mb-12 text-center sm:mb-14">
           <Reveal as="p" className="mb-3 font-dm text-xs uppercase tracking-[0.3em] text-somma-cream/70 sm:text-sm">
@@ -21,10 +52,11 @@ export default function EsquentaCorreio() {
           <Reveal as="p" delay={120} className="mx-auto mt-5 max-w-2xl font-dm text-base leading-relaxed text-somma-cream/80">
             Durante o Esquenta, teremos um ponto especial para você enviar mensagens para alguém da comunidade. Pode ser
             elogio, brincadeira, convite para correr junto ou aquela mensagem que você não teria coragem de falar pessoalmente.
+            Manda agora ou lança o seu no dia do evento.
           </Reveal>
         </div>
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_0.85fr] lg:items-start">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-start">
           {/* Exemplos */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {CORREIO_EXEMPLOS.map((msg, i) => (
@@ -37,39 +69,49 @@ export default function EsquentaCorreio() {
             ))}
           </div>
 
-          {/* Form de demonstração (não funcional) */}
+          {/* Form funcional */}
           <Reveal delay={120}>
             <div className="rounded-3xl border-4 border-somma-cream bg-somma-cream p-6 shadow-[8px_8px_0_#FF4800] sm:p-8">
-              <p className="font-dm text-[11px] font-bold uppercase tracking-[0.25em] text-somma-orange">Demonstração</p>
-              <h3 className="mt-1 font-bebas text-3xl uppercase tracking-wide text-somma-black">Manda um correio</h3>
+              <p className="font-dm text-[11px] font-bold uppercase tracking-[0.25em] text-somma-orange">Manda um correio</p>
+              <h3 className="mt-1 font-bebas text-3xl uppercase tracking-wide text-somma-black">Deixe seu recado</h3>
               {enviado ? (
                 <div className="mt-6 rounded-2xl border-2 border-dashed border-somma-orange/50 bg-somma-orange/[0.06] p-6 text-center">
-                  <JuninoIcon name="fogueira" className="mx-auto h-8 w-8 text-somma-orange" />
-                  <p className="mt-3 font-bebas text-2xl uppercase tracking-wide text-somma-black">Pré-visualização!</p>
+                  <JuninoIcon name="correio" className="mx-auto h-9 w-9 text-somma-orange" />
+                  <p className="mt-3 font-bebas text-2xl uppercase tracking-wide text-somma-black">Correio enviado! 💌</p>
                   <p className="mt-1 font-dm text-sm text-somma-black/65">
-                    No dia do evento o Correio Elegante será entregue pessoalmente. Esta é só uma amostra. 💌
+                    Recebemos seu recado. No dia do Esquenta ele entra no nosso Correio Elegante. 🧡
                   </p>
-                  <button onClick={() => setEnviado(false)} className="mt-4 font-dm text-sm font-bold uppercase tracking-wide text-somma-orange underline-offset-2 hover:underline">
-                    Escrever outro
+                  <button onClick={() => { setEnviado(false); setForm({ nome: '', instagram: '', mensagem: '', contato: '' }) }} className="mt-4 font-dm text-sm font-bold uppercase tracking-wide text-somma-orange underline-offset-2 hover:underline">
+                    Mandar outro
                   </button>
                 </div>
               ) : (
-                <form
-                  onSubmit={(e) => { e.preventDefault(); setEnviado(true) }}
-                  className="mt-5 space-y-4"
-                >
+                <form onSubmit={handleSubmit} noValidate className="mt-5 space-y-4">
                   <div>
-                    <label htmlFor="correio-para" className="mb-1.5 block font-dm text-xs font-bold uppercase tracking-widest text-somma-black/70">Para</label>
-                    <input id="correio-para" type="text" placeholder="Para quem é o recado?" className="w-full rounded-xl border-2 border-somma-black/15 bg-white px-4 py-3 font-dm text-somma-black placeholder:text-somma-black/30 focus:border-somma-blue focus:outline-none focus:ring-2 focus:ring-somma-blue/20" />
+                    <label className={labelCls}>Seu nome</label>
+                    <input value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} placeholder="Como você quer ser identificado?" className={inputCls} />
                   </div>
                   <div>
-                    <label htmlFor="correio-msg" className="mb-1.5 block font-dm text-xs font-bold uppercase tracking-widest text-somma-black/70">Mensagem</label>
-                    <textarea id="correio-msg" rows={3} placeholder="Escreve aquele recado especial..." className="w-full resize-none rounded-xl border-2 border-somma-black/15 bg-white px-4 py-3 font-dm text-somma-black placeholder:text-somma-black/30 focus:border-somma-blue focus:outline-none focus:ring-2 focus:ring-somma-blue/20" />
+                    <label className={labelCls}>@ do Instagram</label>
+                    <input value={form.instagram} onChange={(e) => setForm({ ...form, instagram: e.target.value })} placeholder="@seuuser" className={inputCls} />
                   </div>
-                  <button type="submit" className="w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-3 py-3.5 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#0a0a0a]">
-                    Enviar Correio Elegante
+                  <div>
+                    <label className={labelCls}>Mensagem</label>
+                    <textarea rows={3} value={form.mensagem} onChange={(e) => setForm({ ...form, mensagem: e.target.value })} placeholder="Escreve aquele recado especial..." className={`${inputCls} resize-none`} />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Contato <span className="font-normal text-somma-black/40">(opcional)</span></label>
+                    <input value={form.contato} onChange={(e) => setForm({ ...form, contato: e.target.value })} placeholder="WhatsApp ou @ — caso queiram te encontrar depois" className={inputCls} />
+                  </div>
+
+                  {erro && (
+                    <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-center font-dm text-sm text-red-600">{erro}</p>
+                  )}
+
+                  <button type="submit" disabled={enviando} className="w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-3 py-3.5 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#0a0a0a] disabled:cursor-not-allowed disabled:opacity-60">
+                    {enviando ? 'ENVIANDO...' : 'Enviar Correio Elegante'}
                   </button>
-                  <p className="text-center font-dm text-xs text-somma-black/45">Demonstração — a entrega acontece no evento.</p>
+                  <p className="text-center font-dm text-xs text-somma-black/45">Você pode mandar agora — e também lançar o seu no dia do evento.</p>
                 </form>
               )}
             </div>

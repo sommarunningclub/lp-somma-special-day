@@ -120,6 +120,24 @@ export default function EsquentaCheckin() {
                     Seu check-in no Esquenta SOMMA Special Day está garantido. Te esperamos no Eixão, {ESQUENTA.data}, às {ESQUENTA.concentracao}. 🧡
                   </p>
                   <EsquentaAddToCalendar />
+
+                  {/* Oferta de cupom da corrida da Live */}
+                  <div className="mt-6 w-full rounded-2xl border-2 border-dashed border-somma-orange/50 bg-somma-orange/[0.06] p-5 text-center">
+                    <p className="font-bebas text-xl uppercase tracking-wide text-somma-black">{ESQUENTA.liveCupom.pergunta}</p>
+                    <p className="mt-1 font-dm text-sm leading-snug text-somma-black/65">{ESQUENTA.liveCupom.descricao}</p>
+                    <a
+                      href={ESQUENTA.liveCupom.agendaUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 inline-block w-full rounded-xl bg-somma-orange px-6 py-3 font-bebas text-base tracking-widest text-somma-cream transition-all hover:bg-somma-orange/90 sm:w-auto"
+                    >
+                      Sim, quero o cupom
+                    </a>
+                    <p className="mt-2 font-dm text-xs text-somma-black/55">
+                      Salve a agenda e resgate o cupom <strong className="text-somma-orange">{ESQUENTA.liveCupom.cupom}</strong>.
+                    </p>
+                  </div>
+
                   <a href={ESQUENTA.siteUrl} className="mt-6 font-dm text-sm font-bold uppercase tracking-wide text-somma-orange underline-offset-2 hover:underline">
                     Conhecer o Somma Special Day
                   </a>

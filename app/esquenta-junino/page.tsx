@@ -14,6 +14,7 @@ import EsquentaComoChegar from '@/components/esquenta/EsquentaComoChegar'
 import EsquentaParceiros from '@/components/esquenta/EsquentaParceiros'
 import EsquentaCtaFinal from '@/components/esquenta/EsquentaCtaFinal'
 import EsquentaFaq from '@/components/esquenta/EsquentaFaq'
+import EsquentaCorreioFloat from '@/components/esquenta/EsquentaCorreioFloat'
 
 const URL = 'https://specialday.sommaclub.com.br/esquenta-junino'
 const TITLE = 'Esquenta SOMMA Special Day | Edição Especial Junina em Brasília'
@@ -58,6 +59,7 @@ export default function EsquentaJuninoPage() {
       <EsquentaCtaFinal />
       <EsquentaFaq />
       <FooterSection />
+      <EsquentaCorreioFloat />
     </SmoothScroll>
   )
 }

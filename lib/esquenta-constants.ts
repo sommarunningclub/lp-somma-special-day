@@ -27,6 +27,14 @@ export const ESQUENTA = {
 
   // CTA "Conhecer / Ver o Somma Special Day" → página principal
   siteUrl: 'https://specialday.sommaclub.com.br/',
+
+  // Oferta de cupom da corrida da Live (no fim do check-in)
+  liveCupom: {
+    pergunta: 'Quer cupom pra corrida da Live?',
+    descricao: 'Salve a agenda e resgate o cupom de 15% de desconto na corrida da Live.',
+    cupom: 'SOMMALIVE15',
+    agendaUrl: 'https://agenda.sommaclub.com.br/',
+  },
   // CTA "Quero participar" → seção de check-in embutida
   participarHref: '#check-in',
 
