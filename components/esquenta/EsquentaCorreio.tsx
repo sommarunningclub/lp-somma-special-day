@@ -1,0 +1,81 @@
+'use client'
+
+import { useState } from 'react'
+import { CORREIO_EXEMPLOS } from '@/lib/esquenta-constants'
+import Reveal from './Reveal'
+import { JuninoIcon } from './JuninoIcons'
+
+export default function EsquentaCorreio() {
+  const [enviado, setEnviado] = useState(false)
+
+  return (
+    <section className="bg-somma-blue px-4 py-16 sm:py-20 md:py-28">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-12 text-center sm:mb-14">
+          <Reveal as="p" className="mb-3 font-dm text-xs uppercase tracking-[0.3em] text-somma-cream/70 sm:text-sm">
+            Correio Elegante
+          </Reveal>
+          <Reveal as="h2" delay={60} className="mx-auto max-w-3xl font-bebas text-4xl leading-[1.02] tracking-tight text-somma-cream sm:text-5xl md:text-6xl">
+            Tem mensagem que merece chegar pessoalmente.
+          </Reveal>
+          <Reveal as="p" delay={120} className="mx-auto mt-5 max-w-2xl font-dm text-base leading-relaxed text-somma-cream/80">
+            Durante o Esquenta, teremos um ponto especial para você enviar mensagens para alguém da comunidade. Pode ser
+            elogio, brincadeira, convite para correr junto ou aquela mensagem que você não teria coragem de falar pessoalmente.
+          </Reveal>
+        </div>
+
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_0.85fr] lg:items-start">
+          {/* Exemplos */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {CORREIO_EXEMPLOS.map((msg, i) => (
+              <Reveal key={i} delay={i * 70}>
+                <div className="flex h-full items-start gap-3 rounded-2xl bg-somma-cream p-5 shadow-[5px_5px_0_rgba(0,0,0,0.25)]">
+                  <JuninoIcon name="correio" className="mt-0.5 h-6 w-6 shrink-0 text-somma-orange" />
+                  <p className="font-dm text-[15px] font-medium italic leading-snug text-somma-black">“{msg}”</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+
+          {/* Form de demonstração (não funcional) */}
+          <Reveal delay={120}>
+            <div className="rounded-3xl border-4 border-somma-cream bg-somma-cream p-6 shadow-[8px_8px_0_#FF4800] sm:p-8">
+              <p className="font-dm text-[11px] font-bold uppercase tracking-[0.25em] text-somma-orange">Demonstração</p>
+              <h3 className="mt-1 font-bebas text-3xl uppercase tracking-wide text-somma-black">Manda um correio</h3>
+              {enviado ? (
+                <div className="mt-6 rounded-2xl border-2 border-dashed border-somma-orange/50 bg-somma-orange/[0.06] p-6 text-center">
+                  <JuninoIcon name="fogueira" className="mx-auto h-8 w-8 text-somma-orange" />
+                  <p className="mt-3 font-bebas text-2xl uppercase tracking-wide text-somma-black">Pré-visualização!</p>
+                  <p className="mt-1 font-dm text-sm text-somma-black/65">
+                    No dia do evento o Correio Elegante será entregue pessoalmente. Esta é só uma amostra. 💌
+                  </p>
+                  <button onClick={() => setEnviado(false)} className="mt-4 font-dm text-sm font-bold uppercase tracking-wide text-somma-orange underline-offset-2 hover:underline">
+                    Escrever outro
+                  </button>
+                </div>
+              ) : (
+                <form
+                  onSubmit={(e) => { e.preventDefault(); setEnviado(true) }}
+                  className="mt-5 space-y-4"
+                >
+                  <div>
+                    <label htmlFor="correio-para" className="mb-1.5 block font-dm text-xs font-bold uppercase tracking-widest text-somma-black/70">Para</label>
+                    <input id="correio-para" type="text" placeholder="Para quem é o recado?" className="w-full rounded-xl border-2 border-somma-black/15 bg-white px-4 py-3 font-dm text-somma-black placeholder:text-somma-black/30 focus:border-somma-blue focus:outline-none focus:ring-2 focus:ring-somma-blue/20" />
+                  </div>
+                  <div>
+                    <label htmlFor="correio-msg" className="mb-1.5 block font-dm text-xs font-bold uppercase tracking-widest text-somma-black/70">Mensagem</label>
+                    <textarea id="correio-msg" rows={3} placeholder="Escreve aquele recado especial..." className="w-full resize-none rounded-xl border-2 border-somma-black/15 bg-white px-4 py-3 font-dm text-somma-black placeholder:text-somma-black/30 focus:border-somma-blue focus:outline-none focus:ring-2 focus:ring-somma-blue/20" />
+                  </div>
+                  <button type="submit" className="w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-3 py-3.5 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#0a0a0a]">
+                    Enviar Correio Elegante
+                  </button>
+                  <p className="text-center font-dm text-xs text-somma-black/45">Demonstração — a entrega acontece no evento.</p>
+                </form>
+              )}
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  )
+}
