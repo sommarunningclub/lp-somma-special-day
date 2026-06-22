@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { ESQUENTA } from '@/lib/esquenta-constants'
 import Reveal from './Reveal'
+import EsquentaAddToCalendar from './EsquentaAddToCalendar'
 
 type Evento = {
   id: string
@@ -118,6 +119,7 @@ export default function EsquentaCheckin() {
                   <p className="mt-3 max-w-sm font-dm text-sm leading-relaxed text-somma-black/65">
                     Seu check-in no Esquenta SOMMA Special Day está garantido. Te esperamos no Eixão, {ESQUENTA.data}, às {ESQUENTA.concentracao}. 🧡
                   </p>
+                  <EsquentaAddToCalendar />
                   <a href={ESQUENTA.siteUrl} className="mt-6 font-dm text-sm font-bold uppercase tracking-wide text-somma-orange underline-offset-2 hover:underline">
                     Conhecer o Somma Special Day
                   </a>

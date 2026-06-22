@@ -14,6 +14,17 @@ export const ESQUENTA = {
   // Foto de fundo do hero (troque por outra de /public/eixao_somma se quiser)
   heroFoto: '/eixao_somma/eixao-01.jpg',
 
+  // Dados para "adicionar na agenda" (Google Calendar / .ics).
+  // Horários em UTC (BRT = UTC-3): concentração 6h30 -> 09:30Z, fim ~9h30 -> 12:30Z.
+  calendario: {
+    titulo: 'Esquenta Somma Special Day — Edição Junina',
+    descricao:
+      'Corre no Eixão, café da manhã, ativações e clima de arraiá. Concentração 6h30, início do corre 7h00. Detalhes: https://specialday.sommaclub.com.br/esquenta-junino',
+    local: 'Eixão — Brasília, DF',
+    startUtc: '20260628T093000Z',
+    endUtc: '20260628T123000Z',
+  },
+
   // CTA "Conhecer / Ver o Somma Special Day" → página principal
   siteUrl: 'https://specialday.sommaclub.com.br/',
   // CTA "Quero participar" → seção de check-in embutida
