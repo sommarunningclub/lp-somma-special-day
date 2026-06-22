@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'pt_BR',
     siteName: 'Somma Special Day',
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Esquenta SOMMA Special Day — Edição Especial Junina' }],
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Esquenta Somma Special Day · Edição Especial Junina' }],
   },
   twitter: {
     card: 'summary_large_image',

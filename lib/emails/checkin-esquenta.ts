@@ -22,7 +22,7 @@ export function renderCheckinEsquentaEmail({ nome, distancia }: CheckinEmailData
   html: string
 } {
   const primeiroNome = escapeHtml((nome || '').split(' ')[0] || 'corredor')
-  const subject = 'Check-in confirmado — Esquenta Somma Special Day 💌'
+  const subject = 'Tá confirmado! Seu check-in no Esquenta 💌'
 
   const info = (label: string, value: string) => `
     <td width="50%" valign="top" style="padding:14px 18px;">
@@ -64,7 +64,7 @@ export function renderCheckinEsquentaEmail({ nome, distancia }: CheckinEmailData
                 Tá garantido, ${primeiroNome}!
               </h1>
               <p style="margin:12px 0 0;color:#ffffffcc;font-size:14px;line-height:1.6;">
-                Seu check-in no <strong>Esquenta Somma Special Day</strong> está confirmado. Bora correr, comer, celebrar e entrar no clima de arraiá com a comunidade. 🧡
+                Seu check-in no <strong>Esquenta Somma Special Day</strong> tá confirmado! Bora correr, comer, celebrar e cair no clima de arraiá com a comunidade. 🧡
               </p>
             </td>
           </tr>
@@ -103,10 +103,10 @@ export function renderCheckinEsquentaEmail({ nome, distancia }: CheckinEmailData
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0a0a0a;border-radius:20px;overflow:hidden;">
                 <tr>
                   <td style="padding:26px;">
-                    <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.yellow};">E tem mais…</p>
-                    <p style="margin:8px 0 0;font-size:20px;font-weight:bold;line-height:1.25;color:${COLORS.cream};">O Somma Special Day vem aí — garanta seu ingresso com desconto.</p>
+                    <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.yellow};">Ah, e tem mais…</p>
+                    <p style="margin:8px 0 0;font-size:20px;font-weight:bold;line-height:1.25;color:${COLORS.cream};">O Somma Special Day tá chegando. Garante o seu com desconto.</p>
                     <p style="margin:10px 0 0;font-size:14px;line-height:1.6;color:#ffffffb3;">
-                      O grande evento de 1 ano do Somma está chegando. Quem é da comunidade garante o melhor preço. Clica no botão e garanta sua vaga.
+                      O evento de 1 ano do Somma vem aí e quem é da comunidade paga o melhor preço. Clica no botão e garante a sua vaga antes que esgote.
                     </p>
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;">
                       <tr>

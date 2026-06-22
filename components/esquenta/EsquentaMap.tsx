@@ -54,7 +54,7 @@ export default function EsquentaMap() {
         new google.maps.Marker({
           position: center,
           map,
-          title: `Esquenta SOMMA Special Day — ${ESQUENTA.local}`,
+          title: `Esquenta Somma Special Day · ${ESQUENTA.local}`,
           icon: {
             path: 'M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z',
             fillColor: '#FF4800',
@@ -98,5 +98,5 @@ export default function EsquentaMap() {
     )
   }
 
-  return <div ref={ref} className="h-full w-full" aria-label="Mapa do local do evento — 106 Sul, Brasília DF" role="img" />
+  return <div ref={ref} className="h-full w-full" aria-label="Mapa do local do evento, 106 Sul, Brasília DF" role="img" />
 }

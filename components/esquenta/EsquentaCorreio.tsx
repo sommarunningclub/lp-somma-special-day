@@ -77,7 +77,7 @@ export default function EsquentaCorreio() {
           <Reveal delay={120}>
             <div className="rounded-3xl border-4 border-somma-cream bg-somma-cream p-6 shadow-[8px_8px_0_#FF4800] sm:p-8">
               <p className="font-dm text-[11px] font-bold uppercase tracking-[0.25em] text-somma-orange">Manda um correio</p>
-              <h3 className="mt-1 font-bebas text-3xl uppercase tracking-wide text-somma-black">Deixe seu recado</h3>
+              <h3 className="mt-1 font-bebas text-3xl uppercase tracking-wide text-somma-black">Solta o teu recado</h3>
 
               {salvando ? (
                 /* Estado: guardando a mensagem (~5s) com GIF em loop */

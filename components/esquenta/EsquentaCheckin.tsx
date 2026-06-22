@@ -96,7 +96,7 @@ export default function EsquentaCheckin() {
             Garanta sua<br />presença no corre
           </h2>
           <p className="mx-auto mt-5 max-w-md font-dm text-base leading-relaxed text-somma-cream/80 lg:mx-0">
-            Faça seu check-in para o Esquenta SOMMA Special Day. É rápido: preencha seus dados e pronto — te esperamos no
+            Faz seu check-in pro Esquenta Somma Special Day. É rapidinho: preenche seus dados e pronto. Te esperamos no
             Eixão, {ESQUENTA.data}, concentração às {ESQUENTA.concentracao}.
           </p>
         </div>
@@ -117,7 +117,7 @@ export default function EsquentaCheckin() {
                   </span>
                   <h3 className="font-bebas text-4xl uppercase leading-tight tracking-wide text-somma-black md:text-5xl">Tá feito!</h3>
                   <p className="mt-3 max-w-sm font-dm text-sm leading-relaxed text-somma-black/65">
-                    Seu check-in no Esquenta SOMMA Special Day está garantido. Te esperamos no Eixão, {ESQUENTA.data}, às {ESQUENTA.concentracao}. 🧡
+                    Seu lugar no Esquenta tá garantido! Te esperamos no Eixão, {ESQUENTA.data}, às {ESQUENTA.concentracao}. Bora! 🧡
                   </p>
                   <EsquentaAddToCalendar />
 
@@ -134,7 +134,7 @@ export default function EsquentaCheckin() {
                       Sim, quero o cupom
                     </a>
                     <p className="mt-2 font-dm text-xs text-somma-black/55">
-                      Salve a agenda e resgate o cupom <strong className="text-somma-orange">{ESQUENTA.liveCupom.cupom}</strong>.
+                      Salva a agenda e resgata o cupom <strong className="text-somma-orange">{ESQUENTA.liveCupom.cupom}</strong>.
                     </p>
                   </div>
 
@@ -147,9 +147,9 @@ export default function EsquentaCheckin() {
                   <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-somma-yellow/20 px-4 py-2 font-dm text-xs font-bold uppercase tracking-widest text-somma-black/70">
                     Check-in em breve
                   </span>
-                  <h3 className="font-bebas text-3xl uppercase leading-tight tracking-wide text-somma-black md:text-4xl">O check-in abre em breve</h3>
+                  <h3 className="font-bebas text-3xl uppercase leading-tight tracking-wide text-somma-black md:text-4xl">Calma que já vai abrir</h3>
                   <p className="mt-3 max-w-sm font-dm text-sm leading-relaxed text-somma-black/60">
-                    Ainda não liberamos o check-in do Esquenta. Volte aqui mais perto da data ({ESQUENTA.data}) para garantir sua presença.
+                    O check-in ainda não abriu. Dá um pulo aqui mais perto da data ({ESQUENTA.data}) pra garantir sua presença. 🧡
                   </p>
                 </div>
               ) : status === 'encerrado' ? (
@@ -159,15 +159,15 @@ export default function EsquentaCheckin() {
                   </span>
                   <h3 className="font-bebas text-3xl uppercase leading-tight tracking-wide text-somma-black md:text-4xl">Check-in encerrado</h3>
                   <p className="mt-3 max-w-sm font-dm text-sm leading-relaxed text-somma-black/60">
-                    O check-in do Esquenta foi encerrado. Fique de olho nas nossas redes para os próximos corres.
+                    O check-in do Esquenta já fechou. Fica de olho nas nossas redes que vem mais corre por aí. 🧡
                   </p>
                 </div>
               ) : (
                 <>
                   <div className="mb-6 border-b-2 border-dashed border-somma-black/15 pb-5">
                     <p className="font-dm text-[11px] font-bold uppercase tracking-[0.25em] text-somma-orange">Check-in · Esquenta</p>
-                    <h3 className="mt-1 font-bebas text-3xl leading-tight tracking-wide text-somma-black md:text-4xl">Faça seu check-in</h3>
-                    <p className="mt-2 font-dm text-sm text-somma-black/60">Preencha seus dados e garanta sua presença.</p>
+                    <h3 className="mt-1 font-bebas text-3xl leading-tight tracking-wide text-somma-black md:text-4xl">Bora fazer seu check-in</h3>
+                    <p className="mt-2 font-dm text-sm text-somma-black/60">Preenche seus dados e garante sua presença.</p>
                   </div>
 
                   <form onSubmit={handleSubmit} noValidate className="space-y-5">

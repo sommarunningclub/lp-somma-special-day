@@ -50,7 +50,7 @@ export function JuninoIcon({ name, ...props }: { name: string } & SVGProps<SVGSV
   }
 }
 
-/** Bandeirinhas minimalistas (linha de triângulos) — decoração discreta. */
+/** Bandeirinhas minimalistas (linha de triângulos): decoração discreta. */
 export function Bunting({
   className = '',
   count = 14,
