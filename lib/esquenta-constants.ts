@@ -27,6 +27,12 @@ export const ESQUENTA = {
   },
 } as const
 
+// Fotos reais da comunidade no corre do Eixão (otimizadas em /public/eixao_somma).
+export const EIXAO_FOTOS: string[] = Array.from(
+  { length: 11 },
+  (_, i) => `/eixao_somma/eixao-${String(i + 1).padStart(2, '0')}.jpg`
+)
+
 export const EXPERIENCIAS = [
   { icone: 'corre', titulo: 'Corre no Eixão', texto: 'Um encontro especial para correr no ritmo da comunidade SOMMA.' },
   { icone: 'cafe', titulo: 'Café da manhã Big Box', texto: 'Um café da manhã especial para recuperar a energia depois do corre.' },

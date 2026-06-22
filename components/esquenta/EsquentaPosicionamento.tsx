@@ -1,5 +1,8 @@
 import Reveal from './Reveal'
-import { JuninoIcon } from './JuninoIcons'
+import { EIXAO_FOTOS } from '@/lib/esquenta-constants'
+
+// 4 fotos reais do corre no Eixão para a colagem.
+const COLAGEM = [EIXAO_FOTOS[0], EIXAO_FOTOS[3], EIXAO_FOTOS[6], EIXAO_FOTOS[9]]
 
 export default function EsquentaPosicionamento() {
   return (
@@ -19,18 +22,22 @@ export default function EsquentaPosicionamento() {
           </Reveal>
         </div>
 
-        {/* Composição gráfica */}
+        {/* Colagem com fotos reais do corre no Eixão */}
         <Reveal delay={120} className="relative">
           <div className="grid grid-cols-2 gap-3">
-            {[
-              { icon: 'corre', label: 'Corre', cor: 'bg-somma-orange text-somma-cream' },
-              { icon: 'cafe', label: 'Café', cor: 'bg-somma-black text-somma-cream' },
-              { icon: 'fogueira', label: 'Arraiá', cor: 'bg-somma-blue text-somma-cream' },
-              { icon: 'correio', label: 'Comunidade', cor: 'bg-somma-yellow text-somma-black' },
-            ].map((b) => (
-              <div key={b.label} className={`flex aspect-square flex-col items-center justify-center gap-3 rounded-2xl border-4 border-somma-black ${b.cor} shadow-[6px_6px_0_#0a0a0a]`}>
-                <JuninoIcon name={b.icon} className="h-10 w-10" />
-                <span className="font-bebas text-xl uppercase tracking-widest">{b.label}</span>
+            {COLAGEM.map((src, i) => (
+              <div
+                key={src}
+                className={`overflow-hidden rounded-2xl border-4 border-somma-black shadow-[6px_6px_0_#0a0a0a] ${i % 2 === 1 ? 'mt-6' : ''}`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={src}
+                  alt="Comunidade SOMMA no corre do Eixão"
+                  loading="lazy"
+                  decoding="async"
+                  className="aspect-[4/5] w-full object-cover"
+                />
               </div>
             ))}
           </div>

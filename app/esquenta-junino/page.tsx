@@ -5,6 +5,7 @@ import EsquentaHero from '@/components/esquenta/EsquentaHero'
 import EsquentaPosicionamento from '@/components/esquenta/EsquentaPosicionamento'
 import EsquentaExperiencias from '@/components/esquenta/EsquentaExperiencias'
 import EsquentaConcurso from '@/components/esquenta/EsquentaConcurso'
+import EsquentaGaleria from '@/components/esquenta/EsquentaGaleria'
 import EsquentaCorreio from '@/components/esquenta/EsquentaCorreio'
 import EsquentaProgramacao from '@/components/esquenta/EsquentaProgramacao'
 import EsquentaLocalizacao from '@/components/esquenta/EsquentaLocalizacao'
@@ -46,6 +47,7 @@ export default function EsquentaJuninoPage() {
       <EsquentaPosicionamento />
       <EsquentaExperiencias />
       <EsquentaConcurso />
+      <EsquentaGaleria />
       <EsquentaCorreio />
       <EsquentaProgramacao />
       <EsquentaLocalizacao />
