@@ -6,7 +6,7 @@ import Image from 'next/image'
 import gsap from 'gsap'
 import TicketLoader from './TicketLoader'
 import { PRESALE, PRESALE_PASSOS } from '@/lib/presale-constants'
-import { agendaUrl } from '@/lib/agenda-url'
+import CalendarSubscribeModal from './CalendarSubscribeModal'
 
 export type FormSuccessProps = {
   userData?: {
@@ -28,6 +28,7 @@ function SuccessModal({ userData }: FormSuccessProps) {
   const overlayRef = useRef<HTMLDivElement>(null)
   const ticketRef = useRef<HTMLDivElement>(null)
   const [showTicket, setShowTicket] = useState(false)
+  const [calOpen, setCalOpen] = useState(false)
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -175,11 +176,10 @@ function SuccessModal({ userData }: FormSuccessProps) {
               </div>
 
               {/* Bloco: adicionar à agenda Somma */}
-              <a
-                href={agendaUrl('thank-you')}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-5 block rounded-2xl border-4 border-somma-yellow bg-somma-yellow/15 px-5 py-4 text-left transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:bg-somma-yellow/25"
+              <button
+                type="button"
+                onClick={() => setCalOpen(true)}
+                className="mt-5 block w-full rounded-2xl border-4 border-somma-yellow bg-somma-yellow/15 px-5 py-4 text-left transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:bg-somma-yellow/25"
               >
                 <div className="flex items-start gap-4">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-somma-yellow bg-somma-yellow/30 text-2xl">
@@ -193,11 +193,13 @@ function SuccessModal({ userData }: FormSuccessProps) {
                       Special Day · todos os eventos Somma Club do ano · curadoria das principais corridas do DF.
                     </p>
                     <span className="mt-2 inline-block font-bebas text-xs tracking-widest text-somma-cream underline-offset-4 hover:underline">
-                      Assinar agora →
+                      Escolher meu calendário →
                     </span>
                   </div>
                 </div>
-              </a>
+              </button>
+
+              <CalendarSubscribeModal open={calOpen} onClose={() => setCalOpen(false)} />
 
               <div className="mt-5 flex flex-col gap-3 sm:flex-row lg:justify-start">
                 <button onClick={() => window.location.reload()} className="w-full rounded-full border-2 border-somma-cream bg-transparent px-5 py-3 font-bebas text-lg text-somma-cream transition-colors hover:bg-somma-cream hover:text-somma-blue sm:w-auto">

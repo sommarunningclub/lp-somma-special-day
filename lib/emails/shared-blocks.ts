@@ -4,7 +4,7 @@
  */
 
 import { PRESALE } from '@/lib/presale-constants'
-import { agendaUrl } from '@/lib/agenda-url'
+import { webcalUrl, googleUrl, outlookUrl } from '@/lib/agenda-subscribe'
 
 interface Palette {
   black: string
@@ -115,19 +115,22 @@ export function howItWorksBlock(cupom: string | undefined, colors: Palette): str
 
 /**
  * Bloco "Adicione à sua agenda" — destaca o Special Day + curadoria Somma
- * (todos os eventos do ano + corridas do DF) e leva pra agenda.sommaclub.com.br.
+ * (todos os eventos do ano + corridas do DF) com 4 botões diretos por
+ * plataforma (Apple, Google, Android, Outlook). Não envia pra landing
+ * externa — assina direto.
  *
- * @param ref Origem do clique (entra na query string ?ref=specialday-<ref>).
+ * @param _ref Mantido para compatibilidade, mas não é mais usado.
  * @param colors Paleta do template para harmonizar com o tema.
  */
 export function addToCalendarBlock(
-  ref: 'email-nutricao' | 'email-countdown' | 'email-ticket',
+  _ref: 'email-nutricao' | 'email-countdown' | 'email-ticket',
   colors: Palette,
 ): string {
-  const url = agendaUrl(ref)
-  const isDark = colors.bg === 'dark'
-  const cardBg = isDark ? '#ffffff' : '#ffffff'
+  const cardBg = '#ffffff'
   const muted = '#0a0a0a99'
+
+  const btnStyle = (bg: string, fg: string) =>
+    `display:block;background-color:${bg};color:${fg};text-decoration:none;text-align:center;font-size:13px;font-weight:bold;letter-spacing:1px;padding:14px 10px;border-radius:10px;border:2px solid ${bg};`
 
   return `
     <!-- ADICIONE NA SUA AGENDA -->
@@ -183,15 +186,25 @@ export function addToCalendarBlock(
                 </tr>
               </table>
 
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;">
+              <p style="margin:18px 0 8px;font-size:11px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;color:${colors.black};">
+                Escolha sua plataforma:
+              </p>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td align="center">
-                    <a href="${url}" style="display:block;background-color:${colors.black};color:#ffffff;text-decoration:none;text-align:center;font-size:15px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;padding:16px;border-radius:12px;">
-                      🗓 Assinar a Agenda Somma
-                    </a>
-                    <p style="margin:8px 0 0;font-size:11px;color:${muted};">
-                      iPhone · Mac · Google Calendar · Outlook
-                    </p>
+                  <td style="padding:4px;">
+                    <a href="${webcalUrl}" style="${btnStyle(colors.black, '#ffffff')}">iPhone / Mac</a>
+                  </td>
+                  <td style="padding:4px;">
+                    <a href="${googleUrl}" style="${btnStyle('#1a73e8', '#ffffff')}">Google Calendar</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:4px;">
+                    <a href="${googleUrl}" style="${btnStyle('#16a34a', '#ffffff')}">Android</a>
+                  </td>
+                  <td style="padding:4px;">
+                    <a href="${outlookUrl}" style="${btnStyle('#0078D4', '#ffffff')}">Outlook</a>
                   </td>
                 </tr>
               </table>
