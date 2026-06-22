@@ -25,16 +25,18 @@ export const googleUrl = `https://calendar.google.com/calendar/render?cid=${enco
 export const outlookUrl = `https://outlook.office.com/calendar/0/addfromweb?url=${encodeURIComponent(icsUrl)}&name=${encodeURIComponent(CALENDAR_NAME)}`
 
 export interface PlatformLink {
-  key: 'apple' | 'google' | 'android' | 'outlook'
+  key: 'apple' | 'google' | 'outlook'
   label: string
   hint: string
   url: string
-  emoji: string
+  /** Caminho do SVG oficial em /public (copiado do projeto Agenda-Somma-Club). */
+  icon: string
+  /** Se abre no navegador (true) ou direto no app nativo via protocolo (false). */
+  newTab: boolean
 }
 
 export const SUBSCRIBE_PLATFORMS: PlatformLink[] = [
-  { key: 'apple',   label: 'iPhone / Mac',     hint: 'Abre no app Calendario nativo',     url: webcalUrl,  emoji: '' },
-  { key: 'google',  label: 'Google Calendar',  hint: 'Confirme em calendar.google.com',   url: googleUrl,  emoji: '' },
-  { key: 'android', label: 'Android',          hint: 'Adiciona ao Google Calendar',       url: googleUrl,  emoji: '' },
-  { key: 'outlook', label: 'Outlook',          hint: 'Adiciona pela web do Outlook',      url: outlookUrl, emoji: '' },
+  { key: 'apple',   label: 'Apple Calendar',   hint: 'iPhone, Mac e iPad',    url: webcalUrl,  icon: '/icon-apple-calendar.svg',  newTab: false },
+  { key: 'google',  label: 'Google Calendar',  hint: 'Android e web',         url: googleUrl,  icon: '/icon-google-calendar.svg', newTab: true  },
+  { key: 'outlook', label: 'Outlook',          hint: 'Microsoft 365',         url: outlookUrl, icon: '/icon-outlook.svg',         newTab: true  },
 ]

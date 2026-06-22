@@ -193,21 +193,19 @@ export function addToCalendarBlock(
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td style="padding:4px;">
-                    <a href="${webcalUrl}" style="${btnStyle(colors.black, '#ffffff')}">iPhone / Mac</a>
+                    <a href="${webcalUrl}" style="${btnStyle(colors.black, '#ffffff')}">Apple</a>
                   </td>
                   <td style="padding:4px;">
-                    <a href="${googleUrl}" style="${btnStyle('#1a73e8', '#ffffff')}">Google Calendar</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding:4px;">
-                    <a href="${googleUrl}" style="${btnStyle('#16a34a', '#ffffff')}">Android</a>
+                    <a href="${googleUrl}" style="${btnStyle('#1a73e8', '#ffffff')}">Google</a>
                   </td>
                   <td style="padding:4px;">
                     <a href="${outlookUrl}" style="${btnStyle('#0078D4', '#ffffff')}">Outlook</a>
                   </td>
                 </tr>
               </table>
+              <p style="margin:10px 0 0;font-size:11px;text-align:center;color:${muted};">
+                iPhone, Mac e iPad · Android e web · Microsoft 365
+              </p>
             </td>
           </tr>
         </table>
