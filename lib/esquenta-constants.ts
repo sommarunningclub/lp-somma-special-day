@@ -11,6 +11,9 @@ export const ESQUENTA = {
   concentracao: '6h30',
   inicioCorre: '7h00',
 
+  // Foto de fundo do hero (troque por outra de /public/eixao_somma se quiser)
+  heroFoto: '/eixao_somma/eixao-01.jpg',
+
   // CTA "Conhecer / Ver o Somma Special Day" → página principal
   siteUrl: 'https://specialday.sommaclub.com.br/',
   // CTA "Quero participar" → âncora (ou troque por um link de inscrição quando existir)

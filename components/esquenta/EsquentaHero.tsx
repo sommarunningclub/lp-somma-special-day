@@ -13,13 +13,29 @@ const QUICK = [
 export default function EsquentaHero() {
   return (
     <section className="relative min-h-[100svh] w-full overflow-hidden bg-somma-black px-4 pb-16 pt-6 sm:pt-8 md:flex md:min-h-screen md:flex-col md:justify-center md:py-20">
+      {/* Foto de fundo (corre no Eixão) + overlay para legibilidade */}
+      <div className="absolute inset-0 z-0">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={ESQUENTA.heroFoto}
+          alt="Comunidade SOMMA no corre do Eixão"
+          className="h-full w-full object-cover object-center opacity-100"
+        />
+        {/* escurece para o texto/branding aparecer */}
+        <div className="absolute inset-0 bg-somma-black/70" />
+        <div
+          className="absolute inset-0"
+          style={{ background: 'linear-gradient(180deg, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.45) 45%, rgba(10,10,10,0.92) 100%)' }}
+        />
+      </div>
+
       {/* Bandeirinhas discretas no topo */}
-      <Bunting className="absolute left-0 top-0 h-7 w-full text-somma-cream/20 sm:h-9" />
+      <Bunting className="absolute left-0 top-0 z-[1] h-7 w-full text-somma-cream/25 sm:h-9" />
 
       {/* brilho radial laranja */}
       <div
-        className="pointer-events-none absolute inset-0"
-        style={{ background: 'radial-gradient(ellipse 60% 45% at 50% 18%, rgba(255,72,0,0.16) 0%, transparent 70%)' }}
+        className="pointer-events-none absolute inset-0 z-[1]"
+        style={{ background: 'radial-gradient(ellipse 60% 45% at 50% 18%, rgba(255,72,0,0.22) 0%, transparent 70%)' }}
       />
 
       <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center pt-12 text-center md:pt-0">
