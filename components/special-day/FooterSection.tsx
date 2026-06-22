@@ -17,7 +17,7 @@ export default function FooterSection() {
               />
             </div>
             <p className="font-dm text-somma-cream/80 text-sm leading-relaxed max-w-xs">
-              Junte-se ao SOMMA Running Club, a maior comunidade de corrida de Brasília. Encontros aos sábados às 7h no Parque da Cidade. Mais de 4.300 membros ativos!
+              Vem fazer parte da maior comunidade de corrida de Brasília! Encontros aos sábados, 7h, no Parque da Cidade. Mais de 6.800 membros ativos e crescendo todo dia!
             </p>
             <div className="flex space-x-5">
               <a 

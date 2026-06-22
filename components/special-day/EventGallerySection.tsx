@@ -25,7 +25,7 @@ function GalleryPhoto({ src, rot, shadow, index }: GalleryPhotoProps) {
     >
       <Image
         src={src}
-        alt={`Somma Special Day — edição anterior, foto ${index + 1}`}
+        alt={`Somma Special Day, edição anterior, foto ${index + 1}`}
         fill
         sizes="(max-width: 768px) 50vw, 33vw"
         onLoad={() => setLoaded(true)}
@@ -74,11 +74,11 @@ export default function EventGallerySection() {
 
       <div className="relative mx-auto max-w-6xl">
         <p className="mb-3 text-center font-dm text-xs uppercase tracking-[0.3em] text-somma-yellow sm:text-sm">
-          Como foi a última edição
+          Spoiler da última edição
         </p>
         <h2 className="mb-12 text-center font-bebas text-4xl leading-[1.05] tracking-tight text-somma-cream sm:mb-16 sm:text-6xl md:mb-20 md:text-8xl lg:text-9xl">
-          Isso é o que{' '}
-          <span className="block text-somma-orange sm:mt-1">te espera.</span>
+          Olha o que rolou{' '}
+          <span className="block text-somma-orange sm:mt-1">e o que vem por aí!</span>
         </h2>
 
         <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 md:gap-6">
@@ -89,7 +89,7 @@ export default function EventGallerySection() {
 
         <p className="mx-auto mt-12 max-w-2xl text-center font-bebas text-2xl leading-tight tracking-wide text-somma-cream/80 sm:text-3xl md:mt-16">
           Comunidade, energia e celebração de verdade.{' '}
-          <span className="text-somma-yellow">Em 2026 vai ser ainda maior.</span>
+          <span className="text-somma-yellow">Em 2026 a gente vai dobrar a aposta!</span>
         </p>
       </div>
     </section>

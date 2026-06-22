@@ -16,12 +16,12 @@ export default function LotesSection({ closed = false }: { closed?: boolean }) {
           Valores dos ingressos
         </p>
         <h2 className="mb-3 text-center font-bebas text-4xl leading-[1.05] tracking-tight text-somma-cream sm:text-6xl md:text-7xl">
-          Garanta seu ingresso
+          Bora garantir seu ingresso!
         </h2>
         <p className="mx-auto mb-12 max-w-xl text-center font-dm text-sm leading-relaxed text-somma-cream/60 sm:text-base">
           {closed
-            ? 'A pré-venda encerrou. O 1º lote já está disponível no app Track&Field — e o preço só sobe.'
-            : 'A pré-venda é o menor preço do evento e acaba domingo. Depois, o valor sobe a cada lote.'}
+            ? 'Acabou a pré-venda! Agora o 1º lote já tá no app Track&Field. E o preço só sobe, então corre.'
+            : 'A pré-venda é o menor preço do evento e termina domingo. Cada lote que passa, o valor sobe. Não dá pra ficar de fora!'}
         </p>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:items-stretch">

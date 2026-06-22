@@ -48,11 +48,11 @@ export default function AttractionsSection() {
 
       <div className="relative max-w-6xl mx-auto">
         <p className="mb-3 text-center font-dm text-xs uppercase tracking-[0.3em] text-somma-yellow sm:text-sm">
-          O que vai rolar
+          Olha só o que vem por aí
         </p>
         <h2 className="mb-12 text-center font-bebas text-4xl leading-[1.05] tracking-tight text-somma-cream sm:mb-16 sm:text-6xl md:mb-20 md:text-8xl lg:text-9xl">
-          Um sabado inteiro{' '}
-          <span className="block text-somma-yellow sm:mt-1">de celebracao</span>
+          Vem viver um sábado{' '}
+          <span className="block text-somma-yellow sm:mt-1">do começo ao fim!</span>
         </h2>
 
         <div ref={containerRef} className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">

@@ -37,26 +37,22 @@ export default function NutricaoCaptureSection() {
   return (
     <section className="relative overflow-hidden bg-somma-cream px-4 py-16 md:py-24">
       <div className="mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
-        {/* COLUNA ESQUERDA — copy */}
+        {/* COLUNA ESQUERDA copy */}
         <div className="text-center lg:text-left">
           <p className="font-dm text-xs uppercase tracking-[0.3em] text-somma-orange md:text-sm">
             Receba as novidades
           </p>
           <h2 className="mt-3 font-bebas text-4xl leading-[0.95] tracking-wide text-somma-black md:text-6xl">
-            FIQUE POR DENTRO DE <span className="text-somma-orange">TUDO</span> DO SOMMA SPECIAL DAY.
+            FIQUE POR DENTRO DE <span className="text-somma-orange">TUDO</span> DO SOMMA SPECIAL DAY!
           </h2>
           <p className="mx-auto mt-5 max-w-xl font-dm text-base leading-relaxed text-somma-black/70 lg:mx-0 md:text-lg">
-            Spoilers do percurso, atrações, line-up, atalhos pra garantir sua inscrição
-            antes de todo mundo. Direto no seu e-mail, nada de spam.
+            Spoilers do percurso, atrações, line-up e atalhos pra garantir sua inscrição
+            antes da galera. Tudo no seu e-mail. Zero spam, palavra de Somma.
           </p>
 
-          <div className="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-somma-black bg-somma-yellow px-4 py-2 font-dm text-xs font-bold uppercase tracking-widest text-somma-black">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-somma-orange" />
-            4 e-mails em 7 dias · você sai quando quiser
-          </div>
         </div>
 
-        {/* COLUNA DIREITA — form */}
+        {/* COLUNA DIREITA form */}
         <div className="mx-auto w-full max-w-md lg:justify-self-end">
           {done ? (
             <div className="rounded-3xl border-4 border-somma-black bg-white p-7 text-center shadow-[8px_8px_0_#FF4800] sm:p-8">
@@ -64,10 +60,10 @@ export default function NutricaoCaptureSection() {
                 ✓
               </div>
               <h3 className="font-bebas text-2xl tracking-widest text-somma-black sm:text-3xl">
-                Pronto! Você está dentro.
+                Pronto! Você tá dentro!
               </h3>
               <p className="mx-auto mt-3 max-w-xs font-dm text-sm text-somma-black/70">
-                Seu primeiro e-mail já está a caminho — confira a caixa de entrada (e a de spam, só por garantia).
+                Seu primeiro e-mail já tá voando! Dá uma olhada na caixa de entrada (e na de spam, só por garantia).
               </p>
               <button
                 type="button"

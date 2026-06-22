@@ -58,8 +58,8 @@ const STEPS = [
   },
   {
     n: '07',
-    title: 'Confirme sua vaga',
-    body: 'Após o pagamento, a inscrição será confirmada diretamente no app. É só aparecer no dia!',
+    title: 'Vaga garantida!',
+    body: 'Pagou, confirmou no app, fim de papo. Agora é contar os dias pra 18 de julho!',
     color: 'bg-somma-yellow',
     textColor: 'text-somma-yellow',
     apps: false,
@@ -106,12 +106,12 @@ export default function TFSportsPurchaseJourney() {
           </span>
         </div>
         <h2 className="mb-4 text-center font-bebas text-4xl leading-[1.05] tracking-tight text-somma-cream sm:text-6xl md:text-7xl">
-          A venda acontece{' '}
-          <span className="block text-somma-yellow sm:mt-1">no app da Track&amp;Field</span>
+          Sua vaga rola{' '}
+          <span className="block text-somma-yellow sm:mt-1">direto no app da Track&amp;Field!</span>
         </h2>
         <p className="mx-auto mb-10 max-w-xl text-center font-dm text-sm leading-relaxed text-somma-cream/70 md:mb-14 md:text-base">
-          Não há inscrição por aqui nem em nenhum outro canal: sua vaga no Somma Special Day é garantida
-          dentro do app oficial <span className="font-semibold text-somma-cream">TFSports</span>. Veja o passo a passo abaixo.
+          Sem segredo nem rolê paralelo: a inscrição é só dentro do app oficial
+          <span className="font-semibold text-somma-cream"> TFSports</span>. Olha aqui o passo a passo.
         </p>
 
         {/* Grid de steps */}
@@ -170,10 +170,10 @@ export default function TFSportsPurchaseJourney() {
         {/* Mensagem institucional + CTA final */}
         <div className="mt-14 text-center">
           <p className="font-bebas text-2xl md:text-3xl text-somma-cream tracking-widest mb-2">
-            O jeito TFSports de colocar você em movimento.
+            Baixou? Já entra. A festa começa antes do dia do evento!
           </p>
           <p className="font-dm text-somma-cream/50 text-sm mb-8">
-            Vem com a gente! Convoque quem quiser. É hora de se mexer. Vamos juntos.
+            Chama a galera, manda no grupo, marca aquele amigo. Vamos lotar o COPMDF juntos!
           </p>
 
           <div className="flex w-full flex-col items-center justify-center gap-4 sm:flex-row">

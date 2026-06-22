@@ -22,18 +22,18 @@ export default function AddToCalendarSection() {
               Adicione na sua agenda
             </p>
             <h2 className="mt-3 font-bebas text-4xl leading-[0.95] tracking-wide md:text-6xl">
-              NUNCA MAIS PERCA <span className="text-somma-orange">UM EVENTO SOMMA.</span>
+              NUNCA MAIS PERCA <span className="text-somma-orange">UM EVENTO SOMMA!</span>
             </h2>
             <p className="mx-auto mt-5 max-w-xl font-dm text-base leading-relaxed text-somma-cream/80 lg:mx-0 md:text-lg">
-              Assine a Agenda Somma Club uma única vez e o calendário do seu celular passa a receber
-              <span className="font-semibold text-somma-cream"> automaticamente</span> todos os eventos do ano —
-              com lembretes.
+              Assina uma vez só e pronto. O calendário do seu celular recebe
+              <span className="font-semibold text-somma-cream"> automaticamente</span> tudo o que rola
+              no Somma o ano inteiro, com lembretes na hora certa.
             </p>
 
             <ul className="mx-auto mt-6 max-w-md space-y-2.5 text-left lg:mx-0">
               <li className="flex items-start gap-3 font-dm text-sm text-somma-cream/90 md:text-base">
                 <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 border-somma-orange bg-somma-orange/20 text-xs">⭐</span>
-                <span><strong className="text-somma-orange">Somma Special Day</strong> — 18 de julho · COPMDF</span>
+                <span><strong className="text-somma-orange">Somma Special Day</strong>, 18 de julho no COPMDF</span>
               </li>
               <li className="flex items-start gap-3 font-dm text-sm text-somma-cream/90 md:text-base">
                 <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 border-somma-yellow bg-somma-yellow/20 text-xs">📅</span>
@@ -41,7 +41,7 @@ export default function AddToCalendarSection() {
               </li>
               <li className="flex items-start gap-3 font-dm text-sm text-somma-cream/90 md:text-base">
                 <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 border-somma-blue bg-somma-blue/20 text-xs">🏁</span>
-                <span>Curadoria das <strong className="text-somma-cream">principais corridas do DF</strong> — selecionadas pelo Somma</span>
+                <span>Curadoria das <strong className="text-somma-cream">principais corridas do DF</strong>, selecionadas pelo Somma</span>
               </li>
             </ul>
 
@@ -60,8 +60,8 @@ export default function AddToCalendarSection() {
                 ASSINAR A AGENDA
               </h3>
               <p className="mt-3 font-dm text-sm leading-relaxed text-somma-black/70">
-                Levam menos de 10 segundos. Você assina uma vez, o calendário se mantém atualizado
-                sozinho com novos eventos publicados pelo Somma.
+                10 segundos e tá feito! Você assina uma vez só, e o calendário se atualiza
+                sozinho com tudo que a gente publicar.
               </p>
 
               <button

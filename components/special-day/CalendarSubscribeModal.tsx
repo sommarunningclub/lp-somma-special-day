@@ -88,7 +88,7 @@ export default function CalendarSubscribeModal({ open, onClose }: Props) {
           ESCOLHA SEU CALENDÁRIO
         </h2>
         <p className="mt-2 font-dm text-sm leading-relaxed text-somma-black/70">
-          Selecione onde você quer receber os eventos. A agenda se atualiza sozinha — você assina uma vez só.
+          Escolhe onde você quer receber os eventos. A agenda se atualiza sozinha! Assina uma vez só e pronto.
         </p>
 
         {/* Botões por plataforma */}

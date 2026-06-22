@@ -17,15 +17,15 @@ export default function InscricaoSection({ closed = false }: { closed?: boolean 
           </p>
           <h2 className="font-bebas text-4xl leading-[0.95] tracking-tight text-somma-cream sm:text-6xl md:text-7xl">
             {closed ? (
-              <>O 1º lote já<br />está no app</>
+              <>O 1º lote<br />já tá no app!</>
             ) : (
-              <>Faça seu<br />cadastro</>
+              <>Bora se<br />cadastrar?</>
             )}
           </h2>
           <p className="mx-auto mt-5 max-w-md font-dm text-base leading-relaxed text-somma-cream/80 lg:mx-0">
             {closed
-              ? 'A pré-venda terminou. Agora você garante o 1º lote por R$ 127,50 direto no app Track&Field — e o preço só sobe.'
-              : 'Cadastre-se para garantir sua inscrição no Somma Special Day pelo menor preço. As vagas da pré-venda são limitadas e acabam domingo.'}
+              ? 'A pré-venda acabou! Agora seu ingresso é R$ 127,50 no 1º lote, direto no app Track&Field. E o preço só sobe daqui pra frente.'
+              : 'Cadastra aqui e garante o menor preço do evento. Vaga da pré-venda é limitada e acaba domingo. Não vai bobear, hein?'}
           </p>
         </div>
 
@@ -46,8 +46,8 @@ export default function InscricaoSection({ closed = false }: { closed?: boolean 
                   Garanta o 1º lote
                 </h2>
                 <p className="mt-3 max-w-sm font-dm text-sm leading-relaxed text-somma-black/60">
-                  A pré-venda (R$ 97) acabou. Agora a inscrição é o 1º lote por{' '}
-                  <strong>R$ 127,50</strong>, direto no app Track&amp;Field.
+                  Acabou a pré-venda (R$ 97). Agora a inscrição é o 1º lote por{' '}
+                  <strong>R$ 127,50</strong>, direto no app Track&amp;Field. Corre lá!
                 </p>
                 <a
                   href={PRESALE.eventoUrl}

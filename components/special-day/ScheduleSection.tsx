@@ -11,43 +11,43 @@ gsap.registerPlugin(ScrollTrigger)
 const PROGRAMACAO = [
   {
     hora: '06h00',
-    titulo: 'Abertura dos portões',
-    desc: 'Chegada e credenciamento. O dia começa cedo.',
+    titulo: 'Portões abertos!',
+    desc: 'O dia começa cedo. Bora chegar com calma, fazer o credenciamento e curtir o nascer do sol.',
     emoji: '🚪',
     cor: '#FF4800',
   },
   {
-    hora: '07h — 08h',
+    hora: '07h às 08h',
     titulo: 'Treinão Corre Somma',
-    desc: 'A corrida que dá nome ao dia: 4 km e 8 km pela orla.',
+    desc: 'A corrida que dá nome ao dia: 4 km e 8 km de pura energia pela orla.',
     emoji: '🏃',
     cor: '#005EFF',
   },
   {
-    hora: '08h — 09h',
+    hora: '08h às 09h',
     titulo: 'Fit Dance + café da manhã',
-    desc: 'Aula pra soltar o corpo e café da manhã Big Box pra repor a energia.',
+    desc: 'Aula pra soltar o corpo e o café da manhã Big Box pra recarregar tudo.',
     emoji: '🥐',
     cor: '#FDB716',
   },
   {
-    hora: '09h — 12h',
+    hora: '09h às 12h',
     titulo: 'Roda de samba & ativações',
-    desc: 'Samba ao vivo, ativações dos parceiros, bar, alimentação e Day Use.',
+    desc: 'Samba ao vivo, parceiros ativando, bar abrindo, comida rolando e Day Use solto.',
     emoji: '🥁',
     cor: '#FD6FDB',
   },
   {
-    hora: '11h / 12h — 13h30',
+    hora: '11h às 13h30',
     titulo: 'Gincana Somma',
-    desc: 'Competições com os parceiros, ativações especiais e sorteio de brindes.',
+    desc: 'Competições insanas com a galera, brindes de monte e zero seriedade.',
     emoji: '🎯',
     cor: '#FF4800',
   },
   {
-    hora: '13h30 — 15h',
+    hora: '13h30 às 15h',
     titulo: 'DJ & encerramento social',
-    desc: 'A festa continua até o fim, no melhor clima da comunidade.',
+    desc: 'A festa continua. A gente fecha o dia juntos, no melhor clima da comunidade.',
     emoji: '🎧',
     cor: '#005EFF',
   },
@@ -103,7 +103,7 @@ export default function ScheduleSection() {
         </p>
         <h2 className="mb-12 text-center font-bebas text-4xl leading-[1.05] tracking-tight text-somma-black sm:mb-16 sm:text-6xl md:mb-20 md:text-8xl lg:text-9xl">
           A programação{' '}
-          <span className="block text-somma-blue sm:mt-1">do dia 1 ano</span>
+          <span className="block text-somma-blue sm:mt-1">vai te deixar sem fôlego!</span>
         </h2>
 
         <div className="flex flex-col gap-3 sm:gap-4">
@@ -139,7 +139,7 @@ export default function ScheduleSection() {
         {/* Ativações previstas */}
         <div className="mt-10 rounded-3xl bg-somma-black px-6 py-10 text-center sm:mt-12 sm:py-12">
           <p className="font-dm text-xs uppercase tracking-[0.3em] text-somma-yellow">
-            Ativações previstas durante o evento
+            Quem vem com a gente nesse dia
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-8 sm:gap-x-16">
             {ATIVACOES.map((marca, i) => (
