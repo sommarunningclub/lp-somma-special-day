@@ -1,5 +1,5 @@
 import PresaleSignupForm from '@/components/special-day/PresaleSignupForm'
-import { PRESALE } from '@/lib/presale-constants'
+import InscricaoLoteForm from '@/components/special-day/InscricaoLoteForm'
 
 /**
  * Seção de cadastro na home. Reusa o MESMO fluxo da Lista VIP:
@@ -31,35 +31,17 @@ export default function InscricaoSection({ closed = false }: { closed?: boolean 
 
         {/* Form / CTA */}
         <div className="w-full justify-self-center lg:justify-self-end">
-          <PresaleSignupForm
-            closed={closed}
-            eyebrow="Cadastro · Pré-venda"
-            title="Garanta sua vaga"
-            subtitle="Preencha seus dados e garanta o menor preço do evento."
-            submitLabel="QUERO GARANTIR MINHA VAGA"
-            closedContent={
-              <div className="flex flex-col items-center py-6 text-center">
-                <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-somma-orange/15 px-4 py-2 font-dm text-xs font-bold uppercase tracking-widest text-somma-orange">
-                  Pré-venda encerrada
-                </span>
-                <h2 className="font-bebas text-4xl leading-tight tracking-wide text-somma-black md:text-5xl">
-                  Garanta o 1º lote
-                </h2>
-                <p className="mt-3 max-w-sm font-dm text-sm leading-relaxed text-somma-black/60">
-                  Acabou a pré-venda (R$ 97). Agora a inscrição é o 1º lote por{' '}
-                  <strong>R$ 127,50</strong>, direto no app Track&amp;Field. Corre lá!
-                </p>
-                <a
-                  href={PRESALE.eventoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-6 w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-3 py-4 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] sm:w-auto sm:px-8"
-                >
-                  Comprar no app Track&amp;Field
-                </a>
-              </div>
-            }
-          />
+          {closed ? (
+            <InscricaoLoteForm />
+          ) : (
+            <PresaleSignupForm
+              closed={false}
+              eyebrow="Cadastro · Pré-venda"
+              title="Garanta sua vaga"
+              subtitle="Preencha seus dados e garanta o menor preço do evento."
+              submitLabel="QUERO GARANTIR MINHA VAGA"
+            />
+          )}
         </div>
       </div>
     </section>

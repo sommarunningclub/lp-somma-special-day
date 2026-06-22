@@ -1,4 +1,4 @@
-import { LOTES, PRESALE } from '@/lib/presale-constants'
+import { LOTES } from '@/lib/presale-constants'
 
 /**
  * Tabela de lotes do Somma Special Day.
@@ -88,12 +88,10 @@ export default function LotesSection({ closed = false }: { closed?: boolean }) {
                   )}
                   {isL1 && closed && (
                     <a
-                      href={PRESALE.eventoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href="#inscricao"
                       className="block w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-3 py-3.5 text-center font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#0a0a0a]"
                     >
-                      Comprar no app
+                      Garantir minha vaga
                     </a>
                   )}
                   {((isL1 && !closed) || lote.key === 'l2' || encerrado) && (
