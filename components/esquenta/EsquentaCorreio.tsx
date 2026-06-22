@@ -101,8 +101,13 @@ export default function EsquentaCorreio() {
                 </div>
               ) : enviado ? (
                 <div className="mt-6 rounded-2xl border-2 border-dashed border-somma-orange/50 bg-somma-orange/[0.06] p-6 text-center">
-                  <JuninoIcon name="correio" className="mx-auto h-9 w-9 text-somma-orange" />
-                  <p className="mt-3 font-bebas text-2xl uppercase tracking-wide text-somma-black">Correio enviado! 💌</p>
+                  <div className="mx-auto w-fit rounded-full p-[3px]" style={{ background: 'linear-gradient(45deg, #FF4800, #FDB716, #FD6FDB, #005EFF)' }}>
+                    <div className="rounded-full bg-somma-cream p-[3px]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/yas_correio_parabens.gif" alt="Recado guardado" className="h-24 w-24 rounded-full object-cover" />
+                    </div>
+                  </div>
+                  <p className="mt-4 font-bebas text-2xl uppercase tracking-wide text-somma-black">Correio enviado! 💌</p>
                   <p className="mt-1 font-dm text-sm text-somma-black/65">
                     Anotado! No dia do Esquenta seu recado entra no Correio Elegante. 🧡
                   </p>
