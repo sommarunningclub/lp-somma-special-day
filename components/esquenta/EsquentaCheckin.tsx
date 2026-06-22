@@ -42,7 +42,10 @@ export default function EsquentaCheckin() {
 
   // Sem dado do evento (erro de fetch) caímos no formulário para não travar o usuário.
   const status = evento?.checkin_status ?? 'aberto'
-  const precisaPelotao = evento?.tipo === 'corrida' && !!evento?.pelotoes?.length
+  // Pelotões: usa os do evento (se houver) ou as distâncias padrão (mesmas do check-in oficial).
+  const pelotoesList = evento?.pelotoes?.length
+    ? evento.pelotoes.map((v) => ({ value: v, label: '', desc: '' }))
+    : ESQUENTA.checkinPelotoes
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -51,8 +54,8 @@ export default function EsquentaCheckin() {
       setErro('Preencha todos os campos.')
       return
     }
-    if (precisaPelotao && !form.pelotao) {
-      setErro('Escolha o seu pelotão.')
+    if (!form.pelotao) {
+      setErro('Escolha a sua distância.')
       return
     }
     setSubmitting(true)
@@ -66,7 +69,7 @@ export default function EsquentaCheckin() {
           telefone: form.telefone,
           cpf: form.cpf,
           sexo: form.sexo,
-          pelotao: precisaPelotao ? form.pelotao : null,
+          pelotao: form.pelotao || null,
           evento_id: ESQUENTA.checkinEventoId,
           nome_do_evento: evento?.titulo ?? ESQUENTA.nome,
           data_do_evento: evento?.data_evento ?? '',
@@ -149,6 +152,24 @@ export default function EsquentaCheckin() {
 
                   <form onSubmit={handleSubmit} noValidate className="space-y-5">
                     <div>
+                      <label className={labelCls}>Distância</label>
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                        {pelotoesList.map((p) => (
+                          <button
+                            key={p.value}
+                            type="button"
+                            onClick={() => setForm({ ...form, pelotao: p.value })}
+                            className={`rounded-xl border-2 px-3 py-2.5 text-left transition-all ${
+                              form.pelotao === p.value ? 'border-somma-orange bg-somma-orange/10' : 'border-somma-black/15 bg-white hover:border-somma-black/30'
+                            }`}
+                          >
+                            <span className="block font-bebas text-lg leading-none tracking-wide text-somma-black">{p.value}</span>
+                            {p.label && <span className="mt-0.5 block font-dm text-[11px] leading-tight text-somma-black/55">{p.label}</span>}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
                       <label className={labelCls}>Nome completo</label>
                       <input value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} placeholder="Seu nome" className={inputCls} />
                     </div>
@@ -174,16 +195,6 @@ export default function EsquentaCheckin() {
                       <label className={labelCls}>CPF</label>
                       <input value={form.cpf} inputMode="numeric" onChange={(e) => setForm({ ...form, cpf: formatCPF(e.target.value) })} placeholder="000.000.000-00" className={inputCls} />
                     </div>
-
-                    {precisaPelotao && (
-                      <div>
-                        <label className={labelCls}>Pelotão</label>
-                        <select value={form.pelotao} onChange={(e) => setForm({ ...form, pelotao: e.target.value })} className={`${inputCls} cursor-pointer`}>
-                          <option value="" disabled>Selecione</option>
-                          {evento?.pelotoes?.map((p) => <option key={p} value={p}>{p}</option>)}
-                        </select>
-                      </div>
-                    )}
 
                     {erro && (
                       <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-center font-dm text-sm text-red-600">{erro}</p>

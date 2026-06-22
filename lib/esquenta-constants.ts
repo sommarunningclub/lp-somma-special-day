@@ -22,6 +22,14 @@ export const ESQUENTA = {
   // Evento criado na gestão (admin) — os check-ins gravam neste evento_id.
   checkinEventoId: '83b744b2-e3a5-42fa-b5c4-09bdbcdf0d70',
 
+  // Pelotões/distâncias do check-in (mesmas opções do check-in oficial).
+  // Ajuste aqui se o Esquenta tiver distâncias diferentes.
+  checkinPelotoes: [
+    { value: '4km', label: 'Ritmo Iniciante', desc: '4 km · ritmo leve' },
+    { value: '6km', label: 'Ritmo Moderado', desc: '6 km · ritmo médio' },
+    { value: '8km', label: 'Ritmo Avançado', desc: '8 km · ritmo forte' },
+  ] as { value: string; label: string; desc: string }[],
+
   // Localização (106 Sul, Brasília) — coordenadas e links de mapa configuráveis
   coords: { lat: -15.8140469, lng: -47.8968315 },
   maps: {
