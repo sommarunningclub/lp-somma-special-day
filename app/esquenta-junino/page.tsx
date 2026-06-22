@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import SmoothScroll from '@/components/SmoothScroll'
 import FooterSection from '@/components/special-day/FooterSection'
 import EsquentaHero from '@/components/esquenta/EsquentaHero'
+import EsquentaCheckin from '@/components/esquenta/EsquentaCheckin'
 import EsquentaPosicionamento from '@/components/esquenta/EsquentaPosicionamento'
 import EsquentaExperiencias from '@/components/esquenta/EsquentaExperiencias'
 import EsquentaConcurso from '@/components/esquenta/EsquentaConcurso'
@@ -44,6 +45,7 @@ export default function EsquentaJuninoPage() {
   return (
     <SmoothScroll>
       <EsquentaHero />
+      <EsquentaCheckin />
       <EsquentaPosicionamento />
       <EsquentaExperiencias />
       <EsquentaConcurso />

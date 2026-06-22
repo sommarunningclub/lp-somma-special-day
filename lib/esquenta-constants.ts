@@ -16,8 +16,11 @@ export const ESQUENTA = {
 
   // CTA "Conhecer / Ver o Somma Special Day" → página principal
   siteUrl: 'https://specialday.sommaclub.com.br/',
-  // CTA "Quero participar" → âncora (ou troque por um link de inscrição quando existir)
-  participarHref: '#localizacao',
+  // CTA "Quero participar" → seção de check-in embutida
+  participarHref: '#check-in',
+
+  // Evento criado na gestão (admin) — os check-ins gravam neste evento_id.
+  checkinEventoId: '83b744b2-e3a5-42fa-b5c4-09bdbcdf0d70',
 
   // Localização (106 Sul, Brasília) — coordenadas e links de mapa configuráveis
   coords: { lat: -15.8140469, lng: -47.8968315 },
