@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { sendCheckinConfirmation } from '@/lib/emails/send-checkin'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
@@ -70,6 +71,13 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error('[esquenta-checkin] erro ao inserir:', error.message)
       return NextResponse.json({ error: `Erro ao salvar check-in: ${error.message}` }, { status: 500 })
+    }
+
+    // E-mail de confirmação (não bloqueia o check-in se falhar).
+    try {
+      await sendCheckinConfirmation({ nome: nome_completo, email, distancia: pelotao || null })
+    } catch (e) {
+      console.error('[esquenta-checkin] e-mail falhou:', e)
     }
 
     return NextResponse.json({ success: true, data }, { status: 201 })
