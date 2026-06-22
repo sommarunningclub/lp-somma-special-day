@@ -28,7 +28,7 @@ function esc(value: string): string {
  * Bloco "Como funciona o resgate" — explica passo a passo o processo de
  * baixar app → buscar evento → aplicar cupom. Reforça vantagem Porto Seguro.
  *
- * @param cupom Código a destacar (ex.: SOMMAVIP). Se omitido, fala genericamente.
+ * @param cupom Código a destacar (ex.: SOMMA15). Se omitido, fala genericamente.
  * @param colors Paleta do template para harmonizar com o tema (light/dark bg).
  */
 export function howItWorksBlock(cupom: string | undefined, colors: Palette): string {

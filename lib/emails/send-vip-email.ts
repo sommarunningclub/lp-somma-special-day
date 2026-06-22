@@ -1,6 +1,6 @@
 import { Resend } from 'resend'
 import { renderVipTicketEmail } from './vip-ticket'
-import { PRESALE } from '@/lib/presale-constants'
+import { EMAIL_COUPON } from './email-coupon'
 
 interface SendVipEmailArgs {
   nome: string
@@ -8,7 +8,7 @@ interface SendVipEmailArgs {
   cupom?: string
 }
 
-export async function sendVipTicketEmail({ nome, email, cupom = PRESALE.cupom }: SendVipEmailArgs): Promise<string | null> {
+export async function sendVipTicketEmail({ nome, email, cupom = EMAIL_COUPON.cupom }: SendVipEmailArgs): Promise<string | null> {
   const apiKey = process.env.RESEND_API_KEY
   const from = process.env.VIP_EMAIL_FROM
 

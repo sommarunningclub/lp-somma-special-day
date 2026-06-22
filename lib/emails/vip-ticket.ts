@@ -1,4 +1,5 @@
 import { PRESALE } from '@/lib/presale-constants'
+import { EMAIL_COUPON } from './email-coupon'
 import { howItWorksBlock, addToCalendarBlock } from './shared-blocks'
 
 interface VipTicketEmailData {
@@ -19,7 +20,7 @@ const COLORS = {
 const LOGO_URL = 'https://1-ano-sommaday.vercel.app/logo-special-day.png'
 
 export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): string {
-  const codigo = cupom || PRESALE.cupom
+  const codigo = cupom || EMAIL_COUPON.cupom
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -74,7 +75,7 @@ export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): strin
                     <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.orange};">Seu cupom de pré-venda</p>
                     <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:${COLORS.black};">
                       A inscrição acontece <strong>dentro do app TF Sports</strong>. Use o cupom abaixo na hora de pagar
-                      e garanta o valor do <strong>${escapeHtml(PRESALE.loteLabel)}</strong>. Quando o lote virar, o preço sobe.
+                      e garanta o valor do <strong>${escapeHtml(EMAIL_COUPON.loteLabel)}</strong>. Quando o lote virar, o preço sobe.
                     </p>
 
                     <!-- Cupom em destaque -->
@@ -87,10 +88,10 @@ export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): strin
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;">
                       <tr>
                         <td align="center" style="padding:14px;background-color:#0a0a0a08;border-radius:12px;">
-                          <span style="font-size:13px;color:#0a0a0a80;text-decoration:line-through;">De ${escapeHtml(PRESALE.precoDe)}</span>
+                          <span style="font-size:13px;color:#0a0a0a80;text-decoration:line-through;">De ${escapeHtml(EMAIL_COUPON.precoDe)}</span>
                           <span style="display:inline-block;margin:0 6px;color:#0a0a0a40;">&rarr;</span>
-                          <span style="font-size:22px;font-weight:bold;color:${COLORS.green};">Por ${escapeHtml(PRESALE.precoPor)}</span>
-                          <p style="margin:6px 0 0;font-size:12px;font-weight:bold;color:${COLORS.green};">Você economiza ${escapeHtml(PRESALE.economia)} (${escapeHtml(PRESALE.descontoPct)} de desconto)</p>
+                          <span style="font-size:22px;font-weight:bold;color:${COLORS.green};">Por ${escapeHtml(EMAIL_COUPON.precoPor)}</span>
+                          <p style="margin:6px 0 0;font-size:12px;font-weight:bold;color:${COLORS.green};">Você economiza ${escapeHtml(EMAIL_COUPON.economia)} (${escapeHtml(EMAIL_COUPON.descontoPct)} de desconto)</p>
                         </td>
                       </tr>
                     </table>
@@ -154,7 +155,7 @@ export function renderVipTicketEmail({ nome, cupom }: VipTicketEmailData): strin
                   Não perca o prazo
                 </p>
                 <p style="margin:6px 0 0;font-size:13px;color:#ffffffe6;line-height:1.5;">
-                  Use o cupom <strong>${escapeHtml(codigo)}</strong> dentro do app TF Sports para travar o ${escapeHtml(PRESALE.loteLabel)}. Quando o lote virar, o preço sobe e o cupom deixa de funcionar.
+                  Use o cupom <strong>${escapeHtml(codigo)}</strong> dentro do app TF Sports para travar o ${escapeHtml(EMAIL_COUPON.loteLabel)}. Quando o lote virar, o preço sobe e o cupom deixa de funcionar.
                 </p>
               </div>
             </td>

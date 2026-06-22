@@ -1,5 +1,6 @@
 import type { NutricaoStep } from '@/lib/nutricao/nutricao-steps'
 import { PRESALE } from '@/lib/presale-constants'
+import { EMAIL_COUPON } from './email-coupon'
 import { howItWorksBlock, addToCalendarBlock } from './shared-blocks'
 
 interface NutricaoEmailData {
@@ -114,7 +115,7 @@ export function renderNutricaoEmail({ nome, stepConfig: cfg, unsubscribeUrl }: N
             </td>
           </tr>
 
-          ${howItWorksBlock(cfg.step === 'd6_oferta_final' ? PRESALE.cupom : undefined, {
+          ${howItWorksBlock(cfg.step === 'd6_oferta_final' ? EMAIL_COUPON.cupom : undefined, {
             black: COLORS.black,
             cream: COLORS.cream,
             orange: COLORS.orange,

@@ -1,4 +1,5 @@
 import { PRESALE } from '@/lib/presale-constants'
+import { EMAIL_COUPON } from './email-coupon'
 import { getCountdownStep, type CountdownStepKey } from '@/lib/campaign/vip-countdown-steps'
 import { howItWorksBlock, addToCalendarBlock } from './shared-blocks'
 
@@ -46,7 +47,7 @@ export function renderCountdownEmail({ nome, step, unsubscribeUrl }: CountdownEm
 </head>
 <body style="margin:0;padding:0;background-color:#ff4701;font-family:Arial,Helvetica,sans-serif;">
   <!-- preheader oculto -->
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Não perca: ${escapeHtml(cfg.countdown)} — cupom ${escapeHtml(PRESALE.cupom)} garante ${escapeHtml(PRESALE.precoPor)}.</div>
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Não perca: ${escapeHtml(cfg.countdown)} — cupom ${escapeHtml(EMAIL_COUPON.cupom)} garante ${escapeHtml(EMAIL_COUPON.precoPor)}.</div>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ff4701;padding:32px 16px;">
     <tr>
       <td align="center">
@@ -89,22 +90,22 @@ export function renderCountdownEmail({ nome, step, unsubscribeUrl }: CountdownEm
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${COLORS.cream};border-radius:20px;overflow:hidden;">
                 <tr>
                   <td style="padding:28px;">
-                    <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.orange};">Seu cupom de pré-venda — ${escapeHtml(PRESALE.loteLabel)}</p>
+                    <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.orange};">Seu cupom de pré-venda — ${escapeHtml(EMAIL_COUPON.loteLabel)}</p>
 
                     <!-- Cupom -->
                     <div style="margin-top:16px;border:2px dashed ${COLORS.orange};border-radius:14px;padding:18px;text-align:center;">
                       <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:#0a0a0a80;">Cupom da pré-venda</p>
-                      <p style="margin:6px 0 0;font-size:40px;font-weight:bold;letter-spacing:5px;color:${COLORS.orange};line-height:1;">${escapeHtml(PRESALE.cupom)}</p>
+                      <p style="margin:6px 0 0;font-size:40px;font-weight:bold;letter-spacing:5px;color:${COLORS.orange};line-height:1;">${escapeHtml(EMAIL_COUPON.cupom)}</p>
                     </div>
 
                     <!-- Preço de / por -->
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;">
                       <tr>
                         <td align="center" style="padding:14px;background-color:#0a0a0a08;border-radius:12px;">
-                          <span style="font-size:13px;color:#0a0a0a80;text-decoration:line-through;">De ${escapeHtml(PRESALE.precoDe)}</span>
+                          <span style="font-size:13px;color:#0a0a0a80;text-decoration:line-through;">De ${escapeHtml(EMAIL_COUPON.precoDe)}</span>
                           <span style="display:inline-block;margin:0 6px;color:#0a0a0a40;">&rarr;</span>
-                          <span style="font-size:22px;font-weight:bold;color:${COLORS.green};">Por ${escapeHtml(PRESALE.precoPor)}</span>
-                          <p style="margin:6px 0 0;font-size:12px;font-weight:bold;color:${COLORS.green};">Você economiza ${escapeHtml(PRESALE.economia)} (${escapeHtml(PRESALE.descontoPct)} de desconto)</p>
+                          <span style="font-size:22px;font-weight:bold;color:${COLORS.green};">Por ${escapeHtml(EMAIL_COUPON.precoPor)}</span>
+                          <p style="margin:6px 0 0;font-size:12px;font-weight:bold;color:${COLORS.green};">Você economiza ${escapeHtml(EMAIL_COUPON.economia)} (${escapeHtml(EMAIL_COUPON.descontoPct)} de desconto)</p>
                         </td>
                       </tr>
                     </table>
@@ -116,7 +117,7 @@ export function renderCountdownEmail({ nome, step, unsubscribeUrl }: CountdownEm
                           <a href="${PRESALE.eventoUrl}" style="display:block;background-color:${COLORS.orange};color:#ffffff;text-decoration:none;text-align:center;font-size:16px;font-weight:bold;padding:16px;border-radius:12px;">
                             ${escapeHtml(cfg.cta)}
                           </a>
-                          <p style="margin:8px 0 0;font-size:11px;color:#0a0a0a80;">Aplique o cupom <strong>${escapeHtml(PRESALE.cupom)}</strong> na hora de pagar no app TF Sports.</p>
+                          <p style="margin:8px 0 0;font-size:11px;color:#0a0a0a80;">Aplique o cupom <strong>${escapeHtml(EMAIL_COUPON.cupom)}</strong> na hora de pagar no app TF Sports.</p>
                         </td>
                       </tr>
                     </table>
@@ -126,7 +127,7 @@ export function renderCountdownEmail({ nome, step, unsubscribeUrl }: CountdownEm
             </td>
           </tr>
 
-          ${howItWorksBlock(PRESALE.cupom, {
+          ${howItWorksBlock(EMAIL_COUPON.cupom, {
             black: COLORS.black,
             cream: COLORS.cream,
             orange: COLORS.orange,
