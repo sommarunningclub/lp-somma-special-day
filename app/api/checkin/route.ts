@@ -1,8 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 
 export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+export const revalidate = 0
 export const runtime = 'nodejs'
+
+// Client com fetch no-store (dedupe precisa enxergar check-ins recentes).
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  {
+    auth: { persistSession: false },
+    global: { fetch: (url, opts) => fetch(url, { ...opts, cache: 'no-store' }) },
+  }
+)
 
 /**
  * Grava o check-in na tabela compartilhada `checkins` (mesmo Supabase da gestão).
@@ -17,8 +29,6 @@ export async function POST(request: NextRequest) {
     if (!nome_completo || !email || !telefone || !cpf || !sexo) {
       return NextResponse.json({ error: 'Campos obrigatórios faltando' }, { status: 400 })
     }
-
-    const supabase = createServerClient()
 
     // Dedupe: 1 CPF por evento.
     if (evento_id) {
