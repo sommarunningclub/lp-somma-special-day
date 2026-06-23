@@ -19,7 +19,7 @@ import EsquentaCorreioFloat from '@/components/esquenta/EsquentaCorreioFloat'
 const URL = 'https://specialday.sommaclub.com.br/esquenta-junino'
 const TITLE = 'Esquenta SOMMA Special Day | Edição Especial Junina em Brasília'
 const DESCRIPTION =
-  'Corre, café da manhã Big Box, comidas típicas, ativações, sorteios e concurso de melhor caracterização junina. Dia 28 de junho, na 106 Sul, Brasília DF.'
+  'Corre, café da manhã Big Box, comidas típicas, ativações, sorteios e concurso de melhor caracterização junina. Dia 28 de junho, entre a 106 e 107 Sul, Brasília DF.'
 
 export const metadata: Metadata = {
   title: TITLE,

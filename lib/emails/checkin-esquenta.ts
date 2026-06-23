@@ -88,8 +88,12 @@ export function renderCheckinEsquentaEmail({ nome, distancia }: CheckinEmailData
                       </tr>
                       <tr>
                         ${info('Concentração', ESQUENTA.concentracao)}
-                        ${distancia ? info('Distância', distancia) : info('Início do corre', ESQUENTA.inicioCorre)}
+                        ${info('Aquecimento e largada', ESQUENTA.inicioCorre)}
                       </tr>
+                      ${distancia ? `<tr>
+                        ${info('Distância', distancia)}
+                        <td width="50%"></td>
+                      </tr>` : ''}
                     </table>
                   </td>
                 </tr>

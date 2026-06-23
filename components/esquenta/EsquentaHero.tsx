@@ -7,7 +7,7 @@ const QUICK = [
   { icon: 'chapeu', label: ESQUENTA.data },
   { icon: 'marca', label: ESQUENTA.local },
   { icon: 'fogueira', label: `Concentração às ${ESQUENTA.concentracao}` },
-  { icon: 'corre', label: `Início do corre às ${ESQUENTA.inicioCorre}` },
+  { icon: 'corre', label: `Aquecimento e largada às ${ESQUENTA.inicioCorre}` },
 ]
 
 export default function EsquentaHero() {

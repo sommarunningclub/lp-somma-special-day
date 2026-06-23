@@ -90,7 +90,7 @@ export default function EsquentaMap() {
   if (erro) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center bg-somma-black/5 text-center">
-        <p className="font-bebas text-2xl uppercase tracking-wide text-somma-black">106 Sul · Brasília DF</p>
+        <p className="font-bebas text-2xl uppercase tracking-wide text-somma-black">Entre 106 e 107 Sul · Brasília DF</p>
         <a href={ESQUENTA.maps.abrirNoMaps} target="_blank" rel="noopener noreferrer" className="mt-2 font-dm text-sm font-bold text-somma-orange underline-offset-2 hover:underline">
           Abrir no Google Maps
         </a>
@@ -98,5 +98,5 @@ export default function EsquentaMap() {
     )
   }
 
-  return <div ref={ref} className="h-full w-full" aria-label="Mapa do local do evento, 106 Sul, Brasília DF" role="img" />
+  return <div ref={ref} className="h-full w-full" aria-label="Mapa do local do evento, entre a 106 e 107 Sul, Brasília DF" role="img" />
 }

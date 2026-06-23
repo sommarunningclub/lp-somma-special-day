@@ -8,12 +8,12 @@ type Mode = 'metro' | 'carro'
 
 const METRO = [
   { label: 'Embarque no metrô', detail: 'Pegue o metrô no sentido Central e desça na estação 106 Sul.' },
-  { label: 'Caminhada de ~5 minutos', detail: 'Da saída da estação, siga em direção ao ponto de encontro do SOMMA na 106 Sul.', tag: '~5 min a pé' },
+  { label: 'Caminhada de ~5 minutos', detail: 'Da saída da estação, siga em direção ao ponto de encontro do SOMMA, entre a 106 e 107 Sul.', tag: '~5 min a pé' },
   { label: 'Chegou! Local do evento', detail: 'Procure pela estrutura do SOMMA, pelas ativações das marcas e pelo espaço do café da manhã.', tag: `${ESQUENTA.concentracao}`, destaque: true },
 ]
 
 const CARRO = [
-  { label: 'Chegue com antecedência', detail: 'Procure estacionar nas vias próximas à 106 Sul. Evite parar em áreas de circulação.' },
+  { label: 'Chegue com antecedência', detail: 'Procure estacionar nas vias próximas, entre a 106 e 107 Sul. Evite parar em áreas de circulação.' },
   { label: 'Dividam a carona', detail: 'Chama a galera e venham juntos. Menos carro, mais encontro.' },
   { label: 'Chegou! Local do evento', detail: 'Procure pela estrutura do SOMMA e pelo espaço do café da manhã.', tag: `${ESQUENTA.concentracao}`, destaque: true },
 ]
@@ -36,7 +36,7 @@ export default function EsquentaComoChegar() {
             Como chegar
           </Reveal>
           <Reveal as="h2" delay={60} className="font-bebas text-4xl leading-[1.02] tracking-tight text-somma-cream sm:text-6xl md:text-7xl">
-            Chegando na 106 Sul
+            Chegando entre a 106 e 107 Sul
           </Reveal>
           <Reveal as="p" delay={120} className="mt-4 max-w-lg font-dm text-sm leading-relaxed text-somma-cream/65 sm:text-base">
             A concentração começa às {ESQUENTA.concentracao}. Se programa pra chegar com calma, fazer o check-in, curtir

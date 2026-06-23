@@ -6,22 +6,22 @@ export const ESQUENTA = {
   edicao: 'Edição Especial Junina',
   data: 'Domingo, 28 de junho',
   dataCurta: '28 de junho',
-  local: '106 Sul, Brasília DF',
-  localCurto: '106 Sul',
-  concentracao: '6h30',
-  inicioCorre: '7h00',
+  local: 'Entre a 106 e 107 Sul, Brasília DF',
+  localCurto: 'Entre 106 e 107 Sul',
+  concentracao: '7h00',
+  inicioCorre: '7h30',
 
   // Foto de fundo do hero (troque por outra de /public/somma-eixao se quiser)
   heroFoto: '/somma-eixao/hero.jpg',
 
   // Dados para "adicionar na agenda" (Google Calendar / .ics).
-  // Horários em UTC (BRT = UTC-3): concentração 6h30 = 09:30Z, fim ~9h30 = 12:30Z.
+  // Horários em UTC (BRT = UTC-3): concentração 7h = 10:00Z, fim ~9h30 = 12:30Z.
   calendario: {
     titulo: 'Esquenta Somma Special Day · Edição Junina',
     descricao:
-      'Corre no Eixão, café da manhã, ativações e muito arraiá. Concentração 6h30, corre começa 7h00. Cola lá: https://specialday.sommaclub.com.br/esquenta-junino',
-    local: 'Eixão, Brasília DF',
-    startUtc: '20260628T093000Z',
+      'Corre no Eixão, café da manhã, ativações e muito arraiá. Concentração 7h, aquecimento e largada 7h30. Cola lá: https://specialday.sommaclub.com.br/esquenta-junino',
+    local: 'Eixão, entre a 106 e 107 Sul, Brasília DF',
+    startUtc: '20260628T100000Z',
     endUtc: '20260628T123000Z',
   },
 
@@ -49,7 +49,7 @@ export const ESQUENTA = {
     { value: '8km', label: 'Modo turbo', desc: '8 km com tudo' },
   ] as { value: string; label: string; desc: string }[],
 
-  // Localização (106 Sul, Brasília). Coordenadas e links de mapa configuráveis.
+  // Localização (entre a 106 e 107 Sul, Brasília). Coordenadas e links de mapa configuráveis.
   coords: { lat: -15.8140469, lng: -47.8968315 },
   maps: {
     abrirNoMaps:
@@ -94,14 +94,14 @@ export const CORREIO_EXEMPLOS = [
 
 export type ProgramaItem = { hora: string; titulo: string; texto: string; cor: string; destaque?: boolean }
 export const PROGRAMACAO: ProgramaItem[] = [
-  { hora: '06h30', titulo: 'Chegada e check-in', texto: 'Cola cedo, faz o check-in e já entra no clima.', cor: '#FF4800' },
-  { hora: '06h45', titulo: 'Esquenta da galera', texto: 'Música, fotos, Correio Elegante e aquecimento pra soltar o corpo.', cor: '#FDB716' },
-  { hora: '07h00', titulo: 'Largada do corre', texto: 'A hora H. Todo mundo junto no Eixão.', cor: '#FF4800', destaque: true },
-  { hora: '07h45', titulo: 'Café da Big Box', texto: 'Voltou do corre? Café caprichado te esperando.', cor: '#005EFF' },
-  { hora: '08h00', titulo: 'Arraiá e ativações', texto: 'Comida típica, ativações, foto e os recados do Correio.', cor: '#FD6FDB' },
-  { hora: '08h20', titulo: 'Sorteios e desfile junino', texto: 'Sorteio de brindes e a hora dos looks brilharem.', cor: '#FDB716' },
-  { hora: '08h45', titulo: 'Premiação do look', texto: 'O visual mais arretado leva prêmio.', cor: '#FF4800', destaque: true },
-  { hora: '09h00', titulo: 'Foto oficial e até a próxima', texto: 'A foto da comunidade e aquele até breve.', cor: '#0a0a0a' },
+  { hora: '07h00', titulo: 'Chegada e check-in', texto: 'Concentração às 7h. Cola, faz o check-in e já entra no clima.', cor: '#FF4800' },
+  { hora: '07h15', titulo: 'Aquecimento e esquenta', texto: 'Música, fotos, Correio Elegante e aquecimento pra soltar o corpo.', cor: '#FDB716' },
+  { hora: '07h30', titulo: 'Largada do corre', texto: 'A hora H. Todo mundo junto no Eixão.', cor: '#FF4800', destaque: true },
+  { hora: '08h15', titulo: 'Café da Big Box', texto: 'Voltou do corre? Café caprichado te esperando.', cor: '#005EFF' },
+  { hora: '08h30', titulo: 'Arraiá e ativações', texto: 'Comida típica, ativações, foto e os recados do Correio.', cor: '#FD6FDB' },
+  { hora: '08h50', titulo: 'Sorteios e desfile junino', texto: 'Sorteio de brindes e a hora dos looks brilharem.', cor: '#FDB716' },
+  { hora: '09h15', titulo: 'Premiação do look', texto: 'O visual mais arretado leva prêmio.', cor: '#FF4800', destaque: true },
+  { hora: '09h30', titulo: 'Foto oficial e até a próxima', texto: 'A foto da comunidade e aquele até breve.', cor: '#0a0a0a' },
 ]
 
 // Parceiros. Array configurável (adicione/remova/reordene à vontade).
@@ -134,6 +134,6 @@ export const FAQ = [
   },
   {
     q: 'Onde é o encontro?',
-    a: 'No Eixão, ali na altura da 106 Sul, em Brasília. Te esperamos lá!',
+    a: 'No Eixão, entre a 106 e 107 Sul, em Brasília. Te esperamos lá!',
   },
 ] as const

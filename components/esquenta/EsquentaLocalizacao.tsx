@@ -21,7 +21,7 @@ export default function EsquentaLocalizacao() {
 
         <Reveal delay={120}>
           <p className="mx-auto mb-8 max-w-2xl text-center font-dm text-base leading-relaxed text-somma-black/70">
-            É no Eixão, ali na altura da 106 Sul. Ponto de encontro preparado pra receber a galera, as ativações das
+            É no Eixão, entre a 106 e 107 Sul. Ponto de encontro preparado pra receber a galera, as ativações das
             marcas, o café da manhã e todo o arraiá. Só chegar.
           </p>
         </Reveal>
@@ -41,7 +41,7 @@ export default function EsquentaLocalizacao() {
               <div>
                 <p className="font-bebas text-lg uppercase tracking-wide text-somma-black">{ESQUENTA.local}</p>
                 <p className="mt-0.5 font-dm text-xs text-somma-black/55">
-                  106 Sul · Brasília, DF · {ESQUENTA.data} · Concentração às {ESQUENTA.concentracao} · Início do corre às {ESQUENTA.inicioCorre}
+                  {ESQUENTA.localCurto} · Brasília, DF · {ESQUENTA.data} · Concentração às {ESQUENTA.concentracao} · Aquecimento e largada às {ESQUENTA.inicioCorre}
                 </p>
               </div>
             </div>
