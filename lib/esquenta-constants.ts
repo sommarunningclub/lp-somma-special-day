@@ -53,7 +53,7 @@ export const ESQUENTA = {
   coords: { lat: -15.8140469, lng: -47.8968315 },
   maps: {
     abrirNoMaps:
-      'https://www.google.com/maps/place//@-15.8140469,-47.8968315,17z/data=!3m1!1e3?hl=pt-BR',
+      'https://www.google.com/maps/place//@-15.8139033,-47.8967623,230m/data=!3m1!1e3!4m6!1m5!3m4!2zMTXCsDQ4JzUwLjYiUyA0N8KwNTMnNDguNiJX!8m2!3d-15.8140469!4d-47.8968315?hl=pt-BR',
     google: 'https://www.google.com/maps/dir/?api=1&destination=-15.8140469,-47.8968315',
     waze: 'https://waze.com/ul?ll=-15.8140469,-47.8968315&navigate=yes',
     apple: 'https://maps.apple.com/?daddr=-15.8140469,-47.8968315&dirflg=d',
