@@ -27,8 +27,16 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { nome_completo, email, telefone, cpf, sexo, pelotao, data_do_evento, nome_do_evento, evento_id } = body
 
-    if (!nome_completo || !email || !telefone || !cpf || !sexo) {
+    if (!nome_completo || !email || !telefone || !cpf || !sexo || !pelotao) {
       return NextResponse.json({ error: 'Campos obrigatórios faltando' }, { status: 400 })
+    }
+
+    // Validação básica de formato (defesa no servidor além do front).
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim())
+    const cpfDigitos = String(cpf).replace(/\D/g, '')
+    const telDigitos = String(telefone).replace(/\D/g, '')
+    if (!emailOk || cpfDigitos.length !== 11 || telDigitos.length < 10) {
+      return NextResponse.json({ error: 'Dados inválidos. Confira e-mail, CPF e telefone.' }, { status: 400 })
     }
 
     // Dedupe: 1 CPF por evento.

@@ -21,6 +21,25 @@ function formatPhone(v: string) {
   return v.replace(/\D/g, '').slice(0, 11).replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d{1,4})$/, '$1-$2')
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// Valida CPF (dígitos verificadores). Evita CPF incompleto/inventado na base.
+function isValidCPF(value: string) {
+  const cpf = value.replace(/\D/g, '')
+  if (cpf.length !== 11) return false
+  if (/^(\d)\1{10}$/.test(cpf)) return false // todos os dígitos iguais
+  let soma = 0
+  for (let i = 0; i < 9; i++) soma += parseInt(cpf[i], 10) * (10 - i)
+  let d1 = (soma * 10) % 11
+  if (d1 === 10) d1 = 0
+  if (d1 !== parseInt(cpf[9], 10)) return false
+  soma = 0
+  for (let i = 0; i < 10; i++) soma += parseInt(cpf[i], 10) * (11 - i)
+  let d2 = (soma * 10) % 11
+  if (d2 === 10) d2 = 0
+  return d2 === parseInt(cpf[10], 10)
+}
+
 const inputCls =
   'w-full rounded-xl border-2 border-somma-black/15 bg-white px-4 py-3 font-dm text-somma-black placeholder:text-somma-black/30 focus:border-somma-blue focus:outline-none focus:ring-2 focus:ring-somma-blue/20'
 const labelCls = 'mb-1.5 block font-dm text-xs font-bold uppercase tracking-widest text-somma-black/70'
@@ -29,6 +48,7 @@ export default function EsquentaCheckin() {
   const [evento, setEvento] = useState<Evento | null>(null)
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState({ nome: '', email: '', telefone: '', cpf: '', sexo: '', pelotao: '' })
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [sucesso, setSucesso] = useState(false)
@@ -48,15 +68,36 @@ export default function EsquentaCheckin() {
     ? evento.pelotoes.map((v) => ({ value: v, label: '', desc: '' }))
     : ESQUENTA.checkinPelotoes
 
+  // Atualiza um campo e limpa o erro dele assim que o usuário corrige.
+  function update(field: keyof typeof form, value: string) {
+    setForm((f) => ({ ...f, [field]: value }))
+    setErrors((e) => (e[field] ? { ...e, [field]: '' } : e))
+  }
+
+  // Valida todos os campos obrigatórios e devolve os erros por campo.
+  function validate() {
+    const e: Record<string, string> = {}
+    if (!form.pelotao) e.pelotao = 'Escolha a sua distância.'
+    if (form.nome.trim().length < 3 || !form.nome.trim().includes(' ')) e.nome = 'Informe seu nome completo (nome e sobrenome).'
+    if (!EMAIL_RE.test(form.email.trim())) e.email = 'Informe um e-mail válido.'
+    const tel = form.telefone.replace(/\D/g, '')
+    if (tel.length < 10 || tel.length > 11) e.telefone = 'Informe um telefone com DDD.'
+    if (!form.sexo) e.sexo = 'Selecione uma opção.'
+    if (!isValidCPF(form.cpf)) e.cpf = 'Informe um CPF válido.'
+    return e
+  }
+
+  // Classe do input com destaque vermelho quando o campo tem erro.
+  const fieldCls = (field: string) =>
+    `${inputCls} ${errors[field] ? 'border-red-400 focus:border-red-400 focus:ring-red-200' : ''}`
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setErro(null)
-    if (!form.nome || !form.email || !form.telefone || !form.cpf || !form.sexo) {
-      setErro('Preencha todos os campos.')
-      return
-    }
-    if (!form.pelotao) {
-      setErro('Escolha a sua distância.')
+    const eMap = validate()
+    setErrors(eMap)
+    if (Object.keys(eMap).length > 0) {
+      setErro('Confira os campos destacados. Todos são obrigatórios.')
       return
     }
     setSubmitting(true)
@@ -167,20 +208,24 @@ export default function EsquentaCheckin() {
                   <div className="mb-6 border-b-2 border-dashed border-somma-black/15 pb-5">
                     <p className="font-dm text-[11px] font-bold uppercase tracking-[0.25em] text-somma-orange">Check-in · Esquenta</p>
                     <h3 className="mt-1 font-bebas text-3xl leading-tight tracking-wide text-somma-black md:text-4xl">Bora fazer seu check-in</h3>
-                    <p className="mt-2 font-dm text-sm text-somma-black/60">Preenche seus dados e garante sua presença.</p>
+                    <p className="mt-2 font-dm text-sm text-somma-black/60">Preenche seus dados e garante sua presença. Todos os campos são obrigatórios.</p>
                   </div>
 
                   <form onSubmit={handleSubmit} noValidate className="space-y-5">
                     <div>
-                      <label className={labelCls}>Distância</label>
+                      <label className={labelCls}>Distância <span className="text-somma-orange">*</span></label>
                       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                         {pelotoesList.map((p) => (
                           <button
                             key={p.value}
                             type="button"
-                            onClick={() => setForm({ ...form, pelotao: p.value })}
+                            onClick={() => update('pelotao', p.value)}
                             className={`rounded-xl border-2 px-3 py-2.5 text-left transition-all ${
-                              form.pelotao === p.value ? 'border-somma-orange bg-somma-orange/10' : 'border-somma-black/15 bg-white hover:border-somma-black/30'
+                              form.pelotao === p.value
+                                ? 'border-somma-orange bg-somma-orange/10'
+                                : errors.pelotao
+                                  ? 'border-red-400 bg-white'
+                                  : 'border-somma-black/15 bg-white hover:border-somma-black/30'
                             }`}
                           >
                             <span className="block font-bebas text-lg leading-none tracking-wide text-somma-black">{p.value}</span>
@@ -188,32 +233,38 @@ export default function EsquentaCheckin() {
                           </button>
                         ))}
                       </div>
+                      {errors.pelotao && <p className="mt-1.5 font-dm text-xs font-semibold text-red-600">{errors.pelotao}</p>}
                     </div>
                     <div>
-                      <label className={labelCls}>Nome completo</label>
-                      <input value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} placeholder="Seu nome" className={inputCls} />
+                      <label className={labelCls}>Nome completo <span className="text-somma-orange">*</span></label>
+                      <input required aria-invalid={!!errors.nome} value={form.nome} onChange={(e) => update('nome', e.target.value)} placeholder="Nome e sobrenome" className={fieldCls('nome')} />
+                      {errors.nome && <p className="mt-1.5 font-dm text-xs font-semibold text-red-600">{errors.nome}</p>}
                     </div>
                     <div>
-                      <label className={labelCls}>E-mail</label>
-                      <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="seu@email.com" className={inputCls} />
+                      <label className={labelCls}>E-mail <span className="text-somma-orange">*</span></label>
+                      <input type="email" required aria-invalid={!!errors.email} value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="seu@email.com" className={fieldCls('email')} />
+                      {errors.email && <p className="mt-1.5 font-dm text-xs font-semibold text-red-600">{errors.email}</p>}
                     </div>
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                       <div>
-                        <label className={labelCls}>Telefone</label>
-                        <input value={form.telefone} inputMode="numeric" onChange={(e) => setForm({ ...form, telefone: formatPhone(e.target.value) })} placeholder="(61) 99999-0000" className={inputCls} />
+                        <label className={labelCls}>Telefone <span className="text-somma-orange">*</span></label>
+                        <input required aria-invalid={!!errors.telefone} value={form.telefone} inputMode="numeric" onChange={(e) => update('telefone', formatPhone(e.target.value))} placeholder="(61) 99999-0000" className={fieldCls('telefone')} />
+                        {errors.telefone && <p className="mt-1.5 font-dm text-xs font-semibold text-red-600">{errors.telefone}</p>}
                       </div>
                       <div>
-                        <label className={labelCls}>Sexo</label>
-                        <select value={form.sexo} onChange={(e) => setForm({ ...form, sexo: e.target.value })} className={`${inputCls} cursor-pointer`}>
+                        <label className={labelCls}>Sexo <span className="text-somma-orange">*</span></label>
+                        <select required aria-invalid={!!errors.sexo} value={form.sexo} onChange={(e) => update('sexo', e.target.value)} className={`${fieldCls('sexo')} cursor-pointer`}>
                           <option value="" disabled>Selecione</option>
                           <option value="masculino">Masculino</option>
                           <option value="feminino">Feminino</option>
                         </select>
+                        {errors.sexo && <p className="mt-1.5 font-dm text-xs font-semibold text-red-600">{errors.sexo}</p>}
                       </div>
                     </div>
                     <div>
-                      <label className={labelCls}>CPF</label>
-                      <input value={form.cpf} inputMode="numeric" onChange={(e) => setForm({ ...form, cpf: formatCPF(e.target.value) })} placeholder="000.000.000-00" className={inputCls} />
+                      <label className={labelCls}>CPF <span className="text-somma-orange">*</span></label>
+                      <input required aria-invalid={!!errors.cpf} value={form.cpf} inputMode="numeric" onChange={(e) => update('cpf', formatCPF(e.target.value))} placeholder="000.000.000-00" className={fieldCls('cpf')} />
+                      {errors.cpf && <p className="mt-1.5 font-dm text-xs font-semibold text-red-600">{errors.cpf}</p>}
                     </div>
 
                     {erro && (
