@@ -11,8 +11,8 @@ export const ESQUENTA = {
   concentracao: '6h30',
   inicioCorre: '7h00',
 
-  // Foto de fundo do hero (troque por outra de /public/eixao_somma se quiser)
-  heroFoto: '/eixao_somma/eixao-01.jpg',
+  // Foto de fundo do hero (troque por outra de /public/somma-eixao se quiser)
+  heroFoto: '/somma-eixao/hero.jpg',
 
   // Dados para "adicionar na agenda" (Google Calendar / .ics).
   // Horários em UTC (BRT = UTC-3): concentração 6h30 = 09:30Z, fim ~9h30 = 12:30Z.
@@ -60,10 +60,12 @@ export const ESQUENTA = {
   },
 } as const
 
-// Fotos reais da comunidade no corre do Eixão (otimizadas em /public/eixao_somma).
+// Fotos reais da comunidade no corre do Eixão (otimizadas em /public/somma-eixao).
+// Curadas do ensaio "SOMMA NO EIXÃO": comunidade, marca, parceiros (Red Bull/Big Box),
+// ação, alegria e sorteios. Usadas na colagem (Posicionamento) e na galeria.
 export const EIXAO_FOTOS: string[] = Array.from(
-  { length: 11 },
-  (_, i) => `/eixao_somma/eixao-${String(i + 1).padStart(2, '0')}.jpg`
+  { length: 18 },
+  (_, i) => `/somma-eixao/eixao-${String(i + 1).padStart(2, '0')}.jpg`
 )
 
 export const EXPERIENCIAS = [
