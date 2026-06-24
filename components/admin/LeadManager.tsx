@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useTransition } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { criarLeadListaVip, atualizarLeadListaVip } from '@/actions/admin-leads'
@@ -130,6 +130,20 @@ export default function LeadManager({ leads }: Props) {
       return matchText || matchDigits
     })
   }, [leads, query, emailFilter])
+
+  // Paginação client-side (os leads já vêm todos do servidor).
+  const PAGE_SIZE = 25
+  const [page, setPage] = useState(1)
+  const totalPages = Math.max(1, Math.ceil(orderedLeads.length / PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+  const paged = orderedLeads.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+  const inicio = orderedLeads.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1
+  const fim = Math.min(currentPage * PAGE_SIZE, orderedLeads.length)
+
+  // Volta pra primeira página quando a busca/filtro muda.
+  useEffect(() => {
+    setPage(1)
+  }, [query, emailFilter])
 
   function startCreate() {
     setEditingLead(null)
@@ -371,7 +385,7 @@ export default function LeadManager({ leads }: Props) {
       </div>
 
       <div className="grid gap-4 md:hidden">
-        {orderedLeads.map((lead) => (
+        {paged.map((lead) => (
           <article key={lead.id} className="rounded-2xl border-4 border-somma-black bg-somma-black/70 p-5 shadow-[4px_4px_0_#005EFF]">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
@@ -422,7 +436,7 @@ export default function LeadManager({ leads }: Props) {
             </tr>
           </thead>
           <tbody className="bg-somma-black/80">
-            {orderedLeads.map((lead, index) => (
+            {paged.map((lead, index) => (
               <tr key={lead.id} className={index % 2 === 0 ? 'bg-somma-black' : 'bg-somma-blue/10'}>
                 <td className="px-5 py-4 font-semibold text-somma-cream">{lead.nome}</td>
                 <td className="px-5 py-4 text-somma-cream/75">{lead.email}</td>
@@ -453,6 +467,37 @@ export default function LeadManager({ leads }: Props) {
           </tbody>
         </table>
       </div>
+
+      {/* Paginação */}
+      {orderedLeads.length > 0 && (
+        <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+          <p className="font-dm text-sm text-somma-cream/70">
+            Mostrando <span className="font-bold text-somma-cream">{inicio}–{fim}</span> de{' '}
+            <span className="font-bold text-somma-cream">{orderedLeads.length}</span>
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage <= 1}
+              className="rounded-full border-4 border-somma-cream/25 px-5 py-2 font-bebas tracking-widest text-somma-cream transition-all hover:border-somma-cream disabled:cursor-not-allowed disabled:opacity-30"
+            >
+              ← Anterior
+            </button>
+            <span className="font-bebas text-lg tracking-widest text-somma-yellow">
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              type="button"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage >= totalPages}
+              className="rounded-full border-4 border-somma-cream/25 px-5 py-2 font-bebas tracking-widest text-somma-cream transition-all hover:border-somma-cream disabled:cursor-not-allowed disabled:opacity-30"
+            >
+              Próxima →
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
