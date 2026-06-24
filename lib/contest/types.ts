@@ -51,3 +51,23 @@ export type LeaderboardRow = {
   main_photo_signed: string | null
   votes: number
 }
+
+// Tipos de UI pública (client-safe).
+export type LookCard = {
+  id: string
+  slug: string
+  display_name: string
+  city: string | null
+  look_title: string
+  photo: string | null // signed
+  votes: number
+  rank: number
+  published_at: string | null
+}
+
+export type LookDetail = LookCard & {
+  look_description: string | null
+  instagram: string | null
+  second_photo: string | null // signed
+  total: number
+}

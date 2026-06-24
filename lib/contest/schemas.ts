@@ -29,6 +29,12 @@ export const edicaoSchema = z.object({
 })
 export type EdicaoInput = z.infer<typeof edicaoSchema>
 
+export const voteSchema = z.object({
+  participant_id: z.string().uuid('Participante inválido'),
+  cpf: z.string().refine(isValidCpf, 'CPF inválido'),
+  confirm: z.literal(true),
+})
+
 export const acessoSchema = z.object({ email: z.string().trim().email('E-mail inválido') })
 export const verificarSchema = z.object({
   email: z.string().trim().email('E-mail inválido'),
