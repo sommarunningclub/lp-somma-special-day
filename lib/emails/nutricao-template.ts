@@ -115,7 +115,7 @@ export function renderNutricaoEmail({ nome, stepConfig: cfg, unsubscribeUrl }: N
             </td>
           </tr>
 
-          ${howItWorksBlock(cfg.step === 'd6_oferta_final' ? EMAIL_COUPON.cupom : undefined, {
+          ${howItWorksBlock(EMAIL_COUPON.cupom, {
             black: COLORS.black,
             cream: COLORS.cream,
             orange: COLORS.orange,

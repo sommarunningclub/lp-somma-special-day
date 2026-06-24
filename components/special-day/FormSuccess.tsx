@@ -6,7 +6,9 @@ import Image from 'next/image'
 import gsap from 'gsap'
 import TicketLoader from './TicketLoader'
 import { PRESALE, PRESALE_PASSOS } from '@/lib/presale-constants'
+import { EMAIL_COUPON } from '@/lib/emails/email-coupon'
 import CalendarSubscribeModal from './CalendarSubscribeModal'
+import CouponBox from './CouponBox'
 
 export type FormSuccessProps = {
   userData?: {
@@ -91,15 +93,15 @@ function SuccessModal({ userData }: FormSuccessProps) {
                     </div>
                   )}
 
-                  <div className="col-span-2 flex flex-col">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-somma-black/50">Cupom da pré-venda</span>
-                    <h3 className="mt-1 break-all font-bebas text-4xl leading-none tracking-widest text-somma-orange">{PRESALE.cupom}</h3>
-                    <div className="mt-2 flex items-center gap-2">
-                      <span className="text-xs text-somma-black/40 line-through">De {PRESALE.precoDe}</span>
-                      <span className="text-sm font-bold text-green-600">Por {PRESALE.precoPor}</span>
-                      <span className="rounded bg-green-600/10 px-1.5 py-0.5 text-[10px] font-bold text-green-700">-{PRESALE.descontoPct}</span>
-                    </div>
-                    <p className="mt-2 text-xs text-somma-black/60">Use o cupom <strong>{PRESALE.cupom}</strong> no app TF Sports para liberar o valor da pré-venda.</p>
+                  <div className="col-span-2">
+                    <CouponBox
+                      cupom={EMAIL_COUPON.cupom}
+                      descontoLabel={`${EMAIL_COUPON.descontoPct} off · de ${EMAIL_COUPON.precoDe} por ${EMAIL_COUPON.precoPor}`}
+                      variant="light"
+                    />
+                    <p className="mt-3 text-center text-xs text-somma-black/60">
+                      Use o cupom <strong>{EMAIL_COUPON.cupom}</strong> no app TF Sports na hora de pagar.
+                    </p>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-somma-black/50">Data e Hora</span>
@@ -133,7 +135,7 @@ function SuccessModal({ userData }: FormSuccessProps) {
                   Salve ou tire print do seu ticket.
                 </p>
                 <p className="mt-2 font-dm text-sm leading-relaxed text-somma-cream/90">
-                  Enviamos o cupom <strong className="text-somma-yellow">{PRESALE.cupom}</strong> e este passo a passo também no seu e-mail. A inscrição é feita pelo app TF Sports.
+                  Enviamos o cupom <strong className="text-somma-yellow">{EMAIL_COUPON.cupom}</strong> e este passo a passo também no seu e-mail. A inscrição é feita pelo app TF Sports.
                 </p>
               </div>
 

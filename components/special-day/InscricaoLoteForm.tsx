@@ -6,6 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { nutricaoSchema, type NutricaoInput } from '@/lib/validations/nutricao'
 import { enrollNutricao } from '@/actions/nutricao'
 import { PRESALE } from '@/lib/presale-constants'
+import { EMAIL_COUPON } from '@/lib/emails/email-coupon'
+import CouponBox from './CouponBox'
 
 /**
  * Form leve para capturar lead ANTES de mandar pro app TFSports.
@@ -60,7 +62,15 @@ export default function InscricaoLoteForm() {
           (e a de spam, só por garantia).
         </p>
 
-        <div className="mt-6 rounded-2xl border-2 border-dashed border-somma-black/15 bg-white p-4 text-left">
+        <div className="mt-5">
+          <CouponBox
+            cupom={EMAIL_COUPON.cupom}
+            descontoLabel={`${EMAIL_COUPON.descontoPct} off · de ${EMAIL_COUPON.precoDe} por ${EMAIL_COUPON.precoPor}`}
+            variant="light"
+          />
+        </div>
+
+        <div className="mt-5 rounded-2xl border-2 border-dashed border-somma-black/15 bg-white p-4 text-left">
           <p className="font-bebas text-sm tracking-widest text-somma-black/60">PRÓXIMOS PASSOS</p>
           <ol className="mt-2 space-y-1.5 font-dm text-sm text-somma-black/80">
             <li>1. Baixe o app <strong>TF Sports</strong></li>
