@@ -71,3 +71,23 @@ export type LookDetail = LookCard & {
   second_photo: string | null // signed
   total: number
 }
+
+// Admin (NUNCA inclui CPF — só cpf_hash existe no banco e não é exposto).
+export type AdminParticipant = {
+  id: string
+  full_name: string
+  display_name: string
+  email: string
+  whatsapp: string | null
+  instagram_handle: string | null
+  city: string | null
+  look_title: string
+  look_description: string | null
+  status: ContestStatus
+  slug: string
+  published_at: string | null
+  created_at: string
+  votes: number
+  main_photo_signed: string | null
+  second_photo_signed: string | null
+}
