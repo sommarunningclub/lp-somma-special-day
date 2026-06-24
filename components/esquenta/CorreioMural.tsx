@@ -1,18 +1,22 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
 
 export type Correio = {
   id: string
-  nome: string
-  instagram: string
+  nome: string | null // DE: nome
+  instagram: string | null // DE: @
+  contato: string | null // DE: WhatsApp/@
+  de_foto_url: string | null
+  para_nome: string | null
+  para_instagram: string | null
+  para_foto_url: string | null
   mensagem: string
-  contato: string | null
+  oculto?: boolean
   created_at: string
 }
 
-// Coração reutilizável (SVG, escala sem perder qualidade para a "explosão").
 function Heart({ className = '', style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <svg viewBox="0 0 24 24" className={className} style={style} fill="currentColor" aria-hidden="true">
@@ -21,27 +25,53 @@ function Heart({ className = '', style }: { className?: string; style?: React.CS
   )
 }
 
-const primeiroNome = (nome: string) => nome.trim().split(/\s+/)[0] || nome
+const PALETA = ['#FF4800', '#FDB716', '#FD6FDB', '#005EFF']
+function corDe(seed: string) {
+  let h = 0
+  for (const c of seed) h = (h * 31 + c.charCodeAt(0)) >>> 0
+  return PALETA[h % PALETA.length]
+}
+function iniciais(nome?: string | null, ig?: string | null) {
+  const base = (nome || ig || '?').replace(/^@+/, '').trim()
+  const parts = base.split(/[\s._]+/).filter(Boolean)
+  const ii = (parts[0]?.[0] || '') + (parts[1]?.[0] || '')
+  return (ii || base[0] || '?').toUpperCase()
+}
+const rotuloPara = (m: Correio) => m.para_nome?.trim() || (m.para_instagram ? `@${m.para_instagram}` : 'alguém especial')
+const rotuloDe = (m: Correio) => m.nome?.trim() || (m.instagram ? `@${m.instagram}` : 'Anônimo')
 
-type ContatoInfo = { tipo: 'whatsapp' | 'instagram' | 'texto'; rotulo: string; display: string; href: string | null }
-
-// Interpreta o campo "contato" (WhatsApp ou @) e, se vazio, cai no Instagram do remetente.
-function resolverContato(m: Correio): ContatoInfo {
+type ContatoInfo = { rotulo: string; display: string; href: string | null }
+function resolverContatoDE(m: Correio): ContatoInfo | null {
   const bruto = (m.contato ?? '').trim()
   if (bruto) {
     const digitos = bruto.replace(/\D/g, '')
     if (digitos.length >= 10 && digitos.length <= 13) {
       const comDDI = digitos.length <= 11 ? `55${digitos}` : digitos
-      return { tipo: 'whatsapp', rotulo: 'Conversar no WhatsApp', display: bruto, href: `https://wa.me/${comDDI}` }
+      return { rotulo: 'Conversar no WhatsApp', display: bruto, href: `https://wa.me/${comDDI}` }
     }
     const ig = bruto.replace(/^@+/, '')
-    if (/^[a-zA-Z0-9._]+$/.test(ig)) {
-      return { tipo: 'instagram', rotulo: 'Chamar no Instagram', display: `@${ig}`, href: `https://instagram.com/${ig}` }
-    }
-    return { tipo: 'texto', rotulo: 'Contato', display: bruto, href: null }
+    if (/^[a-zA-Z0-9._]+$/.test(ig)) return { rotulo: 'Chamar no Instagram', display: `@${ig}`, href: `https://instagram.com/${ig}` }
+    return { rotulo: 'Contato', display: bruto, href: null }
   }
-  const ig = m.instagram.replace(/^@+/, '')
-  return { tipo: 'instagram', rotulo: 'Chamar no Instagram', display: `@${ig}`, href: `https://instagram.com/${ig}` }
+  const ig = (m.instagram ?? '').replace(/^@+/, '')
+  if (ig) return { rotulo: 'Chamar no Instagram', display: `@${ig}`, href: `https://instagram.com/${ig}` }
+  return null
+}
+
+function Avatar({ foto, nome, ig, size }: { foto: string | null; nome?: string | null; ig?: string | null; size: number }) {
+  const dim = { width: size, height: size }
+  if (foto) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={foto} alt="" style={dim} className="rounded-full border-4 border-somma-cream object-cover shadow-[3px_3px_0_rgba(0,0,0,0.25)]" />
+  }
+  return (
+    <div
+      style={{ ...dim, background: corDe(nome || ig || '?') }}
+      className="flex items-center justify-center rounded-full border-4 border-somma-cream font-bebas text-somma-cream shadow-[3px_3px_0_rgba(0,0,0,0.25)]"
+    >
+      <span style={{ fontSize: size * 0.4 }}>{iniciais(nome, ig)}</span>
+    </div>
+  )
 }
 
 const KEYFRAMES = `
@@ -51,9 +81,27 @@ const KEYFRAMES = `
 @keyframes correioReveal { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 `
 
-export default function CorreioMural({ mensagens }: { mensagens: Correio[] }) {
+export default function CorreioMural({
+  mensagens,
+  admin = false,
+  adminToken = '',
+}: {
+  mensagens: Correio[]
+  admin?: boolean
+  adminToken?: string
+}) {
+  const [lista, setLista] = useState<Correio[]>(mensagens)
+  const [busca, setBusca] = useState('')
   const [aberta, setAberta] = useState<Correio | null>(null)
   const [revelado, setRevelado] = useState(false)
+
+  const filtradas = useMemo(() => {
+    const q = busca.trim().toLowerCase().replace(/^@+/, '')
+    if (!q) return lista
+    return lista.filter((m) =>
+      [m.para_nome, m.para_instagram].some((v) => (v ?? '').toLowerCase().replace(/^@+/, '').includes(q))
+    )
+  }, [lista, busca])
 
   function abrir(m: Correio) {
     setRevelado(false)
@@ -64,7 +112,23 @@ export default function CorreioMural({ mensagens }: { mensagens: Correio[] }) {
     setRevelado(false)
   }
 
-  const contato = aberta ? resolverContato(aberta) : null
+  async function ocultar(m: Correio) {
+    await fetch(`/api/correio/${m.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'x-correio-token': adminToken },
+      body: JSON.stringify({ oculto: !m.oculto }),
+    })
+    setLista((l) => l.map((x) => (x.id === m.id ? { ...x, oculto: !m.oculto } : x)))
+    setAberta((a) => (a && a.id === m.id ? { ...a, oculto: !m.oculto } : a))
+  }
+  async function excluir(m: Correio) {
+    if (!confirm('Excluir esse recado de vez?')) return
+    await fetch(`/api/correio/${m.id}`, { method: 'DELETE', headers: { 'x-correio-token': adminToken } })
+    setLista((l) => l.filter((x) => x.id !== m.id))
+    fechar()
+  }
+
+  const contato = aberta ? resolverContatoDE(aberta) : null
 
   return (
     <main className="relative min-h-[100svh] overflow-hidden bg-somma-blue px-4 pb-20 pt-10 sm:pt-14">
@@ -77,107 +141,144 @@ export default function CorreioMural({ mensagens }: { mensagens: Correio[] }) {
           Toque num coração <span className="text-somma-yellow">e descubra</span>
         </h1>
         <p className="mx-auto mt-4 max-w-xl font-dm text-base leading-relaxed text-somma-cream/80">
-          Cada coração é um recado da comunidade. Abre o seu, lê a mensagem e, se rolar química, revela o contato pra
-          conversar. 🧡
+          Cada coração é um recado pra alguém da comunidade. Acha o seu, lê a mensagem e, se rolar química, revela o
+          contato pra conversar. 🧡
         </p>
-        <Link href="/esquenta-junino#correio" className="mt-5 inline-block font-dm text-sm font-bold uppercase tracking-wide text-somma-yellow underline-offset-2 hover:underline">
+        {admin && (
+          <p className="mx-auto mt-3 inline-block rounded-full bg-somma-orange px-3 py-1 font-dm text-xs font-bold uppercase tracking-wide text-somma-cream">
+            Modo moderação ativo
+          </p>
+        )}
+
+        {/* Busca "tem recado pra mim?" */}
+        <div className="mx-auto mt-6 max-w-md">
+          <input
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            placeholder="Tem recado pra você? Busca seu nome ou @"
+            className="w-full rounded-full border-2 border-somma-cream/30 bg-somma-cream/10 px-5 py-3 text-center font-dm text-sm text-somma-cream placeholder:text-somma-cream/50 focus:border-somma-cream focus:outline-none"
+          />
+        </div>
+        <p className="mt-3 font-dm text-xs text-somma-cream/60">
+          {filtradas.length} {filtradas.length === 1 ? 'recado' : 'recados'}
+          {busca ? ' encontrado(s)' : ' no mural'}
+        </p>
+        <Link href="/esquenta-junino#correio" className="mt-2 inline-block font-dm text-sm font-bold uppercase tracking-wide text-somma-yellow underline-offset-2 hover:underline">
           Mandar um correio também
         </Link>
       </div>
 
       {/* Mural de corações */}
-      {mensagens.length === 0 ? (
+      {filtradas.length === 0 ? (
         <div className="mx-auto mt-16 max-w-md text-center">
           <Heart className="mx-auto h-20 w-20 text-somma-orange [animation:correioBeat_1.6s_ease-in-out_infinite]" />
-          <p className="mt-4 font-bebas text-2xl uppercase tracking-wide text-somma-cream">Ainda não tem recado por aqui</p>
-          <p className="mt-1 font-dm text-sm text-somma-cream/70">Seja o primeiro a mandar um correio elegante. 💌</p>
+          <p className="mt-4 font-bebas text-2xl uppercase tracking-wide text-somma-cream">
+            {busca ? 'Nenhum recado com esse nome ainda' : 'Ainda não tem recado por aqui'}
+          </p>
+          <p className="mt-1 font-dm text-sm text-somma-cream/70">{busca ? 'Tenta outro nome ou @.' : 'Seja o primeiro a mandar um correio elegante. 💌'}</p>
         </div>
       ) : (
         <div className="mx-auto mt-12 grid max-w-5xl grid-cols-3 gap-x-3 gap-y-8 sm:grid-cols-4 sm:gap-6 md:grid-cols-5">
-          {mensagens.map((m) => (
+          {filtradas.map((m) => (
             <button
               key={m.id}
               onClick={() => abrir(m)}
-              aria-label={`Abrir recado de ${primeiroNome(m.nome)}`}
+              aria-label={`Abrir recado para ${rotuloPara(m)}`}
               className="group flex flex-col items-center gap-2 focus:outline-none"
             >
-              <span className="relative block h-20 w-20 sm:h-24 sm:w-24">
+              <span className="relative block h-24 w-24 sm:h-28 sm:w-28">
                 <Heart className="absolute inset-0 h-full w-full text-somma-pink/40 [animation:correioBurst_2.6s_ease-out_infinite]" />
                 <Heart className="absolute inset-0 h-full w-full text-somma-orange drop-shadow-[3px_3px_0_rgba(0,0,0,0.25)] transition-transform duration-300 [animation:correioBeat_1.8s_ease-in-out_infinite] group-hover:scale-110 group-focus-visible:scale-110" />
+                {/* foto/avatar do PARA dentro do coração */}
+                <span className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2">
+                  <Avatar foto={m.para_foto_url} nome={m.para_nome} ig={m.para_instagram} size={44} />
+                </span>
+                {admin && m.oculto && (
+                  <span className="absolute -right-1 -top-1 rounded-full bg-somma-black px-1.5 py-0.5 font-dm text-[9px] font-bold uppercase text-somma-cream">oculto</span>
+                )}
               </span>
-              <span className="font-dm text-xs font-semibold text-somma-cream/85">de {primeiroNome(m.nome)}</span>
+              <span className="line-clamp-1 max-w-full font-dm text-xs font-semibold text-somma-cream/85">pra {rotuloPara(m)}</span>
             </button>
           ))}
         </div>
       )}
 
-      {/* Overlay com a explosão + mensagem dentro do coração */}
+      {/* Overlay: match card DE → PARA */}
       {aberta && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-somma-blue/95 px-4 backdrop-blur-sm"
-          onClick={fechar}
-          role="dialog"
-          aria-modal="true"
-        >
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-somma-blue/95 px-4 py-8 backdrop-blur-sm" onClick={fechar} role="dialog" aria-modal="true">
           <button
             onClick={fechar}
             aria-label="Fechar"
-            className="absolute right-4 top-[calc(1rem+env(safe-area-inset-top))] flex h-11 w-11 items-center justify-center rounded-full border-2 border-somma-cream/40 font-dm text-2xl leading-none text-somma-cream transition-colors hover:bg-somma-cream hover:text-somma-blue"
+            className="absolute right-4 top-[calc(1rem+env(safe-area-inset-top))] z-10 flex h-11 w-11 items-center justify-center rounded-full border-2 border-somma-cream/40 font-dm text-2xl leading-none text-somma-cream transition-colors hover:bg-somma-cream hover:text-somma-blue"
           >
             ×
           </button>
 
-          <div className="relative" onClick={(e) => e.stopPropagation()}>
-            {/* corações pulsando atrás (efeito de explosão) */}
-            <Heart className="pointer-events-none absolute left-1/2 top-1/2 h-[78vw] max-h-[460px] w-[78vw] max-w-[460px] -translate-x-1/2 -translate-y-1/2 text-somma-pink/25 [animation:correioBurst_2.4s_ease-out_infinite]" />
-            <Heart className="pointer-events-none absolute left-1/2 top-1/2 h-[78vw] max-h-[460px] w-[78vw] max-w-[460px] -translate-x-1/2 -translate-y-1/2 text-somma-yellow/20 [animation:correioBurst_2.4s_ease-out_infinite_0.8s]" />
+          <div className="relative w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+            {/* corações pulsando atrás (efeito) */}
+            <Heart className="pointer-events-none absolute left-1/2 top-1/2 h-[150%] w-[150%] -translate-x-1/2 -translate-y-1/2 text-somma-pink/15 [animation:correioBurst_2.4s_ease-out_infinite]" />
+            <Heart className="pointer-events-none absolute left-1/2 top-1/2 h-[150%] w-[150%] -translate-x-1/2 -translate-y-1/2 text-somma-yellow/10 [animation:correioBurst_2.4s_ease-out_infinite_0.8s]" />
 
-            {/* coração principal */}
-            <div className="relative [animation:correioPop_0.5s_ease-out]">
-              <Heart className="h-[82vw] max-h-[480px] w-[82vw] max-w-[480px] text-somma-orange drop-shadow-[6px_6px_0_rgba(0,0,0,0.25)]" />
-
-              {/* mensagem dentro do coração */}
-              <div className="absolute inset-x-0 top-[24%] mx-auto flex w-[74%] flex-col items-center text-center [animation:correioReveal_0.6s_ease-out_0.15s_both]">
-                <p className="font-dm text-[10px] font-bold uppercase tracking-[0.2em] text-somma-cream/90">De {aberta.nome}</p>
-                <a
-                  href={`https://instagram.com/${aberta.instagram.replace(/^@+/, '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-dm text-xs font-bold text-somma-cream underline-offset-2 hover:underline"
-                >
-                  @{aberta.instagram.replace(/^@+/, '')}
-                </a>
-
-                <div className="mt-2 max-h-[200px] overflow-y-auto rounded-2xl bg-somma-black/25 px-4 py-3">
-                  <p className="font-dm text-sm font-medium italic leading-snug text-somma-cream sm:text-base">“{aberta.mensagem}”</p>
+            {/* card */}
+            <div className="relative rounded-3xl border-4 border-somma-cream bg-somma-cream p-6 text-center shadow-[8px_8px_0_#FF4800] [animation:correioPop_0.5s_ease-out]">
+              {/* DE → PARA */}
+              <div className="flex items-center justify-center gap-4">
+                <div className="flex flex-col items-center gap-1">
+                  <Avatar foto={aberta.de_foto_url} nome={aberta.nome} ig={aberta.instagram} size={72} />
+                  <span className="font-dm text-[10px] font-bold uppercase tracking-widest text-somma-black/50">de</span>
+                  <span className="max-w-[90px] truncate font-dm text-xs font-bold text-somma-black">{rotuloDe(aberta)}</span>
                 </div>
-
-                {/* revelar contato / WhatsApp */}
-                <div className="mt-3">
-                  {!revelado ? (
-                    <button
-                      onClick={() => setRevelado(true)}
-                      className="rounded-full border-2 border-somma-cream bg-somma-cream px-4 py-2 font-bebas text-sm tracking-widest text-somma-blue shadow-[2px_2px_0_rgba(0,0,0,0.25)] transition-transform hover:scale-105"
-                    >
-                      Revelar contato 👀
-                    </button>
-                  ) : contato && contato.href ? (
-                    <a
-                      href={contato.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex flex-col items-center gap-0.5 rounded-2xl border-2 border-somma-cream bg-somma-cream px-4 py-2 text-somma-blue shadow-[2px_2px_0_rgba(0,0,0,0.25)] transition-transform hover:scale-105 [animation:correioReveal_0.3s_ease-out]"
-                    >
-                      <span className="font-bebas text-sm tracking-widest">{contato.rotulo} →</span>
-                      <span className="font-dm text-xs font-semibold">{contato.display}</span>
-                    </a>
-                  ) : (
-                    <span className="rounded-2xl bg-somma-black/25 px-4 py-2 font-dm text-xs font-semibold text-somma-cream [animation:correioReveal_0.3s_ease-out]">
-                      {contato?.display}
-                    </span>
-                  )}
+                <Heart className="h-7 w-7 shrink-0 text-somma-orange [animation:correioBeat_1.2s_ease-in-out_infinite]" />
+                <div className="flex flex-col items-center gap-1">
+                  <Avatar foto={aberta.para_foto_url} nome={aberta.para_nome} ig={aberta.para_instagram} size={72} />
+                  <span className="font-dm text-[10px] font-bold uppercase tracking-widest text-somma-orange">pra</span>
+                  <span className="max-w-[90px] truncate font-dm text-xs font-bold text-somma-black">{rotuloPara(aberta)}</span>
                 </div>
               </div>
+
+              {/* mensagem */}
+              <div className="mt-5 max-h-[34vh] overflow-y-auto rounded-2xl bg-somma-blue/5 px-4 py-4 [animation:correioReveal_0.6s_ease-out_0.15s_both]">
+                <p className="font-dm text-base font-medium italic leading-snug text-somma-black">“{aberta.mensagem}”</p>
+              </div>
+
+              {/* revelar contato */}
+              <div className="mt-5">
+                {!revelado ? (
+                  <button
+                    onClick={() => setRevelado(true)}
+                    className="w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-4 py-3 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#0a0a0a]"
+                  >
+                    Deu match? Revelar contato 💘
+                  </button>
+                ) : contato && contato.href ? (
+                  <a
+                    href={contato.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col items-center gap-0.5 rounded-2xl border-4 border-somma-black bg-somma-yellow px-4 py-3 text-somma-black shadow-[4px_4px_0_#0a0a0a] transition-transform hover:scale-[1.02] [animation:correioReveal_0.3s_ease-out]"
+                  >
+                    <span className="font-bebas text-lg tracking-widest">{contato.rotulo} →</span>
+                    <span className="font-dm text-sm font-semibold">{contato.display}</span>
+                  </a>
+                ) : (
+                  <p className="rounded-2xl bg-somma-blue/5 px-4 py-3 font-dm text-sm font-semibold text-somma-black/60 [animation:correioReveal_0.3s_ease-out]">
+                    Remetente anônimo 🤫 (não deixou contato)
+                  </p>
+                )}
+              </div>
+
+              {/* moderação */}
+              {admin && (
+                <div className="mt-4 flex items-center justify-center gap-3 border-t-2 border-dashed border-somma-black/15 pt-3">
+                  <button onClick={() => ocultar(aberta)} className="font-dm text-xs font-bold uppercase tracking-wide text-somma-blue underline-offset-2 hover:underline">
+                    {aberta.oculto ? 'Reexibir' : 'Ocultar'}
+                  </button>
+                  <span className="text-somma-black/20">|</span>
+                  <button onClick={() => excluir(aberta)} className="font-dm text-xs font-bold uppercase tracking-wide text-red-600 underline-offset-2 hover:underline">
+                    Excluir
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

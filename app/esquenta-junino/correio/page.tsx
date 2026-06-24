@@ -10,7 +10,7 @@ export const runtime = 'nodejs'
 export const metadata: Metadata = {
   title: 'Correio Elegante · Esquenta SOMMA Special Day',
   description: 'Os recados do Correio Elegante da comunidade SOMMA. Toque num coração e descubra.',
-  // Privacidade: o mural tem contatos pessoais — não indexar em buscadores.
+  // Privacidade: o mural tem contatos e fotos pessoais — não indexar em buscadores.
   robots: { index: false, follow: false },
 }
 
@@ -28,25 +28,42 @@ async function getMensagens(): Promise<Correio[]> {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) return []
 
-  // Service role + fetch no-store (RLS esconde tudo da anon key; precisa enxergar tudo).
+  // Service role + no-store (RLS esconde tudo da anon key). select('*') é resiliente
+  // caso alguma coluna nova ainda não exista (mapeamos com fallback abaixo).
   const supabase = createClient(url, key, {
     auth: { persistSession: false },
     global: { fetch: (u, o) => fetch(u, { ...o, cache: 'no-store' }) },
   })
 
-  const { data, error } = await supabase
-    .from('correio_elegante')
-    .select('id, nome, instagram, mensagem, contato, created_at')
-    .order('created_at', { ascending: false })
-
+  const { data, error } = await supabase.from('correio_elegante').select('*').order('created_at', { ascending: false })
   if (error) {
     console.error('[correio-mural] erro ao buscar:', error.message)
     return []
   }
-  return (data ?? []) as Correio[]
+
+  return (data ?? []).map(
+    (r): Correio => ({
+      id: r.id,
+      nome: r.nome ?? null,
+      instagram: r.instagram ?? null,
+      contato: r.contato ?? null,
+      de_foto_url: r.de_foto_url ?? null,
+      para_nome: r.para_nome ?? null,
+      para_instagram: r.para_instagram ?? null,
+      para_foto_url: r.para_foto_url ?? null,
+      mensagem: r.mensagem ?? '',
+      oculto: r.oculto ?? false,
+      created_at: r.created_at,
+    })
+  )
 }
 
-export default async function CorreioMuralPage() {
-  const mensagens = await getMensagens()
-  return <CorreioMural mensagens={mensagens} />
+export default async function CorreioMuralPage({ searchParams }: { searchParams: { k?: string } }) {
+  const token = process.env.CORREIO_ADMIN_TOKEN
+  const admin = !!token && searchParams?.k === token
+
+  const todas = await getMensagens()
+  const mensagens = admin ? todas : todas.filter((m) => !m.oculto)
+
+  return <CorreioMural mensagens={mensagens} admin={admin} adminToken={admin ? (searchParams?.k ?? '') : ''} />
 }
