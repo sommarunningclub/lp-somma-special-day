@@ -1,13 +1,13 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 
 export type Correio = {
   id: string
   nome: string | null // DE: nome
   instagram: string | null // DE: @
-  contato: string | null // DE: WhatsApp/@
+  tem_contato: boolean // se há contato a revelar (telefone não vai no payload)
   de_foto_url: string | null
   para_nome: string | null
   para_instagram: string | null
@@ -16,6 +16,8 @@ export type Correio = {
   oculto?: boolean
   created_at: string
 }
+
+type ContatoInfo = { rotulo: string; display: string; href: string | null }
 
 function Heart({ className = '', style }: { className?: string; style?: React.CSSProperties }) {
   return (
@@ -40,24 +42,6 @@ function iniciais(nome?: string | null, ig?: string | null) {
 const rotuloPara = (m: Correio) => m.para_nome?.trim() || (m.para_instagram ? `@${m.para_instagram}` : 'alguém especial')
 const rotuloDe = (m: Correio) => m.nome?.trim() || (m.instagram ? `@${m.instagram}` : 'Anônimo')
 
-type ContatoInfo = { rotulo: string; display: string; href: string | null }
-function resolverContatoDE(m: Correio): ContatoInfo | null {
-  const bruto = (m.contato ?? '').trim()
-  if (bruto) {
-    const digitos = bruto.replace(/\D/g, '')
-    if (digitos.length >= 10 && digitos.length <= 13) {
-      const comDDI = digitos.length <= 11 ? `55${digitos}` : digitos
-      return { rotulo: 'Conversar no WhatsApp', display: bruto, href: `https://wa.me/${comDDI}` }
-    }
-    const ig = bruto.replace(/^@+/, '')
-    if (/^[a-zA-Z0-9._]+$/.test(ig)) return { rotulo: 'Chamar no Instagram', display: `@${ig}`, href: `https://instagram.com/${ig}` }
-    return { rotulo: 'Contato', display: bruto, href: null }
-  }
-  const ig = (m.instagram ?? '').replace(/^@+/, '')
-  if (ig) return { rotulo: 'Chamar no Instagram', display: `@${ig}`, href: `https://instagram.com/${ig}` }
-  return null
-}
-
 function Avatar({ foto, nome, ig, size }: { foto: string | null; nome?: string | null; ig?: string | null; size: number }) {
   const dim = { width: size, height: size }
   if (foto) {
@@ -81,19 +65,28 @@ const KEYFRAMES = `
 @keyframes correioReveal { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 `
 
-export default function CorreioMural({
-  mensagens,
-  admin = false,
-  adminToken = '',
-}: {
-  mensagens: Correio[]
-  admin?: boolean
-  adminToken?: string
-}) {
+export default function CorreioMural({ mensagens, admin = false }: { mensagens: Correio[]; admin?: boolean }) {
   const [lista, setLista] = useState<Correio[]>(mensagens)
   const [busca, setBusca] = useState('')
   const [aberta, setAberta] = useState<Correio | null>(null)
-  const [revelado, setRevelado] = useState(false)
+  // contato: undefined = não revelado; null = sem contato; objeto = revelado
+  const [contato, setContato] = useState<ContatoInfo | null | undefined>(undefined)
+  const [revelando, setRevelando] = useState(false)
+
+  // ESC fecha + trava o scroll do body com o overlay aberto.
+  useEffect(() => {
+    if (!aberta) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') fechar()
+    }
+    document.addEventListener('keydown', onKey)
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prev
+    }
+  }, [aberta])
 
   const filtradas = useMemo(() => {
     const q = busca.trim().toLowerCase().replace(/^@+/, '')
@@ -104,31 +97,52 @@ export default function CorreioMural({
   }, [lista, busca])
 
   function abrir(m: Correio) {
-    setRevelado(false)
+    setContato(undefined)
+    setRevelando(false)
     setAberta(m)
   }
   function fechar() {
     setAberta(null)
-    setRevelado(false)
+    setContato(undefined)
+  }
+
+  async function revelarContato(m: Correio) {
+    setRevelando(true)
+    try {
+      const r = await fetch(`/api/correio/${m.id}/contato`)
+      const d = await r.json()
+      setContato(d.contato ?? null)
+    } catch {
+      setContato(null)
+    } finally {
+      setRevelando(false)
+    }
   }
 
   async function ocultar(m: Correio) {
-    await fetch(`/api/correio/${m.id}`, {
+    const novo = !m.oculto
+    const r = await fetch(`/api/correio/${m.id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', 'x-correio-token': adminToken },
-      body: JSON.stringify({ oculto: !m.oculto }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ oculto: novo }),
     })
-    setLista((l) => l.map((x) => (x.id === m.id ? { ...x, oculto: !m.oculto } : x)))
-    setAberta((a) => (a && a.id === m.id ? { ...a, oculto: !m.oculto } : a))
+    if (!r.ok) {
+      alert('Não foi possível atualizar (sessão de moderação expirada?).')
+      return
+    }
+    setLista((l) => l.map((x) => (x.id === m.id ? { ...x, oculto: novo } : x)))
+    setAberta((a) => (a && a.id === m.id ? { ...a, oculto: novo } : a))
   }
   async function excluir(m: Correio) {
     if (!confirm('Excluir esse recado de vez?')) return
-    await fetch(`/api/correio/${m.id}`, { method: 'DELETE', headers: { 'x-correio-token': adminToken } })
+    const r = await fetch(`/api/correio/${m.id}`, { method: 'DELETE' })
+    if (!r.ok) {
+      alert('Não foi possível excluir (sessão de moderação expirada?).')
+      return
+    }
     setLista((l) => l.filter((x) => x.id !== m.id))
     fechar()
   }
-
-  const contato = aberta ? resolverContatoDE(aberta) : null
 
   return (
     <main className="relative min-h-[100svh] overflow-hidden bg-somma-blue px-4 pb-20 pt-10 sm:pt-14">
@@ -189,7 +203,6 @@ export default function CorreioMural({
               <span className="relative block h-24 w-24 sm:h-28 sm:w-28">
                 <Heart className="absolute inset-0 h-full w-full text-somma-pink/40 [animation:correioBurst_2.6s_ease-out_infinite]" />
                 <Heart className="absolute inset-0 h-full w-full text-somma-orange drop-shadow-[3px_3px_0_rgba(0,0,0,0.25)] transition-transform duration-300 [animation:correioBeat_1.8s_ease-in-out_infinite] group-hover:scale-110 group-focus-visible:scale-110" />
-                {/* foto/avatar do PARA dentro do coração */}
                 <span className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2">
                   <Avatar foto={m.para_foto_url} nome={m.para_nome} ig={m.para_instagram} size={44} />
                 </span>
@@ -215,11 +228,9 @@ export default function CorreioMural({
           </button>
 
           <div className="relative w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
-            {/* corações pulsando atrás (efeito) */}
             <Heart className="pointer-events-none absolute left-1/2 top-1/2 h-[150%] w-[150%] -translate-x-1/2 -translate-y-1/2 text-somma-pink/15 [animation:correioBurst_2.4s_ease-out_infinite]" />
             <Heart className="pointer-events-none absolute left-1/2 top-1/2 h-[150%] w-[150%] -translate-x-1/2 -translate-y-1/2 text-somma-yellow/10 [animation:correioBurst_2.4s_ease-out_infinite_0.8s]" />
 
-            {/* card */}
             <div className="relative rounded-3xl border-4 border-somma-cream bg-somma-cream p-6 text-center shadow-[8px_8px_0_#FF4800] [animation:correioPop_0.5s_ease-out]">
               {/* DE → PARA */}
               <div className="flex items-center justify-center gap-4">
@@ -238,17 +249,20 @@ export default function CorreioMural({
 
               {/* mensagem */}
               <div className="mt-5 max-h-[34vh] overflow-y-auto rounded-2xl bg-somma-blue/5 px-4 py-4 [animation:correioReveal_0.6s_ease-out_0.15s_both]">
-                <p className="font-dm text-base font-medium italic leading-snug text-somma-black">“{aberta.mensagem}”</p>
+                <p className="font-dm text-base font-medium italic leading-snug text-somma-black [overflow-wrap:anywhere]">“{aberta.mensagem}”</p>
               </div>
 
               {/* revelar contato */}
               <div className="mt-5">
-                {!revelado ? (
+                {!aberta.tem_contato ? (
+                  <p className="rounded-2xl bg-somma-blue/5 px-4 py-3 font-dm text-sm font-semibold text-somma-black/60">Remetente anônimo 🤫 (não deixou contato)</p>
+                ) : contato === undefined ? (
                   <button
-                    onClick={() => setRevelado(true)}
-                    className="w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-4 py-3 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#0a0a0a]"
+                    onClick={() => revelarContato(aberta)}
+                    disabled={revelando}
+                    className="w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-4 py-3 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#0a0a0a] disabled:opacity-60"
                   >
-                    Deu match? Revelar contato 💘
+                    {revelando ? 'Revelando…' : 'Deu match? Revelar contato 💘'}
                   </button>
                 ) : contato && contato.href ? (
                   <a
@@ -258,11 +272,11 @@ export default function CorreioMural({
                     className="flex flex-col items-center gap-0.5 rounded-2xl border-4 border-somma-black bg-somma-yellow px-4 py-3 text-somma-black shadow-[4px_4px_0_#0a0a0a] transition-transform hover:scale-[1.02] [animation:correioReveal_0.3s_ease-out]"
                   >
                     <span className="font-bebas text-lg tracking-widest">{contato.rotulo} →</span>
-                    <span className="font-dm text-sm font-semibold">{contato.display}</span>
+                    <span className="font-dm text-sm font-semibold [overflow-wrap:anywhere]">{contato.display}</span>
                   </a>
                 ) : (
                   <p className="rounded-2xl bg-somma-blue/5 px-4 py-3 font-dm text-sm font-semibold text-somma-black/60 [animation:correioReveal_0.3s_ease-out]">
-                    Remetente anônimo 🤫 (não deixou contato)
+                    Não rolou revelar o contato agora.
                   </p>
                 )}
               </div>

@@ -36,7 +36,10 @@ async function comprimirImagem(file: File): Promise<string> {
   const canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height
-  canvas.getContext('2d')!.drawImage(img, 0, 0, width, height)
+  const ctx = canvas.getContext('2d')!
+  ctx.fillStyle = '#ffffff' // fundo branco (evita transparência virar preto no JPEG)
+  ctx.fillRect(0, 0, width, height)
+  ctx.drawImage(img, 0, 0, width, height)
   return canvas.toDataURL('image/jpeg', 0.82)
 }
 
@@ -58,7 +61,8 @@ function FotoPicker({ value, onChange, hint }: { value: string; onChange: (d: st
           accept="image/*"
           className="hidden"
           onChange={async (e) => {
-            const f = e.target.files?.[0]
+            const input = e.currentTarget
+            const f = input.files?.[0]
             if (!f) return
             setCarregando(true)
             try {
@@ -67,6 +71,7 @@ function FotoPicker({ value, onChange, hint }: { value: string; onChange: (d: st
               /* ignora */
             } finally {
               setCarregando(false)
+              input.value = '' // permite reescolher o mesmo arquivo
             }
           }}
         />
@@ -221,12 +226,14 @@ export default function EsquentaCorreio() {
                       <input value={para.instagram} onChange={(e) => setPara({ ...para, instagram: e.target.value })} placeholder="@ do Instagram" className={inputCls} />
                     </div>
                     <p className="mt-2 font-dm text-[11px] text-somma-black/45">Preenche pelo menos um: nome, @ ou foto.</p>
+                    <p className="mt-1 font-dm text-[11px] text-somma-black/40">📸 Só suba foto sua ou de quem topou aparecer.</p>
                   </div>
 
                   {/* MENSAGEM */}
                   <div>
                     <label className={labelCls}>Mensagem <span className="text-somma-orange">*</span></label>
-                    <textarea rows={3} value={mensagem} onChange={(e) => setMensagem(e.target.value)} placeholder="Escreve aquele recado especial..." className={`${inputCls} resize-none`} />
+                    <textarea rows={3} maxLength={500} value={mensagem} onChange={(e) => setMensagem(e.target.value)} placeholder="Escreve aquele recado especial..." className={`${inputCls} resize-none`} />
+                    <p className="mt-1 text-right font-dm text-[11px] text-somma-black/40">{mensagem.length}/500</p>
                   </div>
 
                   {/* DE */}
