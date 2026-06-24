@@ -1,7 +1,7 @@
 import { CONCURSO_PASSOS } from '@/lib/esquenta-constants'
 import Reveal from './Reveal'
 import { Bunting, JuninoIcon } from './JuninoIcons'
-import ConcursoVotacao from './ConcursoVotacao'
+import ContestCTA from '@/components/concurso/ContestCTA'
 
 export default function EsquentaConcurso() {
   return (
@@ -43,9 +43,17 @@ export default function EsquentaConcurso() {
         </Reveal>
       </div>
 
-      {/* Votação ao vivo + convite via WhatsApp */}
+      {/* CTAs do sistema completo de concurso */}
       <Reveal delay={80} className="mx-auto mt-10 max-w-5xl">
-        <ConcursoVotacao />
+        <div className="rounded-3xl border-4 border-somma-black bg-white p-6 text-center shadow-[8px_8px_0_#FF4800] sm:p-8">
+          <p className="font-bebas text-2xl uppercase tracking-wide text-somma-black sm:text-3xl">Cadastra teu look e entra na disputa</p>
+          <p className="mx-auto mt-1 max-w-xl font-dm text-sm text-somma-black/60">
+            Manda até duas fotos, publica e chama a galera pra votar. Acompanha a corrida pelo prêmio ao vivo. 🌽
+          </p>
+          <div className="mt-5 flex justify-center">
+            <ContestCTA variant="hero" />
+          </div>
+        </div>
       </Reveal>
     </section>
   )
