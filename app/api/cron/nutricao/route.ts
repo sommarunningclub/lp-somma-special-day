@@ -18,17 +18,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
-  // KILL SWITCH: cron pausado em 25/06/2026 apos detectar duplicacao de envios.
-  // Causa: pickStep voltando step ja enviado (recordSend nao deduplicava).
-  // Pra reativar, remova este bloco depois de corrigir o dispatch.
-  return NextResponse.json({ ok: false, paused: true, reason: 'kill-switch ativo' }, { status: 503 })
-
-  // try {
-  //   const summary = await runNutricaoDispatch()
-  //   return NextResponse.json({ ok: true, ...summary })
-  // } catch (e) {
-  //   const msg = e instanceof Error ? e.message : String(e)
-  //   console.error('[cron nutricao] erro:', msg)
-  //   return NextResponse.json({ ok: false, error: msg }, { status: 500 })
-  // }
+  try {
+    const summary = await runNutricaoDispatch()
+    return NextResponse.json({ ok: true, ...summary })
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e)
+    console.error('[cron nutricao] erro:', msg)
+    return NextResponse.json({ ok: false, error: msg }, { status: 500 })
+  }
 }

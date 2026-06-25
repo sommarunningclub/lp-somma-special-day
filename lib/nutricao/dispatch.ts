@@ -125,25 +125,6 @@ async function sendOne(
   }
 }
 
-async function recordSend(outcome: SendOutcome): Promise<void> {
-  const supabase = createServerClient()
-  // dedup: lead_id + step UNIQUE; ignora erro de duplicata.
-  await supabase.from('nutricao_sends').insert({
-    lead_id: outcome.leadId,
-    step: outcome.step,
-    resend_email_id: outcome.resendId ?? null,
-  })
-  // Atualiza lead: marca completed se foi o último passo; cola o resend_email_id no lead pra tracking rápido
-  const patch: Record<string, unknown> = {
-    resend_email_id: outcome.resendId ?? null,
-    email_status: 'sent',
-  }
-  if (outcome.step === getFinalStep().step) {
-    patch.completed_at = new Date().toISOString()
-  }
-  await supabase.from('nutricao_leads').update(patch).eq('id', outcome.leadId)
-}
-
 export interface RunSummary {
   scanned: number
   sent: number
@@ -167,13 +148,50 @@ export async function runNutricaoDispatch(): Promise<RunSummary> {
     const step = pickStep(lead, already, enabledSet)
     if (!step) continue
 
+    // Defesa em profundidade: tenta gravar a INTENÇÃO no nutricao_sends ANTES
+    // de chamar o Resend. Se outro processo/cache acabou de gravar esse step,
+    // o UNIQUE constraint trava aqui e a gente NÃO envia o e-mail. Custa 1
+    // INSERT extra em caso de race, mas garante que nunca duplica envio.
+    const supabase = createServerClient()
+    const { error: reserveErr } = await supabase.from('nutricao_sends').insert({
+      lead_id: lead.id,
+      step,
+      resend_email_id: null,
+    })
+    if (reserveErr) {
+      if (reserveErr.code === '23505') {
+        console.warn(`[nutricao] step ${step} ja registrado pra lead ${lead.id}, pulando.`)
+        continue
+      }
+      console.error('[nutricao] erro ao reservar send:', reserveErr.message)
+      continue
+    }
+
     const outcome = await sendOne(resend, from, lead, step)
     if (outcome.error) {
+      // Rollback: remove a reserva pra outra rodada poder tentar de novo.
+      await supabase
+        .from('nutricao_sends')
+        .delete()
+        .eq('lead_id', lead.id)
+        .eq('step', step)
+        .is('resend_email_id', null)
       summary.failed += 1
       summary.details.push({ email: lead.email, step, ok: false, error: outcome.error })
       continue
     }
-    await recordSend(outcome)
+
+    // Atualiza a reserva com o resend_email_id real + marca completed se for o final
+    await supabase
+      .from('nutricao_sends')
+      .update({ resend_email_id: outcome.resendId ?? null })
+      .eq('lead_id', lead.id)
+      .eq('step', step)
+      .is('resend_email_id', null)
+    const patch: Record<string, unknown> = { resend_email_id: outcome.resendId ?? null, email_status: 'sent' }
+    if (step === getFinalStep().step) patch.completed_at = new Date().toISOString()
+    await supabase.from('nutricao_leads').update(patch).eq('id', lead.id)
+
     summary.sent += 1
     summary.details.push({ email: lead.email, step, ok: true })
 
@@ -202,15 +220,37 @@ export async function sendImmediateWelcome(leadId: string): Promise<SendOutcome 
   if (!data) return null
   const lead = data as LeadRow
 
-  const already = await getSentSteps(lead.id)
-  if (already.has('d0_boas_vindas')) return null
+  // Reserva o D0 antes de enviar (mesma defesa que o cron usa).
+  const { error: reserveErr } = await supabase.from('nutricao_sends').insert({
+    lead_id: lead.id,
+    step: 'd0_boas_vindas',
+    resend_email_id: null,
+  })
+  if (reserveErr) {
+    if (reserveErr.code === '23505') return null // já foi enviado
+    console.error('[nutricao] D0 reserve falhou:', reserveErr.message)
+    return null
+  }
 
   const resend = new Resend(apiKey)
   const outcome = await sendOne(resend, from, lead, 'd0_boas_vindas')
   if (outcome.error) {
+    // rollback da reserva pra próxima tentativa
+    await supabase
+      .from('nutricao_sends')
+      .delete()
+      .eq('lead_id', lead.id)
+      .eq('step', 'd0_boas_vindas')
+      .is('resend_email_id', null)
     console.error('[nutricao] D0 falhou:', outcome.error)
     return outcome
   }
-  await recordSend(outcome)
+  await supabase
+    .from('nutricao_sends')
+    .update({ resend_email_id: outcome.resendId ?? null })
+    .eq('lead_id', lead.id)
+    .eq('step', 'd0_boas_vindas')
+    .is('resend_email_id', null)
+  await supabase.from('nutricao_leads').update({ resend_email_id: outcome.resendId ?? null, email_status: 'sent' }).eq('id', lead.id)
   return outcome
 }
