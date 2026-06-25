@@ -337,9 +337,11 @@ export default function CorreioMural({ mensagens, admin = false }: { mensagens: 
           <button
             onClick={fechar}
             aria-label="Fechar"
-            className="absolute right-4 top-[calc(1rem+env(safe-area-inset-top))] z-10 flex h-11 w-11 items-center justify-center rounded-full border-2 border-somma-cream/40 font-dm text-2xl leading-none text-somma-cream transition-colors hover:bg-somma-cream hover:text-somma-blue"
+            className="absolute right-4 top-[calc(1rem+env(safe-area-inset-top))] z-10 flex h-12 w-12 items-center justify-center rounded-full border-4 border-somma-black bg-somma-cream text-somma-black shadow-[3px_3px_0_#0a0a0a] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:bg-somma-orange hover:text-somma-cream hover:shadow-[2px_2px_0_#0a0a0a] sm:h-14 sm:w-14 sm:right-6 sm:top-6"
           >
-            ×
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
           </button>
 
           <div className="relative w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
