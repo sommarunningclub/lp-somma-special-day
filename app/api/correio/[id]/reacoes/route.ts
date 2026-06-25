@@ -8,9 +8,22 @@ export const runtime = 'nodejs'
 const SUPA_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
-// Emojis aceitos (precisa bater com REACAO_EMOJIS no client).
-const EMOJIS_OK = new Set(['🧡', '🔥', '😂', '👏', '💯', '💌'])
 const FP_MAX = 80
+// Aceita qualquer emoji: limita tamanho e exige pelo menos um pictograph.
+// Suporta sequencias ZWJ (familia, profissoes), bandeiras, skin tones, etc.
+const EMOJI_MAX_CODEPOINTS = 16
+const EMOJI_RE = /\p{Extended_Pictographic}/u
+
+function ehEmojiValido(s: string): boolean {
+  if (!s) return false
+  if (s.length > 64) return false
+  const codepoints = Array.from(s)
+  if (codepoints.length === 0 || codepoints.length > EMOJI_MAX_CODEPOINTS) return false
+  if (!EMOJI_RE.test(s)) return false
+  // Rejeita se tiver letra/digito ASCII (evita textos como "lol")
+  if (/[a-zA-Z0-9]/.test(s)) return false
+  return true
+}
 
 const supabase = createClient(SUPA_URL, SERVICE_KEY, {
   auth: { persistSession: false },
@@ -55,8 +68,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const emoji = String(body.emoji ?? '')
   const fingerprint = String(body.fingerprint ?? '').slice(0, FP_MAX)
 
-  if (!EMOJIS_OK.has(emoji)) {
-    return NextResponse.json({ error: 'Emoji nao permitido.' }, { status: 400 })
+  if (!ehEmojiValido(emoji)) {
+    return NextResponse.json({ error: 'So emoji.' }, { status: 400 })
   }
   if (!fingerprint) {
     return NextResponse.json({ error: 'fingerprint obrigatorio.' }, { status: 400 })

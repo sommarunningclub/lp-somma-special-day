@@ -7,7 +7,7 @@ type Reacoes = { counts: Record<string, number>; minhas: string[] }
 
 type Comentario = {
   id: string
-  autor_nome: string
+  autor_nome: string | null
   autor_instagram: string | null
   texto: string
   oculto: boolean
@@ -18,9 +18,6 @@ interface Props {
   correioId: string
   admin?: boolean
 }
-
-const NOME_LS = 'correio_nome_v1'
-const IG_LS = 'correio_ig_v1'
 
 function tempoRelativo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime()
@@ -35,25 +32,34 @@ function tempoRelativo(iso: string): string {
   return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
 }
 
+// Web Component do emoji-picker-element. Lazy import só quando abre.
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace JSX {
+    interface IntrinsicElements {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      'emoji-picker': any
+    }
+  }
+}
+
 export default function CorreioInteracoes({ correioId, admin = false }: Props) {
   const fp = useRef('')
   const [reacoes, setReacoes] = useState<Reacoes>({ counts: {}, minhas: [] })
   const [comentarios, setComentarios] = useState<Comentario[]>([])
   const [carregandoReacao, setCarregandoReacao] = useState<string | null>(null)
-  const [autorNome, setAutorNome] = useState('')
-  const [autorIg, setAutorIg] = useState('')
   const [texto, setTexto] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
 
-  // Mount: gera fingerprint, restaura nome/@ salvos, carrega reacoes e comentarios.
+  const [pickerOpen, setPickerOpen] = useState(false)
+  const [pickerCarregado, setPickerCarregado] = useState(false)
+  const pickerWrapRef = useRef<HTMLDivElement | null>(null)
+  const pickerElRef = useRef<HTMLElement | null>(null)
+
+  // Mount: gera fingerprint, carrega reacoes e comentarios.
   useEffect(() => {
     fp.current = getCorreioFingerprint()
-    try {
-      setAutorNome(window.localStorage.getItem(NOME_LS) ?? '')
-      setAutorIg(window.localStorage.getItem(IG_LS) ?? '')
-    } catch {}
-
     let abortado = false
     Promise.all([
       fetch(`/api/correio/${correioId}/reacoes?fp=${encodeURIComponent(fp.current)}`).then((r) => r.json()),
@@ -71,10 +77,55 @@ export default function CorreioInteracoes({ correioId, admin = false }: Props) {
     }
   }, [correioId])
 
+  // Lazy import + setup do picker quando abre pela primeira vez.
+  useEffect(() => {
+    if (!pickerOpen) return
+    let cancelado = false
+    ;(async () => {
+      if (!pickerCarregado) {
+        await import('emoji-picker-element')
+        if (cancelado) return
+        setPickerCarregado(true)
+      }
+      // Espera o custom element registrar
+      requestAnimationFrame(() => {
+        const el = pickerWrapRef.current?.querySelector('emoji-picker') as HTMLElement | null
+        if (!el) return
+        pickerElRef.current = el
+        const handler = (e: Event) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const detail = (e as any).detail
+          const unicode: string = detail?.unicode ?? detail?.emoji?.unicode ?? ''
+          if (unicode) {
+            toggleReacao(unicode)
+            setPickerOpen(false)
+          }
+        }
+        el.addEventListener('emoji-click', handler)
+        ;(el as unknown as { _correioCleanup?: () => void })._correioCleanup = () =>
+          el.removeEventListener('emoji-click', handler)
+      })
+    })()
+    return () => {
+      cancelado = true
+      const el = pickerElRef.current as unknown as { _correioCleanup?: () => void } | null
+      el?._correioCleanup?.()
+      pickerElRef.current = null
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pickerOpen])
+
+  // ESC fecha o picker
+  useEffect(() => {
+    if (!pickerOpen) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setPickerOpen(false) }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [pickerOpen])
+
   async function toggleReacao(emoji: string) {
     if (carregandoReacao) return
     setCarregandoReacao(emoji)
-    // Otimista: alterna localmente antes do response
     const minha = reacoes.minhas.includes(emoji)
     setReacoes((r) => ({
       counts: { ...r.counts, [emoji]: Math.max(0, (r.counts[emoji] ?? 0) + (minha ? -1 : 1)) },
@@ -98,10 +149,6 @@ export default function CorreioInteracoes({ correioId, admin = false }: Props) {
   async function enviarComentario(e: React.FormEvent) {
     e.preventDefault()
     setErro(null)
-    if (!autorNome.trim() && !autorIg.trim()) {
-      setErro('Diz teu nome ou @ pra comentar.')
-      return
-    }
     if (!texto.trim()) {
       setErro('Escreve o comentario.')
       return
@@ -111,12 +158,7 @@ export default function CorreioInteracoes({ correioId, admin = false }: Props) {
       const res = await fetch(`/api/correio/${correioId}/comentarios`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          autor_nome: autorNome,
-          autor_instagram: autorIg,
-          texto,
-          fingerprint: fp.current,
-        }),
+        body: JSON.stringify({ texto, fingerprint: fp.current }),
       })
       const d = await res.json().catch(() => null)
       if (!res.ok || !d?.success) {
@@ -125,10 +167,6 @@ export default function CorreioInteracoes({ correioId, admin = false }: Props) {
       }
       setComentarios((c) => [...c, d.comentario])
       setTexto('')
-      try {
-        if (autorNome) window.localStorage.setItem(NOME_LS, autorNome)
-        if (autorIg) window.localStorage.setItem(IG_LS, autorIg)
-      } catch {}
     } catch {
       setErro('Erro de conexao. Tente novamente.')
     } finally {
@@ -153,6 +191,15 @@ export default function CorreioInteracoes({ correioId, admin = false }: Props) {
     }
   }
 
+  // Lista das reações que já têm count > 0 (ordenadas) — alem dos atalhos fixos.
+  const reacoesAtivas = Object.entries(reacoes.counts)
+    .filter(([, n]) => n > 0)
+    .sort((a, b) => b[1] - a[1])
+    .map(([e]) => e)
+
+  // Atalhos = REACAO_EMOJIS + as ativas que nao estao nos atalhos (até 12 total)
+  const atalhos = Array.from(new Set([...REACAO_EMOJIS, ...reacoesAtivas])).slice(0, 12)
+
   return (
     <div className="mt-5 space-y-4 border-t-2 border-dashed border-somma-black/10 pt-4">
       {/* REACOES */}
@@ -161,7 +208,7 @@ export default function CorreioInteracoes({ correioId, admin = false }: Props) {
           Reaja com um emoji
         </p>
         <div className="flex flex-wrap items-center justify-center gap-2">
-          {REACAO_EMOJIS.map((e) => {
+          {atalhos.map((e) => {
             const ativo = reacoes.minhas.includes(e)
             const count = reacoes.counts[e] ?? 0
             const busy = carregandoReacao === e
@@ -184,7 +231,63 @@ export default function CorreioInteracoes({ correioId, admin = false }: Props) {
               </button>
             )
           })}
+          {/* Botão "+" abre o picker completo */}
+          <button
+            type="button"
+            onClick={() => setPickerOpen((v) => !v)}
+            aria-label="Mais emojis"
+            aria-expanded={pickerOpen}
+            className={`flex h-9 w-9 items-center justify-center rounded-full border-2 border-dashed font-dm text-lg transition-all active:scale-95 ${
+              pickerOpen
+                ? 'border-somma-orange bg-somma-orange/15 text-somma-orange'
+                : 'border-somma-black/25 bg-white text-somma-black/55 hover:border-somma-black/45'
+            }`}
+          >
+            {pickerOpen ? '×' : '+'}
+          </button>
         </div>
+
+        {/* Picker dropdown */}
+        {pickerOpen && (
+          <div className="relative mt-3" ref={pickerWrapRef}>
+            <div className="overflow-hidden rounded-2xl border-4 border-somma-black bg-white shadow-[5px_5px_0_rgba(0,0,0,0.25)]">
+              <div className="flex items-center justify-between border-b-2 border-somma-black/10 bg-somma-cream px-3 py-2">
+                <span className="font-dm text-[11px] font-bold uppercase tracking-widest text-somma-black/70">
+                  Escolha um emoji
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPickerOpen(false)}
+                  aria-label="Fechar emojis"
+                  className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-somma-black bg-white text-somma-black transition-colors hover:bg-somma-black hover:text-somma-cream"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+              </div>
+              {pickerCarregado ? (
+                <emoji-picker
+                  style={{
+                    width: '100%',
+                    height: '320px',
+                    display: 'block',
+                    ...({
+                      '--background': '#ffffff',
+                      '--border-color': 'transparent',
+                      '--input-border-color': 'rgba(10,10,10,0.15)',
+                      '--button-active-background': 'rgba(255,72,0,0.15)',
+                      '--button-hover-background': 'rgba(255,72,0,0.08)',
+                      '--indicator-color': '#FF4800',
+                    } as React.CSSProperties),
+                  }}
+                />
+              ) : (
+                <div className="flex h-[320px] items-center justify-center font-dm text-xs text-somma-black/50">
+                  Carregando emojis…
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* COMENTARIOS */}
@@ -201,11 +304,8 @@ export default function CorreioInteracoes({ correioId, admin = false }: Props) {
                 className={`rounded-xl bg-somma-blue/5 px-3 py-2 ${c.oculto ? 'opacity-50' : ''}`}
               >
                 <div className="flex items-baseline justify-between gap-2">
-                  <span className="font-dm text-xs font-bold text-somma-black">
-                    {c.autor_nome}
-                    {c.autor_instagram && !c.autor_nome.startsWith('@') && (
-                      <span className="ml-1 font-normal text-somma-black/50">@{c.autor_instagram}</span>
-                    )}
+                  <span className="font-dm text-xs font-bold text-somma-black/55">
+                    Anônimo
                     {admin && c.oculto && (
                       <span className="ml-1.5 inline-block rounded-full bg-somma-black px-1.5 py-px font-dm text-[9px] font-bold uppercase tracking-wide text-somma-cream">
                         oculto
@@ -240,30 +340,14 @@ export default function CorreioInteracoes({ correioId, admin = false }: Props) {
         )}
 
         <form onSubmit={enviarComentario} className="space-y-2">
-          <div className="grid grid-cols-2 gap-2">
-            <input
-              value={autorNome}
-              onChange={(e) => setAutorNome(e.target.value)}
-              placeholder="Seu nome"
-              maxLength={60}
-              className="w-full rounded-lg border-2 border-somma-black/10 bg-white px-2.5 py-1.5 font-dm text-xs text-somma-black placeholder:text-somma-black/35 focus:border-somma-blue focus:outline-none"
-            />
-            <input
-              value={autorIg}
-              onChange={(e) => setAutorIg(e.target.value)}
-              placeholder="@instagram"
-              maxLength={60}
-              className="w-full rounded-lg border-2 border-somma-black/10 bg-white px-2.5 py-1.5 font-dm text-xs text-somma-black placeholder:text-somma-black/35 focus:border-somma-blue focus:outline-none"
-            />
-          </div>
           <div className="flex items-end gap-2">
             <textarea
               value={texto}
               onChange={(e) => setTexto(e.target.value)}
-              placeholder="Escreve um comentario..."
+              placeholder="Escreve um comentario anonimo..."
               rows={2}
               maxLength={280}
-              className="min-h-[40px] flex-1 resize-none rounded-lg border-2 border-somma-black/10 bg-white px-3 py-2 font-dm text-sm text-somma-black placeholder:text-somma-black/35 focus:border-somma-blue focus:outline-none"
+              className="min-h-[44px] flex-1 resize-none rounded-lg border-2 border-somma-black/10 bg-white px-3 py-2 font-dm text-sm text-somma-black placeholder:text-somma-black/35 focus:border-somma-blue focus:outline-none"
             />
             <button
               type="submit"
