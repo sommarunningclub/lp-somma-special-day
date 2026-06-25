@@ -81,6 +81,9 @@ export default async function LeadsPage() {
             <Link href="/admin" className="w-full rounded-full border-4 border-somma-black/20 px-5 py-2.5 text-center font-bebas tracking-widest text-somma-black transition-all hover:border-somma-black hover:bg-somma-black/10 sm:w-auto">
               Propostas
             </Link>
+            <Link href="/admin/concurso-junino" className="w-full rounded-full border-4 border-somma-orange bg-somma-orange/15 px-5 py-2.5 text-center font-bebas tracking-widest text-somma-orange transition-all hover:bg-somma-orange hover:text-somma-cream sm:w-auto">
+              Concurso Junino
+            </Link>
             <Link href="/listavip" className="w-full rounded-full border-4 border-somma-blue bg-somma-blue/20 px-5 py-2.5 text-center font-bebas tracking-widest text-somma-blue transition-all hover:bg-somma-blue hover:text-somma-cream sm:w-auto">
               Ver página
             </Link>
