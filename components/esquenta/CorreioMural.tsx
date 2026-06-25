@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import Link from 'next/link'
+import CorreioModal from './CorreioModal'
 
 const MAX_FOTO_BYTES = 3 * 1024 * 1024
 const TIPOS_FOTO = ['image/jpeg', 'image/png', 'image/webp']
@@ -85,6 +85,7 @@ export default function CorreioMural({ mensagens, admin = false }: { mensagens: 
   const [contato, setContato] = useState<ContatoInfo | null | undefined>(undefined)
   const [revelando, setRevelando] = useState(false)
   const [uploadingLado, setUploadingLado] = useState<'de' | 'para' | null>(null)
+  const [modalAberto, setModalAberto] = useState(false)
   const inputDeRef = useRef<HTMLInputElement>(null)
   const inputParaRef = useRef<HTMLInputElement>(null)
 
@@ -271,9 +272,10 @@ export default function CorreioMural({ mensagens, admin = false }: { mensagens: 
 
       {/* Card-convite: mandar um correio */}
       <div className="mx-auto mt-8 max-w-2xl">
-        <Link
-          href="/esquenta-junino#correio"
-          className="group relative block overflow-hidden rounded-3xl border-4 border-somma-cream bg-somma-orange p-5 text-center shadow-[6px_6px_0_#FDB716] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_#FDB716] sm:p-6"
+        <button
+          type="button"
+          onClick={() => setModalAberto(true)}
+          className="group relative block w-full overflow-hidden rounded-3xl border-4 border-somma-cream bg-somma-orange p-5 text-center shadow-[6px_6px_0_#FDB716] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_#FDB716] sm:p-6"
         >
           <span className="pointer-events-none absolute -right-4 -top-4 text-[6rem] opacity-20 sm:-right-2 sm:text-[8rem]">💌</span>
           <p className="font-dm text-[11px] font-bold uppercase tracking-[0.3em] text-somma-cream/85 sm:text-xs">
@@ -289,8 +291,10 @@ export default function CorreioMural({ mensagens, admin = false }: { mensagens: 
             Mandar meu correio
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </span>
-        </Link>
+        </button>
       </div>
+
+      <CorreioModal open={modalAberto} onClose={() => setModalAberto(false)} />
 
       {/* Mural de corações */}
       {filtradas.length === 0 ? (
