@@ -267,8 +267,28 @@ export default function CorreioMural({ mensagens, admin = false }: { mensagens: 
           {filtradas.length} {filtradas.length === 1 ? 'recado' : 'recados'}
           {busca ? ' encontrado(s)' : ' no mural'}
         </p>
-        <Link href="/esquenta-junino#correio" className="mt-2 inline-block font-dm text-sm font-bold uppercase tracking-wide text-somma-yellow underline-offset-2 hover:underline">
-          Mandar um correio também
+      </div>
+
+      {/* Card-convite: mandar um correio */}
+      <div className="mx-auto mt-8 max-w-2xl">
+        <Link
+          href="/esquenta-junino#correio"
+          className="group relative block overflow-hidden rounded-3xl border-4 border-somma-cream bg-somma-orange p-5 text-center shadow-[6px_6px_0_#FDB716] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_#FDB716] sm:p-6"
+        >
+          <span className="pointer-events-none absolute -right-4 -top-4 text-[6rem] opacity-20 sm:-right-2 sm:text-[8rem]">💌</span>
+          <p className="font-dm text-[11px] font-bold uppercase tracking-[0.3em] text-somma-cream/85 sm:text-xs">
+            Bora animar a galera
+          </p>
+          <h2 className="mt-2 font-bebas text-3xl leading-[0.95] tracking-tight text-somma-cream sm:text-4xl md:text-5xl">
+            Mande o seu correio elegante <span className="text-somma-yellow">para alguém</span>
+          </h2>
+          <p className="mx-auto mt-3 max-w-md font-dm text-sm leading-relaxed text-somma-cream/90">
+            Recado, elogio, declaração ou aquela cantada gentil. Anônimo se quiser. A gente entrega aqui no mural. 💌
+          </p>
+          <span className="mt-4 inline-flex items-center gap-2 rounded-full border-2 border-somma-cream bg-somma-cream px-5 py-2 font-bebas text-base tracking-widest text-somma-orange transition-colors group-hover:bg-somma-yellow group-hover:text-somma-black">
+            Mandar meu correio
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
         </Link>
       </div>
 
