@@ -2,11 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
 import { contestDb } from '@/lib/contest/db'
 import { registroSchema, edicaoSchema } from '@/lib/contest/schemas'
-import { hashCpf, hashOpaque } from '@/lib/contest/cpf-hash'
+import { hashCpf } from '@/lib/contest/cpf-hash'
 import { getContestSettings, inscricaoAberta } from '@/lib/contest/settings'
 import { uploadContestPhoto, removeContestPhotos } from '@/lib/contest/storage'
 import { getParticipantId, setParticipantSession } from '@/lib/contest/session'
-import { sendAccessCode } from '@/lib/contest/email'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
@@ -19,7 +18,10 @@ function slugify(s: string): string {
 }
 const isDataImg = (v: unknown): v is string => typeof v === 'string' && /^data:image\/(jpeg|png|webp);base64,/i.test(v)
 
-// POST: cria inscrição (draft) + sobe fotos + gera OTP + loga (cookie).
+const primeiroNome = (s: string) => (s.trim().split(/\s+/)[0] || 'Participante').slice(0, 40)
+
+// POST: cadastro curto (nome/email/cpf/termos). Sem fotos, sem OTP.
+// Loga via cookie de sessão e leva pra /minha-inscricao completar.
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -40,13 +42,9 @@ export async function POST(request: NextRequest) {
     }
     const d = parsed.data
 
-    const fotos: string[] = Array.isArray(body.fotos) ? body.fotos.filter(isDataImg) : []
-    const maxFotos = settings?.max_photos ?? 2
-    if (fotos.length < 1) return NextResponse.json({ error: 'Envie pelo menos uma foto do look.' }, { status: 400 })
-    if (fotos.length > maxFotos) return NextResponse.json({ error: `Máximo de ${maxFotos} fotos.` }, { status: 400 })
-
     const cpf_hash = hashCpf(d.cpf)
-    const slug = `${slugify(d.display_name)}-${randomUUID().slice(0, 6)}`
+    const display = primeiroNome(d.full_name)
+    const slug = `${slugify(display)}-${randomUUID().slice(0, 6)}`
     const db = contestDb()
 
     const { data: inserted, error: insErr } = await db
@@ -54,14 +52,9 @@ export async function POST(request: NextRequest) {
       .insert([
         {
           full_name: d.full_name,
-          display_name: d.display_name,
+          display_name: display,
           email: d.email.toLowerCase(),
-          whatsapp: d.whatsapp,
           cpf_hash,
-          instagram_handle: d.instagram ? d.instagram.replace(/^@+/, '') : null,
-          city: d.city || null,
-          look_title: d.look_title,
-          look_description: d.look_description || null,
           status: 'draft',
           slug,
         },
@@ -72,7 +65,7 @@ export async function POST(request: NextRequest) {
     if (insErr) {
       if (insErr.code === '23505' && /uq_cp_cpf_active/.test(insErr.message)) {
         return NextResponse.json(
-          { error: 'Já existe uma inscrição com esse CPF. Acesse sua área pelo seu e-mail.', code: 'cpf_exists' },
+          { error: 'Já existe uma inscrição com esse CPF. Use o acesso ao lado pra entrar.', code: 'cpf_exists' },
           { status: 409 }
         )
       }
@@ -81,31 +74,6 @@ export async function POST(request: NextRequest) {
     }
 
     const id = inserted!.id as string
-    let mainPath: string | null = null
-    let secondPath: string | null = null
-    try {
-      mainPath = await uploadContestPhoto(fotos[0], id, 'main')
-      if (fotos[1]) secondPath = await uploadContestPhoto(fotos[1], id, 'second')
-    } catch (e) {
-      await removeContestPhotos([mainPath, secondPath])
-      await db.from('contest_participants').delete().eq('id', id)
-      return NextResponse.json({ error: e instanceof Error ? e.message : 'Erro ao enviar as fotos.' }, { status: 400 })
-    }
-
-    await db.from('contest_participants').update({ main_photo_url: mainPath, second_photo_url: secondPath }).eq('id', id)
-
-    // OTP de acesso (best effort) + sessão.
-    try {
-      const code = String(Math.floor(100000 + Math.random() * 900000))
-      await db
-        .from('contest_participants')
-        .update({ access_code_hash: hashOpaque(code), access_code_expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString() })
-        .eq('id', id)
-      await sendAccessCode(d.email.toLowerCase(), code, d.display_name)
-    } catch (e) {
-      console.error('[concurso-inscricao] OTP:', e)
-    }
-
     await setParticipantSession(id)
     return NextResponse.json({ ok: true, id, slug }, { status: 201 })
   } catch (e) {

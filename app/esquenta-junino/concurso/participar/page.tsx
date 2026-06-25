@@ -27,7 +27,7 @@ export default async function ParticiparPage() {
         </Link>
         <h1 className="mt-4 font-bebas text-5xl leading-[0.95] tracking-tight text-somma-black sm:text-6xl">Bora pro concurso</h1>
         <p className="mt-3 font-dm text-base leading-relaxed text-somma-black/70">
-          Capricha no look, manda até duas fotos e publica sua participação. O público vota e o look mais arretado leva o prêmio. 🌽
+          Cadastra teus dados em segundos. Depois você entra com o CPF na sua área e manda as fotos do look, dá um título e publica. 🌽
         </p>
 
         {jaLogado && (
@@ -39,7 +39,7 @@ export default async function ParticiparPage() {
         <div className="mt-7">
           {aberta ? (
             <div className="rounded-3xl border-4 border-somma-black bg-white/60 p-5 shadow-[8px_8px_0_#FF4800] sm:p-7">
-              <ParticipantForm maxPhotos={settings?.max_photos ?? 2} />
+              <ParticipantForm />
             </div>
           ) : (
             <div className="rounded-3xl border-4 border-somma-black bg-white p-7 text-center shadow-[8px_8px_0_#FF4800]">

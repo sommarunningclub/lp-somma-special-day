@@ -36,13 +36,15 @@ export default function ParticipantDashboard({ p }: { p: ParticipantWithSigned }
   } = useForm<EdicaoInput>({
     resolver: zodResolver(edicaoSchema),
     defaultValues: {
-      display_name: p.display_name,
+      display_name: p.display_name ?? '',
       instagram: p.instagram_handle ?? '',
       city: p.city ?? '',
-      look_title: p.look_title,
+      look_title: p.look_title ?? '',
       look_description: p.look_description ?? '',
     },
   })
+
+  const faltaCompletar = !p.main_photo_signed || !p.look_title || !p.display_name
 
   const status = STATUS[p.status] ?? STATUS.draft
   const podeEditar = p.status !== 'disqualified'
@@ -155,6 +157,20 @@ export default function ParticipantDashboard({ p }: { p: ParticipantWithSigned }
         >
           Sua página está no ar 🎉 Ver / compartilhar →
         </Link>
+      )}
+
+      {p.status === 'draft' && faltaCompletar && (
+        <div className="rounded-2xl border-4 border-somma-yellow bg-somma-yellow/15 px-4 py-3 text-left">
+          <p className="font-bebas text-base uppercase tracking-wide text-somma-black">Falta completar pra disputar!</p>
+          <ul className="mt-1.5 list-inside list-disc font-dm text-sm text-somma-black/75">
+            {!p.main_photo_signed && <li>Envia pelo menos a <strong>foto principal</strong> do look 👇</li>}
+            {!p.look_title && <li>Coloca um <strong>título</strong> pro look (ex: "Caipira Raiz")</li>}
+            {!p.display_name && <li>Confirma o <strong>nome de exibição</strong> que vai aparecer no mural</li>}
+          </ul>
+          <p className="mt-2 font-dm text-xs text-somma-black/55">
+            Quando tudo estiver pronto, clica em <strong>Publicar participação</strong> no fim da página.
+          </p>
+        </div>
       )}
 
       {/* Fotos */}
