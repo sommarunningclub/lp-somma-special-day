@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import CorreioModal from './CorreioModal'
+import CorreioInteracoes from './CorreioInteracoes'
 
 const MAX_FOTO_BYTES = 3 * 1024 * 1024
 const TIPOS_FOTO = ['image/jpeg', 'image/png', 'image/webp']
@@ -394,6 +395,9 @@ export default function CorreioMural({ mensagens, admin = false }: { mensagens: 
                   </p>
                 )}
               </div>
+
+              {/* reações + comentários */}
+              <CorreioInteracoes correioId={aberta.id} admin={admin} />
 
               {/* moderação */}
               {admin && (
