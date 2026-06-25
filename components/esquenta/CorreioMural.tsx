@@ -1,7 +1,19 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
+
+const MAX_FOTO_BYTES = 3 * 1024 * 1024
+const TIPOS_FOTO = ['image/jpeg', 'image/png', 'image/webp']
+
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader()
+    r.onload = () => resolve(String(r.result))
+    r.onerror = () => reject(new Error('Falha ao ler o arquivo'))
+    r.readAsDataURL(file)
+  })
+}
 
 export type Correio = {
   id: string
@@ -72,6 +84,9 @@ export default function CorreioMural({ mensagens, admin = false }: { mensagens: 
   // contato: undefined = não revelado; null = sem contato; objeto = revelado
   const [contato, setContato] = useState<ContatoInfo | null | undefined>(undefined)
   const [revelando, setRevelando] = useState(false)
+  const [uploadingLado, setUploadingLado] = useState<'de' | 'para' | null>(null)
+  const inputDeRef = useRef<HTMLInputElement>(null)
+  const inputParaRef = useRef<HTMLInputElement>(null)
 
   // ESC fecha + trava o scroll do body com o overlay aberto.
   useEffect(() => {
@@ -142,6 +157,81 @@ export default function CorreioMural({ mensagens, admin = false }: { mensagens: 
     }
     setLista((l) => l.filter((x) => x.id !== m.id))
     fechar()
+  }
+
+  async function selecionarFoto(m: Correio, lado: 'de' | 'para', file: File | null) {
+    if (!file) return
+    if (!TIPOS_FOTO.includes(file.type)) {
+      alert('Formato inválido. Use JPG, PNG ou WebP.')
+      return
+    }
+    if (file.size > MAX_FOTO_BYTES) {
+      alert('Imagem muito grande (máx 3MB).')
+      return
+    }
+    setUploadingLado(lado)
+    try {
+      const dataUrl = await fileToDataUrl(file)
+      const r = await fetch(`/api/correio/${m.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(lado === 'de' ? { de_foto: dataUrl } : { para_foto: dataUrl }),
+      })
+      const d = await r.json().catch(() => null)
+      if (!r.ok || !d?.success) {
+        alert(d?.error || 'Não foi possível enviar a foto.')
+        return
+      }
+      setLista((l) =>
+        l.map((x) =>
+          x.id === m.id
+            ? { ...x, de_foto_url: d.de_foto_url ?? null, para_foto_url: d.para_foto_url ?? null }
+            : x,
+        ),
+      )
+      setAberta((a) =>
+        a && a.id === m.id
+          ? { ...a, de_foto_url: d.de_foto_url ?? null, para_foto_url: d.para_foto_url ?? null }
+          : a,
+      )
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Erro inesperado ao enviar a foto.')
+    } finally {
+      setUploadingLado(null)
+      if (inputDeRef.current) inputDeRef.current.value = ''
+      if (inputParaRef.current) inputParaRef.current.value = ''
+    }
+  }
+
+  async function removerFoto(m: Correio, lado: 'de' | 'para') {
+    if (!confirm(`Remover a foto ${lado === 'de' ? 'do remetente' : 'do destinatário'}?`)) return
+    setUploadingLado(lado)
+    try {
+      const r = await fetch(`/api/correio/${m.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(lado === 'de' ? { de_foto: null } : { para_foto: null }),
+      })
+      const d = await r.json().catch(() => null)
+      if (!r.ok || !d?.success) {
+        alert(d?.error || 'Não foi possível remover a foto.')
+        return
+      }
+      setLista((l) =>
+        l.map((x) =>
+          x.id === m.id
+            ? { ...x, de_foto_url: d.de_foto_url ?? null, para_foto_url: d.para_foto_url ?? null }
+            : x,
+        ),
+      )
+      setAberta((a) =>
+        a && a.id === m.id
+          ? { ...a, de_foto_url: d.de_foto_url ?? null, para_foto_url: d.para_foto_url ?? null }
+          : a,
+      )
+    } finally {
+      setUploadingLado(null)
+    }
   }
 
   return (
@@ -283,14 +373,61 @@ export default function CorreioMural({ mensagens, admin = false }: { mensagens: 
 
               {/* moderação */}
               {admin && (
-                <div className="mt-4 flex items-center justify-center gap-3 border-t-2 border-dashed border-somma-black/15 pt-3">
-                  <button onClick={() => ocultar(aberta)} className="font-dm text-xs font-bold uppercase tracking-wide text-somma-blue underline-offset-2 hover:underline">
-                    {aberta.oculto ? 'Reexibir' : 'Ocultar'}
-                  </button>
-                  <span className="text-somma-black/20">|</span>
-                  <button onClick={() => excluir(aberta)} className="font-dm text-xs font-bold uppercase tracking-wide text-red-600 underline-offset-2 hover:underline">
-                    Excluir
-                  </button>
+                <div className="mt-4 space-y-3 border-t-2 border-dashed border-somma-black/15 pt-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    {(['de', 'para'] as const).map((lado) => {
+                      const tem = lado === 'de' ? !!aberta.de_foto_url : !!aberta.para_foto_url
+                      const inputRef = lado === 'de' ? inputDeRef : inputParaRef
+                      const busy = uploadingLado === lado
+                      const label = lado === 'de' ? 'remetente' : 'destinatário'
+                      return (
+                        <div key={lado} className="flex flex-col items-center gap-1 rounded-xl bg-somma-blue/5 px-2 py-2">
+                          <span className="font-dm text-[10px] font-bold uppercase tracking-widest text-somma-black/50">
+                            Foto {label}
+                          </span>
+                          <input
+                            ref={inputRef}
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            className="hidden"
+                            onChange={(e) => selecionarFoto(aberta, lado, e.target.files?.[0] ?? null)}
+                          />
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => inputRef.current?.click()}
+                              disabled={busy}
+                              className="font-dm text-xs font-bold uppercase tracking-wide text-somma-blue underline-offset-2 hover:underline disabled:opacity-50"
+                            >
+                              {busy ? 'Enviando…' : tem ? '📷 Trocar' : '📷 Adicionar'}
+                            </button>
+                            {tem && !busy && (
+                              <>
+                                <span className="text-somma-black/20">·</span>
+                                <button
+                                  type="button"
+                                  onClick={() => removerFoto(aberta, lado)}
+                                  className="font-dm text-xs font-bold uppercase tracking-wide text-red-600 underline-offset-2 hover:underline"
+                                >
+                                  Remover
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  <div className="flex items-center justify-center gap-3">
+                    <button onClick={() => ocultar(aberta)} className="font-dm text-xs font-bold uppercase tracking-wide text-somma-blue underline-offset-2 hover:underline">
+                      {aberta.oculto ? 'Reexibir' : 'Ocultar'}
+                    </button>
+                    <span className="text-somma-black/20">|</span>
+                    <button onClick={() => excluir(aberta)} className="font-dm text-xs font-bold uppercase tracking-wide text-red-600 underline-offset-2 hover:underline">
+                      Excluir
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

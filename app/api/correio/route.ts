@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { uploadFoto } from '@/lib/correio'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
@@ -17,33 +18,6 @@ const supabase = createClient(SUPA_URL, SERVICE_KEY, {
 })
 
 const limpaArroba = (v: string) => v.replace(/^@+/, '').trim()
-
-// Confere os "magic bytes" pra garantir que o conteúdo é mesmo a imagem declarada.
-function bytesConferem(mime: string, buf: Buffer): boolean {
-  if (buf.length < 12) return false
-  if (mime === 'image/jpeg') return buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff
-  if (mime === 'image/png') return buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47
-  if (mime === 'image/webp') return buf.toString('ascii', 0, 4) === 'RIFF' && buf.toString('ascii', 8, 12) === 'WEBP'
-  return false
-}
-
-// Sobe a foto (dataURL) no bucket PRIVADO `correio` e devolve o PATH (não a URL).
-// A URL assinada é gerada na leitura (mural). Retorna null se não houver foto.
-async function uploadFoto(dataUrl: string | null | undefined, pasta: 'de' | 'para'): Promise<string | null> {
-  if (!dataUrl || typeof dataUrl !== 'string') return null
-  const match = /^data:(image\/(jpeg|png|webp));base64,(.+)$/i.exec(dataUrl)
-  if (!match) throw new Error('Formato de imagem inválido.')
-  const mime = match[1].toLowerCase()
-  const ext = mime === 'image/png' ? 'png' : mime === 'image/webp' ? 'webp' : 'jpg'
-  const buffer = Buffer.from(match[3], 'base64')
-  if (buffer.byteLength > 3 * 1024 * 1024) throw new Error('Imagem muito grande (máx 3MB).')
-  if (!bytesConferem(mime, buffer)) throw new Error('Arquivo de imagem inválido.')
-
-  const path = `${pasta}/${crypto.randomUUID()}.${ext}`
-  const { error } = await supabase.storage.from('correio').upload(path, buffer, { contentType: mime, upsert: false })
-  if (error) throw new Error(`Falha no upload da imagem: ${error.message}`)
-  return path
-}
 
 // Salva uma mensagem do Correio Elegante (DE → PARA) na tabela `correio_elegante`.
 export async function POST(request: NextRequest) {
@@ -74,8 +48,8 @@ export async function POST(request: NextRequest) {
     let deFotoPath: string | null = null
     let paraFotoPath: string | null = null
     try {
-      deFotoPath = await uploadFoto(de.foto, 'de')
-      paraFotoPath = await uploadFoto(para.foto, 'para')
+      deFotoPath = await uploadFoto(supabase, de.foto, 'de')
+      paraFotoPath = await uploadFoto(supabase, para.foto, 'para')
     } catch (e) {
       return NextResponse.json({ error: e instanceof Error ? e.message : 'Erro ao enviar a imagem.' }, { status: 400 })
     }
