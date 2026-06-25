@@ -372,7 +372,22 @@ export default function CorreioMural({ mensagens, admin = false }: { mensagens: 
               {/* revelar contato */}
               <div className="mt-5">
                 {!aberta.tem_contato ? (
-                  <p className="rounded-2xl bg-somma-blue/5 px-4 py-3 font-dm text-sm font-semibold text-somma-black/60">Remetente anônimo 🤫 (não deixou contato)</p>
+                  <div className="space-y-2">
+                    <p className="rounded-2xl bg-somma-blue/5 px-4 py-2.5 font-dm text-xs font-semibold text-somma-black/60">
+                      Remetente anônimo 🤫 (não deixou contato)
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        window.dispatchEvent(
+                          new CustomEvent('correio:focus-comentario', { detail: { correioId: aberta.id } }),
+                        )
+                      }}
+                      className="w-full rounded-2xl border-4 border-somma-black bg-somma-yellow px-4 py-3 font-bebas text-lg tracking-widest text-somma-black shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-somma-orange hover:text-somma-cream hover:shadow-[2px_2px_0_#0a0a0a]"
+                    >
+                      Responder publicamente 💬
+                    </button>
+                  </div>
                 ) : contato === undefined ? (
                   <button
                     onClick={() => revelarContato(aberta)}

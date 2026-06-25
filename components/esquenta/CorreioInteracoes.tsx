@@ -56,6 +56,7 @@ export default function CorreioInteracoes({ correioId, admin = false }: Props) {
   const [pickerCarregado, setPickerCarregado] = useState(false)
   const pickerWrapRef = useRef<HTMLDivElement | null>(null)
   const pickerElRef = useRef<HTMLElement | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
   // Mount: gera fingerprint, carrega reacoes e comentarios.
   useEffect(() => {
@@ -122,6 +123,20 @@ export default function CorreioInteracoes({ correioId, admin = false }: Props) {
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [pickerOpen])
+
+  // Listener pro botao "Responder publicamente" do overlay focar o textarea daqui.
+  useEffect(() => {
+    function onFocar(e: Event) {
+      const ce = e as CustomEvent<{ correioId: string }>
+      if (ce.detail?.correioId !== correioId) return
+      const el = textareaRef.current
+      if (!el) return
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      setTimeout(() => el.focus({ preventScroll: true }), 250)
+    }
+    window.addEventListener('correio:focus-comentario', onFocar)
+    return () => window.removeEventListener('correio:focus-comentario', onFocar)
+  }, [correioId])
 
   async function toggleReacao(emoji: string) {
     if (carregandoReacao) return
@@ -342,6 +357,7 @@ export default function CorreioInteracoes({ correioId, admin = false }: Props) {
         <form onSubmit={enviarComentario} className="space-y-2">
           <div className="flex items-end gap-2">
             <textarea
+              ref={textareaRef}
               value={texto}
               onChange={(e) => setTexto(e.target.value)}
               placeholder="Escreve um comentario anonimo..."
