@@ -18,10 +18,14 @@ const KEYFRAMES = `
 @keyframes srmPulse{0%{transform:scale(.5);opacity:.7}100%{transform:scale(2.4);opacity:0}}
 @keyframes radarRing{0%{transform:scale(.2);opacity:.8}100%{transform:scale(1);opacity:0}}
 @keyframes radarSweep{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes orbitSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 .srm{position:absolute;will-change:left,top}
 .srm-halo{position:absolute;left:0;top:0;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:rgba(255,72,0,.28);animation:srmPulse 1.8s ease-out infinite}
 .srm-core{position:absolute;left:0;top:0;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:#fff;border:3px solid #FF4800;box-shadow:0 0 0 2px rgba(0,0,0,.35)}
 `
+// Delay deliberado de "Satélite em órbita / Buscando sua localização" antes do super-zoom.
+const MIN_ACQUIRE_MS = 4000
+const ORBIT_MS = 1600
 
 export default function TrackingRun({ token, session, initialPoints }: { token: string; session: TrackSession; initialPoints: TrackPoint[] }) {
   const esteira = session.activity_type === 'esteira'
@@ -30,6 +34,7 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
   const [lockMsg, setLockMsg] = useState(false)
   const [geoError, setGeoError] = useState<'denied' | null>(null)
   const [slowGps, setSlowGps] = useState(false)
+  const [acqStage, setAcqStage] = useState<'orbit' | 'searching'>('orbit')
   const [distanceM, setDistanceM] = useState(session.total_distance_m || 0)
   const [durationSec, setDurationSec] = useState(session.total_duration_seconds || 0)
   const [avgPace, setAvgPace] = useState<number | null>(session.average_pace_seconds_per_km)
@@ -59,6 +64,8 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
   phaseRef.current = mapPhase
   const locked = useRef<boolean>(mapPhase === 'active')
   const acquireStart = useRef<number>(Date.now())
+  const bestFix = useRef<{ lat: number; lng: number } | null>(null)
+  const acqTimers = useRef<number[]>([])
   const cameraCancel = useRef<() => void>(() => {})
 
   const QKEY = `gps_queue_${token}`
@@ -168,9 +175,11 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
 
   function triggerLock(lat: number, lng: number) {
     if (locked.current || !map.current) return
+    // segura o lock/super-zoom por no mínimo MIN_ACQUIRE_MS (delay "buscando sua localização")
+    if (Date.now() - acquireStart.current < MIN_ACQUIRE_MS) return
     locked.current = true
     setMapPhase('locking')
-    cameraCancel.current = animateMapTo(map.current, { lat, lng, zoom: 17 }, prefersReducedMotion() ? 300 : 1600, () => {
+    cameraCancel.current = animateMapTo(map.current, { lat, lng, zoom: 17 }, prefersReducedMotion() ? 500 : 2000, () => {
       setLockMsg(true)
       window.setTimeout(() => {
         setLockMsg(false)
@@ -188,9 +197,10 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
     setSlowGps(false)
     ensureMarker(lat, lng, accuracy)
 
-    // fase de aquisição → trava quando a precisão for boa (ou após 25s, degradado)
+    // fase de aquisição → trava quando a precisão for boa (após o delay) ou após 25s (degradado)
     if (phaseRef.current === 'acquiring') {
       const good = accuracy == null || accuracy <= TRACKING_MAX_ACCURACY_METERS
+      if (good) bestFix.current = { lat, lng }
       if (good || Date.now() - acquireStart.current > 25000) triggerLock(lat, lng)
     } else if (phaseRef.current === 'active' && follow.current && map.current) {
       map.current.panTo({ lat, lng })
@@ -250,12 +260,25 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
       }
       if (session.status !== 'finished') {
         setStatus('running')
-        if (!esteira) startWatch()
+        if (!esteira && mapPhase !== 'active') {
+          startWatch()
+          // sequência: "Satélite em órbita" -> "Buscando sua localização" -> super-zoom
+          const t1 = window.setTimeout(() => setAcqStage('searching'), ORBIT_MS)
+          const t2 = window.setTimeout(() => {
+            if (bestFix.current && !locked.current) triggerLock(bestFix.current.lat, bestFix.current.lng)
+          }, MIN_ACQUIRE_MS + 80)
+          acqTimers.current = [t1, t2]
+        } else if (!esteira) {
+          startWatch()
+        }
       } else {
         setStatus('finished')
       }
     })()
-    return () => stopWatch()
+    return () => {
+      stopWatch()
+      acqTimers.current.forEach(clearTimeout)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -335,9 +358,13 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
 
   const acqText = lockMsg
     ? 'Localização confirmada'
-    : !hasFix
-      ? slowGps ? 'Ainda buscando sinal GPS' : 'Buscando sinal GPS'
-      : accuracy != null && accuracy > TRACKING_MAX_ACCURACY_METERS ? 'Validando precisão' : 'Identificando posição'
+    : acqStage === 'orbit'
+      ? 'Satélite SOMMA Club em órbita'
+      : slowGps
+        ? 'Ainda buscando sua localização'
+        : accuracy != null && accuracy > TRACKING_MAX_ACCURACY_METERS
+          ? 'Validando precisão'
+          : 'Buscando sua localização'
 
   // ---------- Tela final ----------
   if (status === 'finished' && summary) {
@@ -389,16 +416,24 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
 
       {/* overlay de aquisição / lock */}
       {!esteira && mapPhase !== 'active' && !geoError && (
-        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center bg-somma-black/45 backdrop-blur-[2px]">
-          <div className="relative h-40 w-40">
-            <span className="absolute inset-0 rounded-full border border-somma-orange/40" style={{ animation: 'radarRing 2s ease-out infinite' }} />
-            <span className="absolute inset-0 rounded-full border border-somma-orange/30" style={{ animation: 'radarRing 2s ease-out infinite .6s' }} />
-            <span className="absolute inset-0 rounded-full border border-somma-orange/20" style={{ animation: 'radarRing 2s ease-out infinite 1.2s' }} />
-            <span className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-somma-orange shadow-[0_0_18px_#FF4800]" />
+        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center bg-somma-black/60 backdrop-blur-[2px]">
+          {/* satélite SOMMA em órbita */}
+          <div className="relative h-44 w-44">
+            <span className="absolute inset-0 rounded-full border border-somma-orange/15" style={{ animation: 'radarRing 2.6s ease-out infinite' }} />
+            <span className="absolute inset-2 rounded-full border border-somma-orange/15" style={{ animation: 'radarRing 2.6s ease-out infinite 1.3s' }} />
+            {/* globo (planeta) */}
+            <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-[0_0_30px_rgba(255,72,0,0.5)]" style={{ background: 'radial-gradient(circle at 34% 30%, #FF7A3C, #FF4800 62%, #9e2f00)' }} />
+            {/* plano de órbita (elipse) com satélite girando */}
+            <div className="absolute inset-0" style={{ transform: 'scaleY(0.46)' }}>
+              <div className="absolute inset-1 rounded-full border border-dashed border-somma-cream/25" />
+              <div className="absolute inset-1" style={{ animation: 'orbitSpin 3s linear infinite' }}>
+                <span className="absolute left-1/2 top-0 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-somma-cream shadow-[0_0_12px_#F9F0DC]" />
+              </div>
+            </div>
           </div>
-          <p className="mt-6 font-dm text-[11px] font-bold uppercase tracking-[0.35em] text-somma-orange">SOMMA GPS</p>
-          <p className="mt-1 font-bebas text-3xl tracking-wide text-somma-cream">{lockMsg ? '✓ ' : ''}{acqText}</p>
-          {accuracy != null && <p className="mt-1 font-dm text-xs text-somma-cream/55">precisão ~{Math.round(accuracy)}m</p>}
+          <p className="mt-6 font-dm text-[11px] font-bold uppercase tracking-[0.35em] text-somma-orange">SOMMA Connect</p>
+          <p className="mt-1 max-w-[18rem] text-center font-bebas text-3xl leading-tight tracking-wide text-somma-cream">{lockMsg ? '✓ ' : ''}{acqText}</p>
+          {acqStage !== 'orbit' && accuracy != null && <p className="mt-1 font-dm text-xs text-somma-cream/55">precisão ~{Math.round(accuracy)}m</p>}
         </div>
       )}
 
