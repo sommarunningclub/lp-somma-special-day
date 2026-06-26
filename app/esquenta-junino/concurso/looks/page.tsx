@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { getPublishedLooks } from '@/lib/contest/public'
 import { getContestSettings } from '@/lib/contest/settings'
 import LookGallery from '@/components/concurso/LookGallery'
+import { muralFechado } from '@/lib/contest/gate'
+import MuralFechado from '@/components/concurso/MuralFechado'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
@@ -14,6 +16,8 @@ export const metadata: Metadata = {
 }
 
 export default async function LooksPage() {
+  if (muralFechado()) return <MuralFechado origem="Mural" />
+
   const [looks, settings] = await Promise.all([getPublishedLooks(), getContestSettings()])
   const showVotes = settings?.show_vote_count_publicly ?? true
 

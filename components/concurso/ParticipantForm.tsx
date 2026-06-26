@@ -67,12 +67,6 @@ export default function ParticipantForm() {
       </div>
 
       <div>
-        <label className={label}>E-mail *</label>
-        <input type="email" {...register('email')} className={input} placeholder="seu@email.com" />
-        {errors.email && <p className={err}>{errors.email.message}</p>}
-      </div>
-
-      <div>
         <label className={label}>CPF *</label>
         <input
           inputMode="numeric"
@@ -85,19 +79,6 @@ export default function ParticipantForm() {
         <p className="mt-1 font-dm text-[11px] text-somma-black/45">
           Esse CPF é o que você vai usar pra acessar sua área e mandar as fotos depois.
         </p>
-      </div>
-
-      <div className="space-y-2 rounded-2xl border-2 border-somma-black/10 bg-white/50 p-4">
-        <label className="flex items-start gap-2 font-dm text-sm text-somma-black/80">
-          <input type="checkbox" {...register('authorize_image')} className="mt-0.5 h-5 w-5 shrink-0 accent-somma-orange" />
-          <span>Autorizo o uso da minha imagem e das fotos enviadas na divulgação do Concurso Junino SOMMA.</span>
-        </label>
-        {errors.authorize_image && <p className={err}>{errors.authorize_image.message}</p>}
-        <label className="flex items-start gap-2 font-dm text-sm text-somma-black/80">
-          <input type="checkbox" {...register('accept_rules')} className="mt-0.5 h-5 w-5 shrink-0 accent-somma-orange" />
-          <span>Li e aceito o regulamento e a política de privacidade.</span>
-        </label>
-        {errors.accept_rules && <p className={err}>{errors.accept_rules.message}</p>}
       </div>
 
       {erro && (
@@ -122,7 +103,7 @@ export default function ParticipantForm() {
         {isSubmitting ? 'ENVIANDO...' : 'CRIAR MINHA INSCRIÇÃO'}
       </button>
       <p className="text-center font-dm text-xs text-somma-black/55">
-        Em seguida você vai pra sua área pessoal pra mandar as fotos do look, dar um título e publicar. 🌽
+        Em seguida você vai pra sua área pessoal pra mandar as fotos do look, dar um nome e publicar. 🌽
       </p>
     </form>
   )

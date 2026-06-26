@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         {
           full_name: d.full_name,
           display_name: display,
-          email: d.email.toLowerCase(),
+          email: null,
           cpf_hash,
           status: 'draft',
           slug,
@@ -108,11 +108,7 @@ export async function PATCH(request: NextRequest) {
   if (!atual) return NextResponse.json({ error: 'Inscrição não encontrada.' }, { status: 404 })
 
   const update: Record<string, unknown> = {
-    display_name: d.display_name,
-    instagram_handle: d.instagram ? d.instagram.replace(/^@+/, '') : null,
-    city: d.city || null,
     look_title: d.look_title,
-    look_description: d.look_description || null,
   }
 
   try {

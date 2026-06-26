@@ -26,6 +26,7 @@ export default function ParticipantDashboard({ p }: { p: ParticipantWithSigned }
   const [msg, setMsg] = useState<string | null>(null)
   const [erro, setErro] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [editandoNome, setEditandoNome] = useState(false)
   const mainRef = useRef<HTMLInputElement>(null)
   const secondRef = useRef<HTMLInputElement>(null)
 
@@ -35,21 +36,16 @@ export default function ParticipantDashboard({ p }: { p: ParticipantWithSigned }
     formState: { errors, isSubmitting },
   } = useForm<EdicaoInput>({
     resolver: zodResolver(edicaoSchema),
-    defaultValues: {
-      display_name: p.display_name ?? '',
-      instagram: p.instagram_handle ?? '',
-      city: p.city ?? '',
-      look_title: p.look_title ?? '',
-      look_description: p.look_description ?? '',
-    },
+    defaultValues: { look_title: p.look_title ?? '' },
   })
-
-  const faltaCompletar = !p.main_photo_signed || !p.look_title || !p.display_name
 
   const status = STATUS[p.status] ?? STATUS.draft
   const podeEditar = p.status !== 'disqualified'
+  const faltaNome = !p.look_title
+  const faltaFoto = !p.main_photo_signed
+  const prontoParaPublicar = !faltaNome && !faltaFoto
 
-  async function salvar(data: EdicaoInput) {
+  async function salvarNome(data: EdicaoInput) {
     setErro(null)
     setMsg(null)
     const res = await fetch('/api/concurso/inscricao', {
@@ -58,7 +54,8 @@ export default function ParticipantDashboard({ p }: { p: ParticipantWithSigned }
       body: JSON.stringify(data),
     })
     if (res.ok) {
-      setMsg('Alterações salvas!')
+      setMsg('Nome do look salvo!')
+      setEditandoNome(false)
       router.refresh()
     } else {
       const j = await res.json().catch(() => ({}))
@@ -75,11 +72,7 @@ export default function ParticipantDashboard({ p }: { p: ParticipantWithSigned }
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          display_name: p.display_name,
-          instagram: p.instagram_handle ?? '',
-          city: p.city ?? '',
-          look_title: p.look_title,
-          look_description: p.look_description ?? '',
+          look_title: p.look_title ?? '',
           [slot === 'main' ? 'main_foto' : 'second_foto']: d,
         }),
       })
@@ -91,18 +84,12 @@ export default function ParticipantDashboard({ p }: { p: ParticipantWithSigned }
   }
 
   async function removerSegunda() {
+    if (!confirm('Remover a segunda foto?')) return
     setBusy(true)
     const res = await fetch('/api/concurso/inscricao', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        display_name: p.display_name,
-        instagram: p.instagram_handle ?? '',
-        city: p.city ?? '',
-        look_title: p.look_title,
-        look_description: p.look_description ?? '',
-        remove_second: true,
-      }),
+      body: JSON.stringify({ look_title: p.look_title ?? '', remove_second: true }),
     })
     setBusy(false)
     if (res.ok) router.refresh()
@@ -159,23 +146,19 @@ export default function ParticipantDashboard({ p }: { p: ParticipantWithSigned }
         </Link>
       )}
 
-      {p.status === 'draft' && faltaCompletar && (
+      {p.status === 'draft' && (faltaNome || faltaFoto) && (
         <div className="rounded-2xl border-4 border-somma-yellow bg-somma-yellow/15 px-4 py-3 text-left">
           <p className="font-bebas text-base uppercase tracking-wide text-somma-black">Falta completar pra disputar!</p>
           <ul className="mt-1.5 list-inside list-disc font-dm text-sm text-somma-black/75">
-            {!p.main_photo_signed && <li>Envia pelo menos a <strong>foto principal</strong> do look 👇</li>}
-            {!p.look_title && <li>Coloca um <strong>título</strong> pro look (ex: "Caipira Raiz")</li>}
-            {!p.display_name && <li>Confirma o <strong>nome de exibição</strong> que vai aparecer no mural</li>}
+            {faltaFoto && <li>Envia pelo menos a <strong>foto principal</strong> do look 👇</li>}
+            {faltaNome && <li>Dá um <strong>nome</strong> pro look</li>}
           </ul>
-          <p className="mt-2 font-dm text-xs text-somma-black/55">
-            Quando tudo estiver pronto, clica em <strong>Publicar participação</strong> no fim da página.
-          </p>
         </div>
       )}
 
-      {/* Fotos */}
+      {/* Fotos (max 2) */}
       <div className="rounded-3xl border-4 border-somma-black bg-somma-cream p-5 shadow-[6px_6px_0_#FF4800]">
-        <p className="mb-3 font-bebas text-xl uppercase tracking-wide text-somma-black">Fotos do look</p>
+        <p className="mb-3 font-bebas text-xl uppercase tracking-wide text-somma-black">Fotos do look (até 2)</p>
         <div className="grid grid-cols-2 gap-3">
           <div>
             <div className="overflow-hidden rounded-2xl border-4 border-somma-black">
@@ -187,11 +170,25 @@ export default function ParticipantDashboard({ p }: { p: ParticipantWithSigned }
               )}
             </div>
             {podeEditar && (
-              <button onClick={() => mainRef.current?.click()} disabled={busy} className="mt-2 w-full font-dm text-xs font-bold uppercase tracking-wide text-somma-orange underline-offset-2 hover:underline">
-                Trocar principal
+              <button
+                onClick={() => mainRef.current?.click()}
+                disabled={busy}
+                className="mt-2 w-full font-dm text-xs font-bold uppercase tracking-wide text-somma-orange underline-offset-2 hover:underline"
+              >
+                {p.main_photo_signed ? 'Trocar principal' : 'Adicionar principal'}
               </button>
             )}
-            <input ref={mainRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => { const f = e.currentTarget.files?.[0]; if (f) trocarFoto(f, 'main'); e.currentTarget.value = '' }} />
+            <input
+              ref={mainRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.currentTarget.files?.[0]
+                if (f) trocarFoto(f, 'main')
+                e.currentTarget.value = ''
+              }}
+            />
           </div>
           <div>
             <div className="overflow-hidden rounded-2xl border-4 border-somma-black">
@@ -204,72 +201,116 @@ export default function ParticipantDashboard({ p }: { p: ParticipantWithSigned }
             </div>
             {podeEditar && (
               <div className="mt-2 flex items-center justify-between gap-2">
-                <button onClick={() => secondRef.current?.click()} disabled={busy} className="font-dm text-xs font-bold uppercase tracking-wide text-somma-orange underline-offset-2 hover:underline">
+                <button
+                  onClick={() => secondRef.current?.click()}
+                  disabled={busy}
+                  className="font-dm text-xs font-bold uppercase tracking-wide text-somma-orange underline-offset-2 hover:underline"
+                >
                   {p.second_photo_signed ? 'Trocar' : 'Adicionar'}
                 </button>
                 {p.second_photo_signed && (
-                  <button onClick={removerSegunda} disabled={busy} className="font-dm text-xs font-bold uppercase tracking-wide text-red-600 underline-offset-2 hover:underline">
+                  <button
+                    onClick={removerSegunda}
+                    disabled={busy}
+                    className="font-dm text-xs font-bold uppercase tracking-wide text-red-600 underline-offset-2 hover:underline"
+                  >
                     Remover
                   </button>
                 )}
               </div>
             )}
-            <input ref={secondRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => { const f = e.currentTarget.files?.[0]; if (f) trocarFoto(f, 'second'); e.currentTarget.value = '' }} />
+            <input
+              ref={secondRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.currentTarget.files?.[0]
+                if (f) trocarFoto(f, 'second')
+                e.currentTarget.value = ''
+              }}
+            />
           </div>
         </div>
       </div>
 
-      {/* Dados */}
+      {/* Nome do look */}
       {podeEditar && (
-        <form onSubmit={handleSubmit(salvar)} className="space-y-4 rounded-3xl border-4 border-somma-black bg-somma-cream p-5 shadow-[6px_6px_0_#0a0a0a]">
-          <p className="font-bebas text-xl uppercase tracking-wide text-somma-black">Dados do look</p>
-          <div>
-            <label className={label}>Nome de exibição</label>
-            <input {...register('display_name')} className={input} />
-            {errors.display_name && <p className="mt-1 font-dm text-xs font-semibold text-red-600">{errors.display_name.message}</p>}
+        <div className="rounded-3xl border-4 border-somma-black bg-somma-cream p-5 shadow-[6px_6px_0_#0a0a0a]">
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="font-bebas text-xl uppercase tracking-wide text-somma-black">Nome do look</p>
+            {!editandoNome && p.look_title && (
+              <button
+                type="button"
+                onClick={() => setEditandoNome(true)}
+                className="font-dm text-xs font-bold uppercase tracking-wide text-somma-blue underline-offset-2 hover:underline"
+              >
+                Editar
+              </button>
+            )}
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className={label}>Instagram</label>
-              <input {...register('instagram')} className={input} placeholder="@seuuser" />
-            </div>
-            <div>
-              <label className={label}>Cidade</label>
-              <input {...register('city')} className={input} />
-            </div>
-          </div>
-          <div>
-            <label className={label}>Título do look</label>
-            <input {...register('look_title')} className={input} />
-            {errors.look_title && <p className="mt-1 font-dm text-xs font-semibold text-red-600">{errors.look_title.message}</p>}
-          </div>
-          <div>
-            <label className={label}>Descrição</label>
-            <textarea rows={3} maxLength={500} {...register('look_description')} className={`${input} resize-none`} />
-          </div>
-          <button type="submit" disabled={isSubmitting} className="w-full rounded-2xl border-4 border-somma-black bg-somma-blue px-3 py-3 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] disabled:opacity-60">
-            {isSubmitting ? 'SALVANDO...' : 'SALVAR ALTERAÇÕES'}
-          </button>
-        </form>
+
+          {!editandoNome && p.look_title ? (
+            <p className="mt-2 font-bebas text-3xl tracking-wide text-somma-black sm:text-4xl">{p.look_title}</p>
+          ) : (
+            <form onSubmit={handleSubmit(salvarNome)} className="mt-3 space-y-3">
+              <div>
+                <label className={label}>Nome do look</label>
+                <input {...register('look_title')} className={input} placeholder='Ex: "Caipira Raiz"' autoFocus />
+                {errors.look_title && (
+                  <p className="mt-1 font-dm text-xs font-semibold text-red-600">{errors.look_title.message}</p>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-1 rounded-xl border-4 border-somma-black bg-somma-blue px-3 py-2.5 font-bebas tracking-widest text-somma-cream shadow-[3px_3px_0_#0a0a0a] disabled:opacity-60"
+                >
+                  {isSubmitting ? 'SALVANDO...' : 'SALVAR'}
+                </button>
+                {p.look_title && (
+                  <button
+                    type="button"
+                    onClick={() => setEditandoNome(false)}
+                    className="rounded-xl border-2 border-somma-black bg-white px-4 py-2.5 font-bebas tracking-widest text-somma-black"
+                  >
+                    Cancelar
+                  </button>
+                )}
+              </div>
+            </form>
+          )}
+        </div>
       )}
 
       {msg && <p className="rounded-xl border border-green-200 bg-green-50 px-4 py-2.5 text-center font-dm text-sm text-green-700">{msg}</p>}
       {erro && <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-center font-dm text-sm text-red-600">{erro}</p>}
 
-      {/* Publicar / excluir */}
+      {/* Publicar / Despublicar */}
       {podeEditar && (
         <div className="flex flex-col gap-3 rounded-3xl border-4 border-somma-black bg-somma-cream p-5 shadow-[6px_6px_0_#FDB716] sm:flex-row sm:items-center sm:justify-between">
           {p.status === 'published' ? (
             <>
               <p className="font-dm text-sm text-somma-black/70">Sua inscrição está pública no mural.</p>
-              <button onClick={() => publicar(false)} disabled={busy} className="rounded-2xl border-4 border-somma-black bg-white px-5 py-3 font-bebas text-base tracking-widest text-somma-black shadow-[3px_3px_0_#0a0a0a] disabled:opacity-60">
+              <button
+                onClick={() => publicar(false)}
+                disabled={busy}
+                className="rounded-2xl border-4 border-somma-black bg-white px-5 py-3 font-bebas text-base tracking-widest text-somma-black shadow-[3px_3px_0_#0a0a0a] disabled:opacity-60"
+              >
                 Despublicar
               </button>
             </>
           ) : (
             <>
-              <p className="font-dm text-sm text-somma-black/70">Pronto pra disputar? Publica pra aparecer no mural e receber votos.</p>
-              <button onClick={() => publicar(true)} disabled={busy} className="rounded-2xl border-4 border-somma-black bg-somma-orange px-5 py-3 font-bebas text-base tracking-widest text-somma-cream shadow-[3px_3px_0_#0a0a0a] disabled:opacity-60">
+              <p className="font-dm text-sm text-somma-black/70">
+                {prontoParaPublicar ? 'Pronto pra disputar? Publica pra aparecer no mural e receber votos.' : 'Complete foto e nome do look pra poder publicar.'}
+              </p>
+              <button
+                onClick={() => publicar(true)}
+                disabled={busy || !prontoParaPublicar}
+                className="rounded-2xl border-4 border-somma-black bg-somma-orange px-5 py-3 font-bebas text-base tracking-widest text-somma-cream shadow-[3px_3px_0_#0a0a0a] disabled:opacity-50"
+              >
                 Publicar participação
               </button>
             </>
