@@ -26,6 +26,9 @@ export function toTrackSession(s: Record<string, unknown>) {
   return {
     id: s.id as string,
     participant_name: s.participant_name as string,
+    activity_type: (s.activity_type as string) ?? 'rua',
+    watch_metrics: (s.watch_metrics as Record<string, unknown>) ?? null,
+    ai_report: (s.ai_report as string) ?? null,
     reference_location_name: (s.reference_location_name as string) ?? null,
     reference_lat: num(s.reference_lat),
     reference_lng: num(s.reference_lng),

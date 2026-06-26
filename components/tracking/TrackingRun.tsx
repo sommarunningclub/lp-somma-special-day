@@ -187,7 +187,7 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
       }
       if (session.status !== 'finished') {
         setStatus('running')
-        startWatch()
+        if (session.activity_type !== 'esteira') startWatch() // esteira: indoor, sem GPS
       } else {
         setStatus('finished')
       }
@@ -264,7 +264,10 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
     onPosition({ coords: { latitude: lat, longitude: lng, accuracy: 8, altitude: null, altitudeAccuracy: null, heading: null, speed: 3 }, timestamp: Date.now() } as unknown as GeolocationPosition)
   }, [onPosition, session])
 
-  const gps = !hasFix ? { t: 'GPS buscando sinal', c: 'text-somma-yellow' } : accuracy == null ? { t: 'Aguardando localização', c: 'text-somma-cream/60' } : accuracy <= TRACKING_MAX_ACCURACY_METERS ? { t: `GPS bom · ${Math.round(accuracy)}m`, c: 'text-[#1faa59]' } : { t: `Sinal fraco · ${Math.round(accuracy)}m`, c: 'text-somma-orange' }
+  const esteira = session.activity_type === 'esteira'
+  const gps = esteira
+    ? { t: 'Esteira (indoor)', c: 'text-somma-cream/70' }
+    : !hasFix ? { t: 'GPS buscando sinal', c: 'text-somma-yellow' } : accuracy == null ? { t: 'Aguardando localização', c: 'text-somma-cream/60' } : accuracy <= TRACKING_MAX_ACCURACY_METERS ? { t: `GPS bom · ${Math.round(accuracy)}m`, c: 'text-[#1faa59]' } : { t: `Sinal fraco · ${Math.round(accuracy)}m`, c: 'text-somma-orange' }
 
   // ---------- Tela final ----------
   if (status === 'finished' && summary) {
@@ -287,8 +290,8 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
             {session.reference_location_name ?? 'Corre livre'} · {new Date().toLocaleString('pt-BR')}
           </p>
           <div className="flex flex-col gap-3">
-            <Link href={`/tracking/gps-somma/admin`} className="rounded-2xl border-2 border-somma-cream/30 px-3 py-3 text-center font-bebas text-lg tracking-widest">Ver no painel</Link>
-            <Link href="/tracking/gps-somma" className="rounded-2xl border-4 border-somma-cream bg-somma-orange px-3 py-3 text-center font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#000]">Nova corrida</Link>
+            <Link href={`/tracking/gps-somma/atividade/${token}`} className="rounded-2xl border-4 border-somma-cream bg-somma-orange px-3 py-4 text-center font-bebas text-xl tracking-widest text-somma-cream shadow-[4px_4px_0_#000]">📸 Relatório completo + foto do relógio</Link>
+            <Link href="/tracking/gps-somma" className="rounded-2xl border-2 border-somma-cream/30 px-3 py-3 text-center font-bebas text-lg tracking-widest">Nova corrida</Link>
           </div>
         </div>
       </main>

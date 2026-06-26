@@ -1,7 +1,26 @@
 // Tipos client-safe (sem segredos).
+export type WatchMetrics = {
+  distance_km?: number | null
+  duration?: string | null
+  duration_seconds?: number | null
+  avg_pace?: string | null
+  avg_pace_seconds_per_km?: number | null
+  avg_hr?: number | null
+  max_hr?: number | null
+  calories?: number | null
+  elevation_gain_m?: number | null
+  cadence?: number | null
+  device?: string | null
+  raw_text?: string | null
+}
+
 export type TrackSession = {
   id: string
   participant_name: string
+  activity_type: 'rua' | 'esteira' | 'caminhada'
+  watch_photo_signed?: string | null
+  watch_metrics?: WatchMetrics | null
+  ai_report?: string | null
   reference_location_name: string | null
   reference_lat: number | null
   reference_lng: number | null
@@ -24,7 +43,8 @@ export type TrackSession = {
 export type TrackPoint = {
   latitude: number
   longitude: number
-  accuracy_m: number | null
+  accuracy_m?: number | null
+  altitude_m?: number | null
   captured_at: string
   speed_mps?: number | null
   is_valid?: boolean

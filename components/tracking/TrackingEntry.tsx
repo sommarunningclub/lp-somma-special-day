@@ -10,6 +10,7 @@ type Dest = { name: string; lat: number; lng: number }
 export default function TrackingEntry() {
   const router = useRouter()
   const [nome, setNome] = useState('Alex')
+  const [tipo, setTipo] = useState<'rua' | 'esteira' | 'caminhada'>('rua')
   const [atual, setAtual] = useState<Coords | null>(null)
   const [destino, setDestino] = useState<Dest | null>(null)
   const [plannedPolyline, setPlannedPolyline] = useState<string | null>(null)
@@ -146,6 +147,7 @@ export default function TrackingEntry() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           participant_name: nome.trim(),
+          activity_type: tipo,
           reference_location_name: ref?.name ?? null,
           reference_lat: ref?.lat ?? null,
           reference_lng: ref?.lng ?? null,
@@ -180,6 +182,23 @@ export default function TrackingEntry() {
           <div>
             <label className={labelCls}>Seu nome</label>
             <input value={nome} onChange={(e) => setNome(e.target.value)} className={inputCls} placeholder="Seu nome" />
+          </div>
+
+          <div>
+            <label className={labelCls}>Tipo do corre</label>
+            <div className="grid grid-cols-3 gap-2">
+              {([['rua', '🏃 Rua'], ['esteira', '🏃‍♂️ Esteira'], ['caminhada', '🚶 Caminhada']] as const).map(([v, label]) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => setTipo(v)}
+                  className={`rounded-xl border-2 px-2 py-3 font-bebas text-base tracking-wide transition-colors ${tipo === v ? 'border-somma-orange bg-somma-orange text-somma-cream' : 'border-somma-cream/20 bg-somma-black text-somma-cream/60'}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {tipo === 'esteira' && <p className="mt-2 font-dm text-xs text-somma-yellow">Na esteira o GPS não mede distância (indoor). Ao terminar, tire a foto do relógio pro relatório com IA. 📸</p>}
           </div>
 
           <div>

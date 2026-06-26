@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
       .insert({
         tracking_token_hash: hashTrackingToken(token),
         participant_name: d.participant_name,
+        activity_type: d.activity_type,
         reference_location_name: d.reference_location_name ?? null,
         reference_lat: d.reference_lat ?? null,
         reference_lng: d.reference_lng ?? null,
