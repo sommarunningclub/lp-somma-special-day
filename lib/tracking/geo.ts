@@ -46,10 +46,10 @@ export function processPoints(incoming: PointInput[], anchorIn: Anchor): Process
       const dist = getDistance({ latitude: anchor.lat, longitude: anchor.lng }, { latitude: p.lat, longitude: p.lng })
       const dt = (at - anchor.at) / 1000
       if (dt <= 0) {
-        if (dist < TRACKING_DEDUPE_MIN_METERS) {
-          valid = false
-          reason = 'duplicate'
-        }
+        // ponto igual ou anterior à âncora (reenvio da fila / fora de ordem):
+        // nunca soma distância nem move a âncora pra trás.
+        valid = false
+        reason = dist < TRACKING_DEDUPE_MIN_METERS ? 'duplicate' : 'out_of_order'
       } else {
         const speed = dist / dt
         if (speed > TRACKING_MAX_SPEED_MPS) {
