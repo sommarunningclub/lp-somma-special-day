@@ -28,6 +28,8 @@ export function toTrackSession(s: Record<string, unknown>) {
     participant_name: s.participant_name as string,
     activity_type: (s.activity_type as string) ?? 'rua',
     watch_metrics: (s.watch_metrics as Record<string, unknown>) ?? null,
+    consolidated: (s.consolidated as Record<string, unknown>) ?? null,
+    calibration_factor: num(s.calibration_factor),
     ai_report: (s.ai_report as string) ?? null,
     reference_location_name: (s.reference_location_name as string) ?? null,
     reference_lat: num(s.reference_lat),

@@ -5,8 +5,15 @@ import Link from 'next/link'
 import { loadMapsLib, mapsAvailable, DARK_SOMMA_STYLE } from './maps'
 import { compressImage } from '@/components/concurso/image'
 import { fmtDistance, fmtDuration, fmtPace } from '@/lib/tracking/format'
-import type { TrackSession, TrackPoint, WatchMetrics } from '@/lib/tracking/types'
+import type { TrackSession, TrackPoint, WatchMetrics, Consolidated } from '@/lib/tracking/types'
 import type { Split } from '@/lib/tracking/analytics'
+
+const CONF: Record<string, { txt: string; cls: string }> = {
+  alta: { txt: 'Alta confiança', cls: 'bg-[#1faa59]/15 text-[#1faa59]' },
+  media: { txt: 'Confiança média', cls: 'bg-somma-yellow/20 text-somma-yellow' },
+  baixa: { txt: 'Divergência alta', cls: 'bg-red-500/15 text-red-300' },
+  gps: { txt: 'Só GPS', cls: 'bg-somma-cream/10 text-somma-cream/60' },
+}
 
 const TIPO: Record<string, string> = { rua: 'Corrida na rua', esteira: 'Esteira', caminhada: 'Caminhada' }
 
@@ -27,6 +34,7 @@ export default function ActivityReport({
   const fileRef = useRef<HTMLInputElement>(null)
   const [photo, setPhoto] = useState<string | null>(session.watch_photo_signed ?? null)
   const [metrics, setMetrics] = useState<WatchMetrics | null>((session.watch_metrics as WatchMetrics) ?? null)
+  const [consolidated, setConsolidated] = useState<Consolidated | null>((session.consolidated as Consolidated) ?? null)
   const [report, setReport] = useState<string | null>(session.ai_report ?? null)
   const [busy, setBusy] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
@@ -66,6 +74,7 @@ export default function ActivityReport({
       if (res.ok) {
         setPhoto(j.photo ?? dataUrl)
         setMetrics(j.metrics ?? null)
+        setConsolidated(j.consolidated ?? null)
         setReport(j.report ?? null)
       } else {
         setPhoto(dataUrl)
@@ -80,6 +89,10 @@ export default function ActivityReport({
 
   const maxPace = Math.max(1, ...splits.map((s) => s.pace))
   const elev = elevation.series
+  const dispDist = consolidated?.distance_m ?? Number(session.total_distance_m || 0)
+  const dispDur = consolidated?.duration_seconds ?? Number(session.total_duration_seconds || 0)
+  const dispPace = consolidated?.pace_seconds_per_km ?? session.average_pace_seconds_per_km
+  const conf = consolidated ? CONF[consolidated.confidence] ?? CONF.gps : null
 
   return (
     <main className="min-h-[100svh] bg-somma-black px-4 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-[calc(1.2rem+env(safe-area-inset-top))] text-somma-cream">
@@ -107,10 +120,17 @@ export default function ActivityReport({
           </p>
         </header>
 
-        <div className="grid grid-cols-3 gap-3">
-          <Box label="Distância" value={fmtDistance(Number(session.total_distance_m || 0))} />
-          <Box label="Tempo" value={fmtDuration(Number(session.total_duration_seconds || 0))} />
-          <Box label="Ritmo médio" value={fmtPace(session.average_pace_seconds_per_km)} />
+        <div>
+          <div className="grid grid-cols-3 gap-3">
+            <Box label="Distância" value={fmtDistance(dispDist)} />
+            <Box label="Tempo" value={fmtDuration(dispDur)} />
+            <Box label="Ritmo médio" value={fmtPace(dispPace)} />
+          </div>
+          {consolidated && (
+            <p className="mt-1.5 text-center font-dm text-[10px] font-bold uppercase tracking-widest text-somma-cream/40">
+              Resultado consolidado · GPS + relógio
+            </p>
+          )}
         </div>
 
         {mapsAvailable() && points.some((p) => p.is_valid !== false) && (
@@ -170,19 +190,35 @@ export default function ActivityReport({
             <img src={photo} alt="Foto do relógio" className="mt-4 w-full rounded-2xl border-2 border-somma-cream/15 object-contain" />
           )}
 
-          {metrics && (
+          {consolidated ? (
+            <div className="mt-4 space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                {conf && <span className={`rounded-full px-3 py-1 font-dm text-[11px] font-bold uppercase tracking-wide ${conf.cls}`}>{conf.txt}</span>}
+                {consolidated.discrepancy_distance_pct != null && (
+                  <span className="rounded-full bg-somma-cream/10 px-3 py-1 font-dm text-[11px] font-bold text-somma-cream/70">GPS × relógio: {consolidated.discrepancy_distance_pct}%</span>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {consolidated.avg_hr != null && <Tag label="FC média" value={`${consolidated.avg_hr} bpm`} />}
+                {consolidated.max_hr != null && <Tag label="FC máx" value={`${consolidated.max_hr} bpm`} />}
+                {consolidated.calories != null && <Tag label="Calorias" value={`${consolidated.calories}`} />}
+                {consolidated.cadence != null && <Tag label="Cadência" value={`${consolidated.cadence} spm`} />}
+                {consolidated.elevation_gain_m != null && <Tag label="Elevação" value={`+${consolidated.elevation_gain_m} m`} />}
+                {metrics?.device && <Tag label="Aparelho" value={String(metrics.device)} />}
+              </div>
+              <p className="font-dm text-[11px] leading-relaxed text-somma-cream/45">
+                Distância oficial: <span className="text-somma-cream/70">{fmtDistance(consolidated.distance_m ?? 0)}</span> (fonte: {consolidated.distance_source === 'watch' ? 'relógio' : 'GPS'})
+                {session.calibration_factor != null && <> · calibração registrada (fator {session.calibration_factor})</>}
+              </p>
+            </div>
+          ) : metrics ? (
             <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
               {metrics.device && <Tag label="Aparelho" value={String(metrics.device)} />}
               {metrics.distance_km != null && <Tag label="Distância" value={`${metrics.distance_km} km`} />}
-              {metrics.duration && <Tag label="Tempo" value={String(metrics.duration)} />}
               {metrics.avg_pace && <Tag label="Pace" value={String(metrics.avg_pace)} />}
               {metrics.avg_hr != null && <Tag label="FC média" value={`${metrics.avg_hr} bpm`} />}
-              {metrics.max_hr != null && <Tag label="FC máx" value={`${metrics.max_hr} bpm`} />}
-              {metrics.calories != null && <Tag label="Calorias" value={`${metrics.calories}`} />}
-              {metrics.elevation_gain_m != null && <Tag label="Elevação" value={`${metrics.elevation_gain_m} m`} />}
-              {metrics.cadence != null && <Tag label="Cadência" value={`${metrics.cadence}`} />}
             </div>
-          )}
+          ) : null}
 
           {report && <p className="mt-4 whitespace-pre-line rounded-2xl bg-somma-orange/10 p-4 font-dm text-sm leading-relaxed text-somma-cream/90">{report}</p>}
 
