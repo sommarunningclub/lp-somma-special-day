@@ -17,21 +17,26 @@ export async function POST(request: NextRequest) {
     }
     const d = parsed.data
     const token = generateTrackingToken()
+    const db = trackingDb()
 
-    const { data, error } = await trackingDb()
-      .from('gps_tracking_sessions')
-      .insert({
-        tracking_token_hash: hashTrackingToken(token),
-        participant_name: d.participant_name,
-        activity_type: d.activity_type,
-        reference_location_name: d.reference_location_name ?? null,
-        reference_lat: d.reference_lat ?? null,
-        reference_lng: d.reference_lng ?? null,
-        planned_route_polyline: d.planned_route_polyline ?? null,
-        status: 'created',
-      })
-      .select('id')
-      .single()
+    const row: Record<string, unknown> = {
+      tracking_token_hash: hashTrackingToken(token),
+      participant_name: d.participant_name,
+      activity_type: d.activity_type,
+      reference_location_name: d.reference_location_name ?? null,
+      reference_lat: d.reference_lat ?? null,
+      reference_lng: d.reference_lng ?? null,
+      planned_route_polyline: d.planned_route_polyline ?? null,
+      status: 'created',
+    }
+
+    let { data, error } = await db.from('gps_tracking_sessions').insert(row).select('id').single()
+
+    // Resiliência: se a migration 0003 ainda não rodou, a coluna activity_type não existe.
+    if (error && (error.code === '42703' || /column .* does not exist/i.test(error.message))) {
+      delete row.activity_type
+      ;({ data, error } = await db.from('gps_tracking_sessions').insert(row).select('id').single())
+    }
 
     if (error) {
       console.error('[gps-session] insert:', error.message)

@@ -4,15 +4,32 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { getDistance } from 'geolib'
 import { loadMapsLib, mapsAvailable, DARK_SOMMA_STYLE } from './maps'
+import { animateMapTo, prefersReducedMotion } from './cameraAnim'
+import { createRunnerMarker, type RunnerMarker } from './runnerMarker'
 import { fmtDistance, fmtDuration, fmtPace } from '@/lib/tracking/format'
 import { TRACKING_MIN_INTERVAL_MS, TRACKING_MIN_DISTANCE_METERS, TRACKING_MAX_ACCURACY_METERS } from '@/lib/tracking/constants'
 import type { TrackSession, TrackPoint } from '@/lib/tracking/types'
 
 type Pt = { lat: number; lng: number; accuracy: number | null; altitude: number | null; speed: number | null; heading: number | null; captured_at: string }
 type Status = 'created' | 'running' | 'paused' | 'finished' | 'cancelled'
+type MapPhase = 'acquiring' | 'locking' | 'active'
+
+const KEYFRAMES = `
+@keyframes srmPulse{0%{transform:scale(.5);opacity:.7}100%{transform:scale(2.4);opacity:0}}
+@keyframes radarRing{0%{transform:scale(.2);opacity:.8}100%{transform:scale(1);opacity:0}}
+@keyframes radarSweep{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.srm{position:absolute;will-change:left,top}
+.srm-halo{position:absolute;left:0;top:0;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:rgba(255,72,0,.28);animation:srmPulse 1.8s ease-out infinite}
+.srm-core{position:absolute;left:0;top:0;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:#fff;border:3px solid #FF4800;box-shadow:0 0 0 2px rgba(0,0,0,.35)}
+`
 
 export default function TrackingRun({ token, session, initialPoints }: { token: string; session: TrackSession; initialPoints: TrackPoint[] }) {
+  const esteira = session.activity_type === 'esteira'
   const [status, setStatus] = useState<Status>(session.status === 'created' ? 'running' : (session.status as Status))
+  const [mapPhase, setMapPhase] = useState<MapPhase>(esteira || initialPoints.length > 0 ? 'active' : 'acquiring')
+  const [lockMsg, setLockMsg] = useState(false)
+  const [geoError, setGeoError] = useState<'denied' | null>(null)
+  const [slowGps, setSlowGps] = useState(false)
   const [distanceM, setDistanceM] = useState(session.total_distance_m || 0)
   const [durationSec, setDurationSec] = useState(session.total_duration_seconds || 0)
   const [avgPace, setAvgPace] = useState<number | null>(session.average_pace_seconds_per_km)
@@ -26,7 +43,7 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
 
   const mapDiv = useRef<HTMLDivElement>(null)
   const map = useRef<google.maps.Map | null>(null)
-  const meMarker = useRef<google.maps.Marker | null>(null)
+  const runner = useRef<RunnerMarker | null>(null)
   const meCircle = useRef<google.maps.Circle | null>(null)
   const realLine = useRef<google.maps.Polyline | null>(null)
   const follow = useRef(true)
@@ -38,6 +55,11 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
   const flushing = useRef(false)
   const statusRef = useRef<Status>(status)
   statusRef.current = status
+  const phaseRef = useRef<MapPhase>(mapPhase)
+  phaseRef.current = mapPhase
+  const locked = useRef<boolean>(mapPhase === 'active')
+  const acquireStart = useRef<number>(Date.now())
+  const cameraCancel = useRef<() => void>(() => {})
 
   const QKEY = `gps_queue_${token}`
 
@@ -45,7 +67,7 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
     try {
       localStorage.setItem(QKEY, JSON.stringify(queue.current))
     } catch {
-      /* storage cheio/indisponível */
+      /* storage indisponível */
     }
     setPending(queue.current.length)
   }, [QKEY])
@@ -62,21 +84,20 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
       })
       if (res.ok) {
         const j = await res.json()
-        const sentKeys = new Set(snapshot.map((p) => p.captured_at))
-        queue.current = queue.current.filter((p) => !sentKeys.has(p.captured_at))
+        const sent = new Set(snapshot.map((p) => p.captured_at))
+        queue.current = queue.current.filter((p) => !sent.has(p.captured_at))
         persistQueue()
         if (typeof j.total_distance_m === 'number') setDistanceM(j.total_distance_m)
         if (typeof j.total_duration_seconds === 'number') setDurationSec(j.total_duration_seconds)
         if ('average_pace_seconds_per_km' in j) setAvgPace(j.average_pace_seconds_per_km)
       }
     } catch {
-      /* mantém na fila e tenta depois */
+      /* mantém na fila */
     } finally {
       flushing.current = false
     }
   }, [token, persistQueue])
 
-  // restaura fila persistida
   useEffect(() => {
     try {
       const raw = localStorage.getItem(QKEY)
@@ -89,18 +110,30 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
     }
   }, [QKEY])
 
-  // mapa
+  // ---- mapa ----
   useEffect(() => {
     if (!mapsAvailable() || !mapDiv.current) return
     let cancelled = false
     ;(async () => {
       const { Map } = await loadMapsLib('maps')
       if (cancelled || !mapDiv.current) return
-      const center = session.latest_lat != null ? { lat: Number(session.latest_lat), lng: Number(session.latest_lng) } : session.reference_lat != null ? { lat: Number(session.reference_lat), lng: Number(session.reference_lng) } : { lat: -15.7939, lng: -47.8828 }
-      map.current = new Map(mapDiv.current, { center, zoom: 17, styles: DARK_SOMMA_STYLE, disableDefaultUI: true, gestureHandling: 'greedy', backgroundColor: '#1d1d1d' })
+      const last = realPath.current[realPath.current.length - 1]
+      const center = last ?? (session.latest_lat != null ? { lat: Number(session.latest_lat), lng: Number(session.latest_lng) } : session.reference_lat != null ? { lat: Number(session.reference_lat), lng: Number(session.reference_lng) } : { lat: -15.7939, lng: -47.8828 })
+      const startZoom = phaseRef.current === 'active' ? 17 : 12
+      map.current = new Map(mapDiv.current, {
+        center,
+        zoom: startZoom,
+        styles: DARK_SOMMA_STYLE,
+        disableDefaultUI: true,
+        gestureHandling: 'greedy',
+        backgroundColor: '#1d1d1d',
+        isFractionalZoomEnabled: true,
+        clickableIcons: false,
+      })
       map.current.addListener('dragstart', () => (follow.current = false))
+
       realLine.current = new google.maps.Polyline({ map: map.current, path: realPath.current, strokeColor: '#FF4800', strokeWeight: 5, strokeOpacity: 0.95 })
-      // rota planejada (cinza pontilhada)
+
       if (session.planned_route_polyline) {
         try {
           const geo = await loadMapsLib('geometry')
@@ -110,65 +143,96 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
           /* opcional */
         }
       }
+
+      // se já estamos ativos (reload no meio), posiciona o marcador
+      if (phaseRef.current === 'active' && last) ensureMarker(last.lat, last.lng, accuracy)
     })()
     return () => {
       cancelled = true
+      cameraCancel.current()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session])
 
-  const drawMe = useCallback((lat: number, lng: number, acc: number | null) => {
+  function ensureMarker(lat: number, lng: number, acc: number | null) {
     if (!map.current) return
     const pos = { lat, lng }
-    if (!meMarker.current) {
-      meMarker.current = new google.maps.Marker({ map: map.current, position: pos, icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#FF4800', fillOpacity: 1, strokeColor: '#fff', strokeWeight: 3 } })
-      meCircle.current = new google.maps.Circle({ map: map.current, center: pos, radius: acc ?? 15, strokeColor: '#FF4800', strokeOpacity: 0.35, strokeWeight: 1, fillColor: '#FF4800', fillOpacity: 0.08 })
-    } else {
-      meMarker.current.setPosition(pos)
-      meCircle.current?.setCenter(pos)
-      meCircle.current?.setRadius(acc ?? 15)
+    if (!runner.current) {
+      runner.current = createRunnerMarker(map.current)
+      meCircle.current = new google.maps.Circle({ map: map.current, center: pos, radius: acc ?? 15, strokeColor: '#FF4800', strokeOpacity: 0.3, strokeWeight: 1, fillColor: '#FF4800', fillOpacity: 0.07 })
     }
-    if (follow.current) map.current.panTo(pos)
-  }, [])
+    runner.current.setPosition(pos)
+    meCircle.current?.setCenter(pos)
+    meCircle.current?.setRadius(acc ?? 15)
+  }
 
-  const onPosition = useCallback(
-    (p: GeolocationPosition) => {
-      if (statusRef.current !== 'running') return
-      const { latitude: lat, longitude: lng, accuracy, altitude, speed, heading } = p.coords
-      setAccuracy(accuracy)
-      setHasFix(true)
-      drawMe(lat, lng, accuracy)
+  function triggerLock(lat: number, lng: number) {
+    if (locked.current || !map.current) return
+    locked.current = true
+    setMapPhase('locking')
+    cameraCancel.current = animateMapTo(map.current, { lat, lng, zoom: 17 }, prefersReducedMotion() ? 300 : 1600, () => {
+      setLockMsg(true)
+      window.setTimeout(() => {
+        setLockMsg(false)
+        setMapPhase('active')
+      }, 1300)
+    })
+  }
 
-      const now = p.timestamp || Date.now()
-      const prev = lastSent.current
-      const dist = prev ? getDistance({ latitude: prev.lat, longitude: prev.lng }, { latitude: lat, longitude: lng }) : Infinity
-      const dt = prev ? now - prev.at : Infinity
-      if (dt < TRACKING_MIN_INTERVAL_MS && dist < TRACKING_MIN_DISTANCE_METERS) return // throttle
+  const onPosition = useCallback((p: GeolocationPosition) => {
+    if (statusRef.current !== 'running') return
+    const { latitude: lat, longitude: lng, accuracy, altitude, speed, heading } = p.coords
+    setAccuracy(accuracy)
+    setHasFix(true)
+    setGeoError(null)
+    setSlowGps(false)
+    ensureMarker(lat, lng, accuracy)
 
-      lastSent.current = { lat, lng, at: now }
-      queue.current.push({ lat, lng, accuracy: accuracy ?? null, altitude: altitude ?? null, speed: speed ?? null, heading: heading ?? null, captured_at: new Date(now).toISOString() })
-      persistQueue()
+    // fase de aquisição → trava quando a precisão for boa (ou após 25s, degradado)
+    if (phaseRef.current === 'acquiring') {
+      const good = accuracy == null || accuracy <= TRACKING_MAX_ACCURACY_METERS
+      if (good || Date.now() - acquireStart.current > 25000) triggerLock(lat, lng)
+    } else if (phaseRef.current === 'active' && follow.current && map.current) {
+      map.current.panTo({ lat, lng })
+    }
 
-      // desenha só pontos de boa precisão na linha real
-      if (accuracy == null || accuracy <= TRACKING_MAX_ACCURACY_METERS) {
-        realPath.current.push({ lat, lng })
-        realLine.current?.setPath(realPath.current)
-        // ritmo atual: janela dos últimos ~6 pontos
-        const w = realPath.current.slice(-6)
-        if (w.length >= 2) {
-          let d = 0
-          for (let i = 1; i < w.length; i++) d += getDistance(w[i - 1], w[i])
-          const secs = Math.min(30, (w.length - 1) * 5)
-          setCurPace(d > 15 ? Math.round(secs / (d / 1000)) : null)
-        }
+    const now = p.timestamp || Date.now()
+    const prev = lastSent.current
+    const dist = prev ? getDistance({ latitude: prev.lat, longitude: prev.lng }, { latitude: lat, longitude: lng }) : Infinity
+    const dt = prev ? now - prev.at : Infinity
+    if (dt < TRACKING_MIN_INTERVAL_MS && dist < TRACKING_MIN_DISTANCE_METERS) return
+
+    lastSent.current = { lat, lng, at: now }
+    queue.current.push({ lat, lng, accuracy: accuracy ?? null, altitude: altitude ?? null, speed: speed ?? null, heading: heading ?? null, captured_at: new Date(now).toISOString() })
+    persistQueue()
+
+    if (accuracy == null || accuracy <= TRACKING_MAX_ACCURACY_METERS) {
+      realPath.current.push({ lat, lng })
+      realLine.current?.setPath(realPath.current)
+      const w = realPath.current.slice(-6)
+      if (w.length >= 2) {
+        let d = 0
+        for (let i = 1; i < w.length; i++) d += getDistance(w[i - 1], w[i])
+        const secs = Math.min(30, (w.length - 1) * 5)
+        setCurPace(d > 15 ? Math.round(secs / (d / 1000)) : null)
       }
-      flush()
-    },
-    [drawMe, persistQueue, flush]
-  )
+    }
+    flush()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [persistQueue, flush])
 
   const startWatch = useCallback(() => {
     if (!navigator.geolocation || watchId.current != null) return
-    watchId.current = navigator.geolocation.watchPosition(onPosition, () => setHasFix(false), { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 })
+    acquireStart.current = Date.now()
+    watchId.current = navigator.geolocation.watchPosition(
+      onPosition,
+      (err) => {
+        if (err.code === err.PERMISSION_DENIED) setGeoError('denied')
+        else setSlowGps(true)
+        setHasFix(false)
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    )
   }, [onPosition])
 
   const stopWatch = useCallback(() => {
@@ -178,7 +242,6 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
     }
   }, [])
 
-  // boot: marca running + começa a captar
   useEffect(() => {
     ;(async () => {
       if (session.status === 'created' || session.status === 'paused') {
@@ -187,7 +250,7 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
       }
       if (session.status !== 'finished') {
         setStatus('running')
-        if (session.activity_type !== 'esteira') startWatch() // esteira: indoor, sem GPS
+        if (!esteira) startWatch()
       } else {
         setStatus('finished')
       }
@@ -196,7 +259,6 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // timers: duração + flush periódico + online
   useEffect(() => {
     const tick = setInterval(() => {
       if (statusRef.current === 'running') setDurationSec(Math.max(0, Math.round((Date.now() - startedAtMs.current) / 1000)))
@@ -226,7 +288,7 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
   async function retomar() {
     await fetch('/api/tracking/gps-somma/resume', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }) }).catch(() => {})
     setStatus('running')
-    startWatch()
+    if (!esteira) startWatch()
   }
   async function finalizar() {
     stopWatch()
@@ -239,14 +301,12 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
     } catch {
       setSummary({ distance: distanceM, duration: durationSec, pace: avgPace })
     }
-    // ajusta câmera ao trajeto
     if (map.current && realPath.current.length > 1) {
       const b = new google.maps.LatLngBounds()
       realPath.current.forEach((p) => b.extend(p))
       map.current.fitBounds(b, 48)
     }
   }
-
   function centralizar() {
     follow.current = true
     const last = realPath.current[realPath.current.length - 1]
@@ -255,8 +315,13 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
       map.current.setZoom(17)
     }
   }
+  function tentarNovamente() {
+    setGeoError(null)
+    setSlowGps(false)
+    stopWatch()
+    startWatch()
+  }
 
-  // simulador (somente dev): injeta um passo de caminhada
   const devStep = useCallback(() => {
     const last = realPath.current[realPath.current.length - 1] ?? { lat: Number(session.reference_lat) || -15.7939, lng: Number(session.reference_lng) || -47.8828 }
     const lat = last.lat + (Math.random() - 0.3) * 0.00009
@@ -264,10 +329,15 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
     onPosition({ coords: { latitude: lat, longitude: lng, accuracy: 8, altitude: null, altitudeAccuracy: null, heading: null, speed: 3 }, timestamp: Date.now() } as unknown as GeolocationPosition)
   }, [onPosition, session])
 
-  const esteira = session.activity_type === 'esteira'
   const gps = esteira
     ? { t: 'Esteira (indoor)', c: 'text-somma-cream/70' }
-    : !hasFix ? { t: 'GPS buscando sinal', c: 'text-somma-yellow' } : accuracy == null ? { t: 'Aguardando localização', c: 'text-somma-cream/60' } : accuracy <= TRACKING_MAX_ACCURACY_METERS ? { t: `GPS bom · ${Math.round(accuracy)}m`, c: 'text-[#1faa59]' } : { t: `Sinal fraco · ${Math.round(accuracy)}m`, c: 'text-somma-orange' }
+    : !hasFix ? { t: 'GPS buscando sinal', c: 'text-somma-yellow' } : accuracy == null ? { t: 'Aguardando localização', c: 'text-somma-cream/60' } : accuracy <= TRACKING_MAX_ACCURACY_METERS ? { t: `GPS bom · ${Math.round(accuracy)}m`, c: 'text-[#1faa59]' } : { t: `GPS fraco · ${Math.round(accuracy)}m`, c: 'text-somma-orange' }
+
+  const acqText = lockMsg
+    ? 'Localização confirmada'
+    : !hasFix
+      ? slowGps ? 'Ainda buscando sinal GPS' : 'Buscando sinal GPS'
+      : accuracy != null && accuracy > TRACKING_MAX_ACCURACY_METERS ? 'Validando precisão' : 'Identificando posição'
 
   // ---------- Tela final ----------
   if (status === 'finished' && summary) {
@@ -286,9 +356,7 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
           <div className="overflow-hidden rounded-3xl border-2 border-somma-cream/15">
             <div ref={mapDiv} className="h-72 w-full bg-somma-cream/5" />
           </div>
-          <p className="text-center font-dm text-sm text-somma-cream/60">
-            {session.reference_location_name ?? 'Corre livre'} · {new Date().toLocaleString('pt-BR')}
-          </p>
+          <p className="text-center font-dm text-sm text-somma-cream/60">{session.reference_location_name ?? 'Corre livre'} · {new Date().toLocaleString('pt-BR')}</p>
           <div className="flex flex-col gap-3">
             <Link href={`/tracking/gps-somma/atividade/${token}`} className="rounded-2xl border-4 border-somma-cream bg-somma-orange px-3 py-4 text-center font-bebas text-xl tracking-widest text-somma-cream shadow-[4px_4px_0_#000]">📸 Relatório completo + foto do relógio</Link>
             <Link href="/tracking/gps-somma" className="rounded-2xl border-2 border-somma-cream/30 px-3 py-3 text-center font-bebas text-lg tracking-widest">Nova corrida</Link>
@@ -301,35 +369,51 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
   // ---------- Tracking ativo ----------
   return (
     <main className="relative h-[100svh] w-full overflow-hidden bg-somma-black text-somma-cream">
+      <style>{KEYFRAMES}</style>
       <div ref={mapDiv} className="absolute inset-0 bg-somma-cream/5" />
       {!mapsAvailable() && <div className="absolute inset-0 flex items-center justify-center p-6 text-center font-dm text-sm text-somma-cream/60">Mapa indisponível (sem chave do Google Maps). O tracking continua salvando os pontos.</div>}
 
-      {/* topo: status */}
-      <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-2 px-3 pt-[calc(0.6rem+env(safe-area-inset-top))]">
+      {/* badges topo */}
+      <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between gap-2 px-3 pt-[calc(0.6rem+env(safe-area-inset-top))]">
         <span className={`rounded-full border border-somma-cream/15 bg-somma-black/70 px-3 py-1.5 font-dm text-xs font-bold backdrop-blur ${gps.c}`}>{gps.t}</span>
         <div className="flex gap-2">
-          <span className={`rounded-full border border-somma-cream/15 bg-somma-black/70 px-3 py-1.5 font-dm text-xs font-bold backdrop-blur ${online ? 'text-somma-cream/70' : 'text-red-400'}`}>
-            {online ? (pending > 0 ? `Sincronizando ${pending}` : 'Online') : 'Sem conexão'}
-          </span>
-          <span className={`rounded-full border border-somma-cream/15 bg-somma-black/70 px-3 py-1.5 font-dm text-xs font-bold backdrop-blur ${status === 'running' ? 'text-[#1faa59]' : 'text-somma-yellow'}`}>
-            {status === 'running' ? 'Ativo' : 'Pausado'}
-          </span>
+          <span className={`rounded-full border border-somma-cream/15 bg-somma-black/70 px-3 py-1.5 font-dm text-xs font-bold backdrop-blur ${online ? 'text-somma-cream/70' : 'text-red-400'}`}>{online ? (pending > 0 ? `Sincronizando ${pending}` : 'Online') : 'Sem conexão'}</span>
+          <span className={`rounded-full border border-somma-cream/15 bg-somma-black/70 px-3 py-1.5 font-dm text-xs font-bold backdrop-blur ${status === 'running' ? 'text-[#1faa59]' : 'text-somma-yellow'}`}>{status === 'running' ? 'Ativo' : 'Pausado'}</span>
         </div>
       </div>
 
-      {/* centralizar */}
-      <button onClick={centralizar} className="absolute right-3 top-[calc(3.6rem+env(safe-area-inset-top))] z-10 flex h-11 w-11 items-center justify-center rounded-full border border-somma-cream/20 bg-somma-black/70 text-lg backdrop-blur" aria-label="Centralizar em mim">
-        ◎
-      </button>
-
+      <button onClick={centralizar} className="absolute right-3 top-[calc(3.6rem+env(safe-area-inset-top))] z-20 flex h-11 w-11 items-center justify-center rounded-full border border-somma-cream/20 bg-somma-black/70 text-lg backdrop-blur" aria-label="Centralizar em mim">◎</button>
       {process.env.NODE_ENV !== 'production' && (
-        <button onClick={devStep} className="absolute left-3 top-[calc(3.6rem+env(safe-area-inset-top))] z-10 rounded-full border border-somma-cream/20 bg-somma-black/70 px-3 py-1.5 font-dm text-xs backdrop-blur">
-          + ponto (dev)
-        </button>
+        <button onClick={devStep} className="absolute left-3 top-[calc(3.6rem+env(safe-area-inset-top))] z-20 rounded-full border border-somma-cream/20 bg-somma-black/70 px-3 py-1.5 font-dm text-xs backdrop-blur">+ ponto (dev)</button>
+      )}
+
+      {/* overlay de aquisição / lock */}
+      {!esteira && mapPhase !== 'active' && !geoError && (
+        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center bg-somma-black/45 backdrop-blur-[2px]">
+          <div className="relative h-40 w-40">
+            <span className="absolute inset-0 rounded-full border border-somma-orange/40" style={{ animation: 'radarRing 2s ease-out infinite' }} />
+            <span className="absolute inset-0 rounded-full border border-somma-orange/30" style={{ animation: 'radarRing 2s ease-out infinite .6s' }} />
+            <span className="absolute inset-0 rounded-full border border-somma-orange/20" style={{ animation: 'radarRing 2s ease-out infinite 1.2s' }} />
+            <span className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-somma-orange shadow-[0_0_18px_#FF4800]" />
+          </div>
+          <p className="mt-6 font-dm text-[11px] font-bold uppercase tracking-[0.35em] text-somma-orange">SOMMA GPS</p>
+          <p className="mt-1 font-bebas text-3xl tracking-wide text-somma-cream">{lockMsg ? '✓ ' : ''}{acqText}</p>
+          {accuracy != null && <p className="mt-1 font-dm text-xs text-somma-cream/55">precisão ~{Math.round(accuracy)}m</p>}
+        </div>
+      )}
+
+      {/* falha de permissão */}
+      {geoError === 'denied' && (
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-somma-black/85 px-8 text-center">
+          <p className="font-bebas text-3xl tracking-wide">Precisamos da sua localização</p>
+          <p className="max-w-xs font-dm text-sm text-somma-cream/70">Libere a localização precisa nos ajustes do navegador pra rastrear o corre.</p>
+          <button onClick={tentarNovamente} className="rounded-2xl border-4 border-somma-cream bg-somma-orange px-6 py-3 font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#000]">Tentar novamente</button>
+        </div>
       )}
 
       {/* painel inferior */}
-      <div className="absolute inset-x-0 bottom-0 z-10 rounded-t-3xl border-t-2 border-somma-cream/15 bg-somma-black/85 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 backdrop-blur">
+      <div className="absolute inset-x-0 bottom-0 z-20 rounded-t-3xl border-t-2 border-somma-cream/15 bg-somma-black/85 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 backdrop-blur">
+        {esteira && <p className="mb-3 text-center font-dm text-xs text-somma-yellow">Esteira: o GPS não mede distância. Ao terminar, gere o relatório com a foto do relógio. 📸</p>}
         <div className="grid grid-cols-3 gap-3">
           <Metric label="Distância" value={fmtDistance(distanceM)} />
           <Metric label="Tempo" value={fmtDuration(durationSec)} />
@@ -346,7 +430,7 @@ export default function TrackingRun({ token, session, initialPoints }: { token: 
       </div>
 
       {confirmFinish && (
-        <div className="absolute inset-0 z-20 flex items-end justify-center bg-somma-black/70 p-4 sm:items-center" onClick={() => setConfirmFinish(false)}>
+        <div className="absolute inset-0 z-30 flex items-end justify-center bg-somma-black/70 p-4 sm:items-center" onClick={() => setConfirmFinish(false)}>
           <div className="w-full max-w-sm rounded-3xl border-2 border-somma-cream/20 bg-somma-black p-6 text-center" onClick={(e) => e.stopPropagation()}>
             <p className="font-bebas text-2xl uppercase tracking-wide">Finalizar o corre?</p>
             <p className="mt-1 font-dm text-sm text-somma-cream/65">Vamos consolidar distância, tempo e ritmo.</p>

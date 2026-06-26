@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { loadMapsLib, mapsAvailable, DARK_SOMMA_STYLE } from './maps'
 
@@ -168,8 +169,8 @@ export default function TrackingEntry() {
     <main className="min-h-[100svh] bg-somma-black px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-[calc(1.5rem+env(safe-area-inset-top))] text-somma-cream">
       <div className="mx-auto flex max-w-md flex-col gap-5">
         <header className="text-center">
-          <p className="font-dm text-[11px] font-bold uppercase tracking-[0.35em] text-somma-orange">SOMMA</p>
-          <h1 className="font-bebas text-5xl leading-none tracking-tight">SOMMA GPS Tracking</h1>
+          <Image src="/logo-somma.svg" alt="SOMMA Club" width={1280} height={343} priority className="mx-auto h-12 w-auto sm:h-14" />
+          <h1 className="mt-4 font-bebas text-4xl leading-none tracking-tight sm:text-5xl">GPS Tracking</h1>
           <p className="mx-auto mt-2 max-w-xs font-dm text-sm text-somma-cream/70">Registra teu percurso ao vivo no mapa. Distância, tempo e ritmo em tempo real.</p>
         </header>
 
