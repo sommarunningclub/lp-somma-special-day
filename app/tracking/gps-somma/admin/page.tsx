@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
 export const runtime = 'nodejs'
 
-export const metadata: Metadata = { title: 'SOMMA GPS · Admin', robots: { index: false, follow: false } }
+export const metadata: Metadata = { title: 'Painel' }
 
 export default async function GpsAdminPage() {
   if (!(await isAuthenticated())) redirect('/login-admin')

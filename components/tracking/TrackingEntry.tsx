@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { loadMapsLib, mapsAvailable, DARK_SOMMA_STYLE } from './maps'
+import Onboarding, { shouldShowOnboarding } from './Onboarding'
 
 type Coords = { lat: number; lng: number; accuracy?: number }
 type Dest = { name: string; lat: number; lng: number }
@@ -18,6 +19,7 @@ export default function TrackingEntry() {
   const [geoMsg, setGeoMsg] = useState<string | null>(null)
   const [buscandoLoc, setBuscandoLoc] = useState(false)
   const [iniciando, setIniciando] = useState(false)
+  const [onb, setOnb] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
 
   const mapDiv = useRef<HTMLDivElement>(null)
@@ -27,6 +29,11 @@ export default function TrackingEntry() {
   const meCircle = useRef<google.maps.Circle | null>(null)
   const destMarker = useRef<google.maps.Marker | null>(null)
   const plannedLine = useRef<google.maps.Polyline | null>(null)
+
+  // Onboarding guiado na primeira visita.
+  useEffect(() => {
+    if (shouldShowOnboarding()) setOnb(true)
+  }, [])
 
   // Inicializa mapa + autocomplete (client only).
   useEffect(() => {
@@ -166,11 +173,22 @@ export default function TrackingEntry() {
   }
 
   return (
-    <main className="min-h-[100svh] bg-somma-black px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-[calc(1.5rem+env(safe-area-inset-top))] text-somma-cream">
-      <div className="mx-auto flex max-w-md flex-col gap-5">
+    <main className="relative min-h-[100svh] overflow-hidden bg-somma-black px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-[calc(1.5rem+env(safe-area-inset-top))] text-somma-cream">
+      {/* fundo com foto da comunidade + overlay escuro */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/somma-eixao/eixao-13.jpg" alt="" className="h-full w-full object-cover opacity-30" />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(10,10,10,0.75) 0%, rgba(10,10,10,0.88) 55%, #0a0a0a 100%)' }} />
+      </div>
+
+      {onb && <Onboarding onClose={() => setOnb(false)} />}
+
+      <button onClick={() => setOnb(true)} aria-label="Como usar" className="absolute right-4 top-[calc(1rem+env(safe-area-inset-top))] z-10 flex h-9 w-9 items-center justify-center rounded-full border border-somma-cream/25 bg-somma-black/50 font-dm text-sm font-bold text-somma-cream/80 backdrop-blur">?</button>
+
+      <div className="relative z-10 mx-auto flex max-w-md flex-col gap-5">
         <header className="text-center">
           <Image src="/logo-somma.svg" alt="SOMMA Club" width={1280} height={343} priority className="mx-auto h-12 w-auto sm:h-14" />
-          <h1 className="mt-4 font-bebas text-4xl leading-none tracking-tight sm:text-5xl">GPS Tracking</h1>
+          <h1 className="mt-4 font-bebas text-4xl leading-none tracking-tight sm:text-5xl">Connect</h1>
           <p className="mx-auto mt-2 max-w-xs font-dm text-sm text-somma-cream/70">Registra teu percurso ao vivo no mapa. Distância, tempo e ritmo em tempo real.</p>
         </header>
 
