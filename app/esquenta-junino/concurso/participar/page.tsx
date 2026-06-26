@@ -30,9 +30,20 @@ export default async function ParticiparPage() {
           Cadastra teus dados em segundos. Depois você entra com o CPF na sua área e manda as fotos do look, dá um título e publica. 🌽
         </p>
 
-        {jaLogado && (
+        {jaLogado ? (
           <Link href="/esquenta-junino/concurso/minha-inscricao" className="mt-5 block rounded-2xl border-4 border-somma-black bg-white px-4 py-3 text-center font-dm text-sm font-bold text-somma-black shadow-[4px_4px_0_#0a0a0a]">
             Você já tem uma inscrição. Ir pra minha área →
+          </Link>
+        ) : (
+          <Link
+            href="/esquenta-junino/concurso/minha-inscricao"
+            className="mt-5 flex items-center justify-between gap-3 rounded-2xl border-4 border-somma-blue bg-somma-blue/10 px-5 py-3 text-left transition-all hover:bg-somma-blue/20"
+          >
+            <span className="font-dm text-sm text-somma-black/80">
+              <span className="font-bold uppercase tracking-widest text-somma-blue">Já tem inscrição?</span>
+              <span className="ml-2">Entra com o seu CPF.</span>
+            </span>
+            <span className="font-bebas text-base tracking-widest text-somma-blue">ENTRAR →</span>
           </Link>
         )}
 
