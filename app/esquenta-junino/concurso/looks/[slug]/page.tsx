@@ -4,8 +4,6 @@ import { notFound } from 'next/navigation'
 import { getLookBySlug, getLookOgImage } from '@/lib/contest/public'
 import { getContestSettings } from '@/lib/contest/settings'
 import LookDetail from '@/components/concurso/LookDetail'
-import { muralFechado } from '@/lib/contest/gate'
-import MuralFechado from '@/components/concurso/MuralFechado'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
@@ -26,7 +24,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function LookPage({ params }: { params: { slug: string } }) {
-  if (muralFechado()) return <MuralFechado origem="Look" />
   const [look, settings] = await Promise.all([getLookBySlug(params.slug), getContestSettings()])
   if (!look) notFound()
   const showVotes = settings?.show_vote_count_publicly ?? true
