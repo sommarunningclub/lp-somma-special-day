@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 import { contestDb } from '@/lib/contest/db'
 import { voteSchema } from '@/lib/contest/schemas'
 import { hashCpf, hashOpaque } from '@/lib/contest/cpf-hash'
@@ -9,11 +8,16 @@ export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
 export const runtime = 'nodejs'
 
-// Mensagem única pra qualquer falha de voto — não revela se o CPF já votou.
 const GENERIC = 'Este voto não pôde ser concluído. Confira os dados e tente novamente.'
-const VOTED_COOKIE = 'cj_voted'
+const JA_VOTOU = 'Esse CPF já votou no concurso. Cada pessoa vota uma única vez. 🌽'
+
+// Trava de voto e SO pelo CPF (1 por pessoa, garantido pelo unique index
+// uq_votes_voter). Sem cookie de navegador: varias pessoas podem votar do
+// mesmo aparelho num evento presencial.
+// Rate limit por IP segue ativo (anti-spam) mas com folga alta, ja que num
+// evento o publico inteiro costuma compartilhar o mesmo IP (WiFi do local).
 const RATE_WINDOW_MS = 10 * 60 * 1000
-const RATE_MAX = 30
+const RATE_MAX = 1000
 
 function clientIp(request: NextRequest): string {
   const xff = request.headers.get('x-forwarded-for')
@@ -37,7 +41,7 @@ export async function POST(request: NextRequest) {
     const parsed = voteSchema.safeParse(body)
     if (!parsed.success) {
       const confirmFalhou = parsed.error.issues.some((i) => i.path[0] === 'confirm')
-      return NextResponse.json({ error: confirmFalhou ? 'Você precisa confirmar a declaração.' : GENERIC }, { status: 400 })
+      return NextResponse.json({ error: confirmFalhou ? 'Você precisa confirmar a declaração.' : 'CPF inválido. Confira os números.' }, { status: 400 })
     }
     const { participant_id, cpf } = parsed.data
 
@@ -45,7 +49,7 @@ export async function POST(request: NextRequest) {
     const ipHash = hashOpaque(clientIp(request))
     const uaHash = hashOpaque(request.headers.get('user-agent') || 'unknown')
 
-    // Rate limit por IP (registra tentativa e conta na janela).
+    // Rate limit por IP (anti-spam) — folga alta pro WiFi do evento.
     await db.from('contest_vote_attempts').insert({ ip_hash: ipHash })
     const since = new Date(Date.now() - RATE_WINDOW_MS).toISOString()
     const { count } = await db
@@ -54,12 +58,7 @@ export async function POST(request: NextRequest) {
       .eq('ip_hash', ipHash)
       .gte('created_at', since)
     if ((count ?? 0) > RATE_MAX) {
-      return NextResponse.json({ error: GENERIC }, { status: 429 })
-    }
-
-    // Rate limit por sessão (cookie marca quem já votou neste navegador).
-    if ((await cookies()).get(VOTED_COOKIE)?.value) {
-      return NextResponse.json({ error: GENERIC }, { status: 400 })
+      return NextResponse.json({ error: 'Muitos votos em pouco tempo desse local. Aguarde um instante e tente de novo.' }, { status: 429 })
     }
 
     // Participante precisa existir e estar publicado.
@@ -74,11 +73,14 @@ export async function POST(request: NextRequest) {
       .insert({ participant_id, voter_hash, ip_hash: ipHash, user_agent_hash: uaHash })
 
     if (error) {
-      // 23505 = CPF já votou. Resposta genérica (não revela).
+      // 23505 = unique violation no voter_hash = esse CPF já votou.
+      if (error.code === '23505') {
+        return NextResponse.json({ error: JA_VOTOU, code: 'already_voted' }, { status: 409 })
+      }
+      console.error('[concurso-votar] insert:', error.message)
       return NextResponse.json({ error: GENERIC }, { status: 400 })
     }
 
-    ;(await cookies()).set(VOTED_COOKIE, '1', { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 365 })
     return NextResponse.json({ ok: true })
   } catch {
     return NextResponse.json({ error: GENERIC }, { status: 500 })
