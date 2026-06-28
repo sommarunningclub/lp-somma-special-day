@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
 import { contestDb } from '@/lib/contest/db'
-import { registroSchema, edicaoSchema } from '@/lib/contest/schemas'
+import { registroSchema, edicaoPatchSchema } from '@/lib/contest/schemas'
 import { hashCpf } from '@/lib/contest/cpf-hash'
 import { getContestSettings, inscricaoAberta } from '@/lib/contest/settings'
 import { uploadContestPhoto, removeContestPhotos } from '@/lib/contest/storage'
@@ -98,7 +98,7 @@ export async function PATCH(request: NextRequest) {
   }
 
   const body = await request.json()
-  const parsed = edicaoSchema.safeParse(body)
+  const parsed = edicaoPatchSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' }, { status: 400 })
   }
@@ -112,8 +112,9 @@ export async function PATCH(request: NextRequest) {
     .maybeSingle()
   if (!atual) return NextResponse.json({ error: 'Inscrição não encontrada.' }, { status: 404 })
 
-  const update: Record<string, unknown> = {
-    look_title: d.look_title,
+  const update: Record<string, unknown> = {}
+  if (d.look_title && d.look_title.length >= 2) {
+    update.look_title = d.look_title
   }
 
   try {
@@ -132,6 +133,10 @@ export async function PATCH(request: NextRequest) {
     }
   } catch (e) {
     return NextResponse.json({ error: e instanceof Error ? e.message : 'Erro ao atualizar a foto.' }, { status: 400 })
+  }
+
+  if (Object.keys(update).length === 0) {
+    return NextResponse.json({ error: 'Nada para atualizar.' }, { status: 400 })
   }
 
   const { error } = await db.from('contest_participants').update(update).eq('id', id)

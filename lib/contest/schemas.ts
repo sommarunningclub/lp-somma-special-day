@@ -14,6 +14,15 @@ export const edicaoSchema = z.object({
 })
 export type EdicaoInput = z.infer<typeof edicaoSchema>
 
+// PATCH aceita troca de foto sem nome do look (nome pode ser preenchido depois).
+export const edicaoPatchSchema = z.object({
+  look_title: z.string().trim().max(80).optional(),
+}).superRefine((data, ctx) => {
+  if (data.look_title !== undefined && data.look_title.length > 0 && data.look_title.length < 2) {
+    ctx.addIssue({ code: 'custom', message: 'Dá um nome pro look', path: ['look_title'] })
+  }
+})
+
 export const voteSchema = z.object({
   participant_id: z.string().uuid('Participante inválido'),
   cpf: z.string().refine(isValidCpf, 'CPF inválido'),

@@ -68,16 +68,20 @@ export default function ParticipantDashboard({ p }: { p: ParticipantWithSigned }
     setErro(null)
     try {
       const d = await compressImage(file, '4:5')
+      const payload: Record<string, unknown> = {
+        [slot === 'main' ? 'main_foto' : 'second_foto']: d,
+      }
+      if (p.look_title) payload.look_title = p.look_title
       const res = await fetch('/api/concurso/inscricao', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          look_title: p.look_title ?? '',
-          [slot === 'main' ? 'main_foto' : 'second_foto']: d,
-        }),
+        body: JSON.stringify(payload),
       })
       if (res.ok) router.refresh()
-      else setErro('Não foi possível trocar a foto.')
+      else {
+        const j = await res.json().catch(() => ({}))
+        setErro(j.error ?? 'Não foi possível trocar a foto.')
+      }
     } finally {
       setBusy(false)
     }
@@ -86,10 +90,12 @@ export default function ParticipantDashboard({ p }: { p: ParticipantWithSigned }
   async function removerSegunda() {
     if (!confirm('Remover a segunda foto?')) return
     setBusy(true)
+    const payload: Record<string, unknown> = { remove_second: true }
+    if (p.look_title) payload.look_title = p.look_title
     const res = await fetch('/api/concurso/inscricao', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ look_title: p.look_title ?? '', remove_second: true }),
+      body: JSON.stringify(payload),
     })
     setBusy(false)
     if (res.ok) router.refresh()
