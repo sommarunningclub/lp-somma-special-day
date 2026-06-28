@@ -47,13 +47,18 @@ export async function POST(request: NextRequest) {
     const slug = `${slugify(display)}-${randomUUID().slice(0, 6)}`
     const db = contestDb()
 
+    // O cadastro novo nao coleta e-mail. Mas a coluna `email` pode ainda estar
+    // NOT NULL (migration 012 nao aplicada). Usamos um placeholder unico e
+    // inofensivo (login e por CPF, e-mail nao e usado em lugar nenhum agora).
+    const placeholderEmail = `sem-email+${randomUUID()}@concurso.sommaclub.com.br`
+
     const { data: inserted, error: insErr } = await db
       .from('contest_participants')
       .insert([
         {
           full_name: d.full_name,
           display_name: display,
-          email: null,
+          email: placeholderEmail,
           cpf_hash,
           status: 'draft',
           slug,
