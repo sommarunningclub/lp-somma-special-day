@@ -6,7 +6,7 @@ import VoteModal from './VoteModal'
 import { track } from '@/lib/analytics'
 import type { LookDetail as LD } from '@/lib/contest/types'
 
-export default function LookDetail({ look, showVotes }: { look: LD; showVotes: boolean }) {
+export default function LookDetail({ look, showVotes, votingOpen = true }: { look: LD; showVotes: boolean; votingOpen?: boolean }) {
   const fotos = [look.photo, look.second_photo].filter(Boolean) as string[]
   const [idx, setIdx] = useState(0)
   const [votar, setVotar] = useState(false)
@@ -84,9 +84,16 @@ export default function LookDetail({ look, showVotes }: { look: LD; showVotes: b
 
       {/* Ações */}
       <div className="mt-6 flex flex-col gap-3">
-        <button onClick={() => setVotar(true)} className="w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-3 py-4 font-bebas text-xl tracking-widest text-somma-cream shadow-[5px_5px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_#0a0a0a]">
-          Votar neste look
-        </button>
+        {votingOpen ? (
+          <button onClick={() => setVotar(true)} className="w-full rounded-2xl border-4 border-somma-black bg-somma-orange px-3 py-4 font-bebas text-xl tracking-widest text-somma-cream shadow-[5px_5px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_#0a0a0a]">
+            Votar neste look
+          </button>
+        ) : (
+          <div className="w-full rounded-2xl border-4 border-somma-black bg-somma-yellow px-3 py-4 text-center shadow-[5px_5px_0_#0a0a0a]">
+            <p className="font-bebas text-xl uppercase tracking-widest text-somma-black">🏁 Votação encerrada</p>
+            <p className="mt-0.5 font-dm text-xs text-somma-black/70">Obrigado por participar!</p>
+          </div>
+        )}
         <div className="flex gap-3">
           <button onClick={compartilhar} className="flex-1 rounded-2xl border-2 border-somma-black bg-somma-cream px-3 py-3 font-bebas text-base tracking-widest text-somma-black">
             Compartilhar

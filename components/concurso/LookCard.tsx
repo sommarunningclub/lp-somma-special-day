@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import type { LookCard as LookCardType } from '@/lib/contest/types'
 
-export default function LookCard({ look, showVotes, onVote }: { look: LookCardType; showVotes: boolean; onVote: (l: LookCardType) => void }) {
+export default function LookCard({ look, showVotes, votingOpen = true, onVote }: { look: LookCardType; showVotes: boolean; votingOpen?: boolean; onVote: (l: LookCardType) => void }) {
   return (
     <div className="flex flex-col overflow-hidden rounded-3xl border-4 border-somma-black bg-somma-cream shadow-[6px_6px_0_#0a0a0a]">
       <div className="relative">
@@ -39,12 +39,14 @@ export default function LookCard({ look, showVotes, onVote }: { look: LookCardTy
           >
             Ver look
           </Link>
-          <button
-            onClick={() => onVote(look)}
-            className="flex-1 rounded-xl border-2 border-somma-black bg-somma-orange px-3 py-2.5 text-center font-bebas text-sm tracking-widest text-somma-cream shadow-[2px_2px_0_#0a0a0a] transition-transform hover:translate-y-[1px]"
-          >
-            Votar
-          </button>
+          {votingOpen && (
+            <button
+              onClick={() => onVote(look)}
+              className="flex-1 rounded-xl border-2 border-somma-black bg-somma-orange px-3 py-2.5 text-center font-bebas text-sm tracking-widest text-somma-cream shadow-[2px_2px_0_#0a0a0a] transition-transform hover:translate-y-[1px]"
+            >
+              Votar
+            </button>
+          )}
         </div>
       </div>
     </div>

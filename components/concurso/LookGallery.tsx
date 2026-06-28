@@ -19,7 +19,7 @@ function hash(s: string): number {
   return h
 }
 
-export default function LookGallery({ initial, showVotes }: { initial: L[]; showVotes: boolean }) {
+export default function LookGallery({ initial, showVotes, votingOpen = true }: { initial: L[]; showVotes: boolean; votingOpen?: boolean }) {
   const [looks, setLooks] = useState<L[]>(() => rerank(initial))
   const [busca, setBusca] = useState('')
   const [ordem, setOrdem] = useState<Ordem>('votos')
@@ -65,6 +65,17 @@ export default function LookGallery({ initial, showVotes }: { initial: L[]; show
 
   return (
     <div>
+      {!votingOpen && (
+        <div className="mb-6 rounded-2xl border-4 border-somma-black bg-somma-yellow px-5 py-4 text-center shadow-[4px_4px_0_#0a0a0a]">
+          <p className="font-bebas text-xl uppercase tracking-wide text-somma-black sm:text-2xl">
+            🏁 Votação encerrada
+          </p>
+          <p className="mt-1 font-dm text-sm text-somma-black/70">
+            Obrigado a quem participou! Confira abaixo como ficou o ranking final.
+          </p>
+        </div>
+      )}
+
       {/* Controles */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
         <input
@@ -115,7 +126,7 @@ export default function LookGallery({ initial, showVotes }: { initial: L[]; show
         <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {visiveis.map((l) => (
-              <LookCard key={l.id} look={l} showVotes={showVotes} onVote={setVotar} />
+              <LookCard key={l.id} look={l} showVotes={showVotes} votingOpen={votingOpen} onVote={setVotar} />
             ))}
           </div>
           {limite < filtradas.length && (

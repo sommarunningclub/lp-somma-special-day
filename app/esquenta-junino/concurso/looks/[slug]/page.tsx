@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getLookBySlug, getLookOgImage } from '@/lib/contest/public'
-import { getContestSettings } from '@/lib/contest/settings'
+import { getContestSettings, votacaoAberta } from '@/lib/contest/settings'
 import LookDetail from '@/components/concurso/LookDetail'
 
 export const dynamic = 'force-dynamic'
@@ -27,6 +27,7 @@ export default async function LookPage({ params }: { params: { slug: string } })
   const [look, settings] = await Promise.all([getLookBySlug(params.slug), getContestSettings()])
   if (!look) notFound()
   const showVotes = settings?.show_vote_count_publicly ?? true
+  const votingOpen = votacaoAberta(settings)
 
   return (
     <main className="min-h-[100svh] bg-somma-cream px-4 py-10 sm:py-14">
@@ -35,7 +36,7 @@ export default async function LookPage({ params }: { params: { slug: string } })
           ← Todos os looks
         </Link>
         <div className="mt-6">
-          <LookDetail look={look} showVotes={showVotes} />
+          <LookDetail look={look} showVotes={showVotes} votingOpen={votingOpen} />
         </div>
       </div>
     </main>
