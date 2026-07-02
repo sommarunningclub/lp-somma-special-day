@@ -242,11 +242,10 @@ export default function PropostaView({ proposta }: Props) {
 
           <div className="mt-10 space-y-4">
             {[
-              { n: 1, title: 'Naming na camiseta oficial',          body: 'A marca estampada na camiseta Thermodry Track&Field do kit oficial. 400 peças circulando antes, durante e depois do evento.' },
-              { n: 2, title: 'Divulgação nas redes sociais Somma',  body: 'Posts dedicados, stories, reels e menções nos canais oficiais do Somma Club para uma comunidade engajada de 4.000+ membros.' },
-              { n: 3, title: 'Disparo de e-mail para base Somma + Evolve', body: 'Mais de 90 mil pessoas alcançadas via e-mail marketing direcionado.' },
-              { n: 4, title: 'Leads qualificados pós-evento',       body: 'Acesso à base de inscritos do evento e à Lista VIP — nome, e-mail, CPF e telefone.' },
-              { n: 5, title: 'Inserção do nome na página de inscrição', body: 'Marca visível na página oficial de inscrição do evento, presente em cada conversão.' },
+              { n: 1, title: 'Divulgação nas redes sociais Somma',  body: 'Posts dedicados, stories, reels e menções nos canais oficiais do Somma Club para uma comunidade engajada de 4.000+ membros.' },
+              { n: 2, title: 'Disparo de e-mail para base Somma + Evolve', body: 'Mais de 90 mil pessoas alcançadas via e-mail marketing direcionado.' },
+              { n: 3, title: 'Leads qualificados pós-evento',       body: 'Acesso à base de inscritos do evento e à Lista VIP — nome, e-mail, CPF e telefone.' },
+              { n: 4, title: 'Inserção do nome na página de inscrição', body: 'Marca visível na página oficial de inscrição do evento, presente em cada conversão.' },
             ].map(item => (
               <div key={item.n} className="fade-up flex flex-col gap-4 rounded-2xl border-4 border-somma-black bg-white p-5 shadow-[5px_5px_0_#FDB716] md:flex-row md:items-center">
                 <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-4 border-somma-black bg-somma-yellow font-bebas text-3xl text-somma-black">
