@@ -62,10 +62,115 @@ export const REGUAS_META: EventoReguaMeta[] = [
   {
     base: 'cadastro_site',
     label: 'Régua 3 · Cadastro do site',
-    descricao: 'Despertar a base antiga com o gancho do aniversário de 1 ano.',
+    descricao: 'Base antiga. Régua diária: 3 e-mails por dia (manhã, tarde e noite) de 06/07 a 17/07.',
     accent: '#FDB716',
   },
 ]
+
+function pad2(n: number): string {
+  return String(n).padStart(2, '0')
+}
+
+/**
+ * Régua diária da base cadastro_site: 3 e-mails por dia (manhã 09h, tarde 14h,
+ * noite 19h BRT) de 06/07 a 17/07 (véspera do evento). ~36 disparos no total.
+ * A copy varia por slot, por dia e pela fase da contagem regressiva.
+ */
+function buildCadastroSteps(): EventoStep[] {
+  const slots = [
+    { s: 'm', utc: 12, saud: 'Bom dia', fecho: 'Que tal começar o dia decidindo isso? ☀️' },
+    { s: 't', utc: 17, saud: 'Boa tarde', fecho: 'Bora resolver antes que o dia acabe? 🏃' },
+    { s: 'n', utc: 22, saud: 'Boa noite', fecho: 'Fecha o dia com essa boa notícia. 🧡' },
+  ] as const
+
+  const subj = {
+    m: [
+      'Bom dia! Bora garantir sua vaga? ☀️',
+      'Acordou? O Somma Special Day te chama 🏃',
+      'Café da manhã com novidade boa ☕',
+      'Bom dia! Que tal decidir correr hoje? 🧡',
+      'Levanta que hoje dá pra garantir o 1º lote ☀️',
+      'Bom dia! O dia 18/07 tá logo ali, bora?',
+    ],
+    t: [
+      'Pausa da tarde: já garantiu sua vaga? 👀',
+      'Boa tarde! O 1º lote continua te esperando',
+      'Boa tarde! Bora fechar isso hoje?',
+      'A tarde é sua pra entrar nessa 🏃',
+      'Lembrete da tarde: 1 ano de Somma pra comemorar',
+      'Garante agora e fica tranquilo o resto do dia 😌',
+    ],
+    n: [
+      'Antes de dormir: sua vaga te espera 🌙',
+      'Boa noite! O grande dia tá chegando',
+      'Fecha o dia garantindo sua vaga 🧡',
+      'Boa noite! O Special Day é 18/07 no COPMDF',
+      'Última chance do dia de pegar o 1º lote 🌙',
+      'Dorme pensando: 18/07 vai ser incrível ✨',
+    ],
+  } as const
+
+  const headline = {
+    m: ['Bom dia, corredor!', 'Começa o dia correndo', 'Bora pra cima hoje'],
+    t: ['Boa tarde!', 'Ainda dá tempo', 'Sua vaga tá aí'],
+    n: ['Fecha o dia com a gente', 'Boa noite!', 'Bora sonhar com a corrida'],
+  } as const
+
+  const steps: EventoStep[] = []
+  let dayIdx = 0
+  for (let day = 6; day <= 17; day++, dayIdx++) {
+    const daysLeft = 18 - day
+    const amanha = daysLeft === 1
+    for (const slot of slots) {
+      const pool = subj[slot.s]
+      const subject = amanha
+        ? `${slot.saud}! É AMANHÃ 🎉 vem com a gente`
+        : pool[dayIdx % pool.length]
+      const hPool = headline[slot.s]
+      const head = amanha ? 'É amanhã!' : hPool[dayIdx % hPool.length]
+
+      // Corpo por fase da contagem.
+      let body: string[]
+      if (amanha) {
+        body = [
+          `${slot.saud}, {{nome}}! É amanhã! 🎉`,
+          'O Somma Special Day é dia 18/07, às 06h, no COPMDF, em Brasília. É o aniversário de 1 ano do Somma, e ainda dá tempo de você fazer parte.',
+          '4 km ou 8 km, você escolhe. O ingresso tá no 1º lote, no app Track&Field.',
+          slot.fecho,
+        ]
+      } else if (daysLeft >= 6) {
+        body = [
+          `${slot.saud}, {{nome}}! Você já faz parte da história do Somma, e o clube tá completando 1 ano. Bora comemorar correndo junto?`,
+          `É o Somma Special Day, dia 18/07, em Brasília. 4 km ou 8 km, do seu jeito. Faltam ${daysLeft} dias!`,
+          slot.fecho,
+        ]
+      } else {
+        body = [
+          `${slot.saud}, {{nome}}! O Somma Special Day tá chegando: faltam só ${daysLeft} dias.`,
+          'São 4 km ou 8 km no COPMDF, dia 18/07, com muita gente boa e pagode ao vivo. O ingresso tá no 1º lote, no app Track&Field.',
+          slot.fecho,
+        ]
+      }
+
+      const buy = slot.s === 't' || daysLeft <= 3 || amanha
+      steps.push({
+        base: 'cadastro_site',
+        step: `s_${pad2(day)}${slot.s}`,
+        sendAt: `2026-07-${pad2(day)}T${pad2(slot.utc)}:00:00Z`,
+        subject,
+        preheader: amanha ? 'É amanhã! Bora garantir sua vaga.' : `Faltam ${daysLeft} dias pro Somma Special Day.`,
+        selo: amanha ? 'É amanhã' : `Faltam ${daysLeft} dias`,
+        headline: head,
+        body,
+        showPrice: buy,
+        cta: buy ? 'Garantir minha vaga' : 'Quero participar',
+        ctaUrl: buy ? BUY_URL : SITE_URL,
+        waText: 'Oi! Quero participar do Somma Special Day dia 18/07',
+      })
+    }
+  }
+  return steps
+}
 
 export const EVENTO_STEPS: EventoStep[] = [
   // ===================== RÉGUA 1 · lista_vip =====================
@@ -255,64 +360,7 @@ export const EVENTO_STEPS: EventoStep[] = [
   },
 
   // ===================== RÉGUA 3 · cadastro_site =====================
-  {
-    base: 'cadastro_site',
-    step: 's1',
-    sendAt: '2026-07-05T13:00:00Z',
-    subject: '1 ano de Somma 🧡 e essa história tem você',
-    preheader: 'Bora comemorar correndo junto?',
-    selo: '1 ano de Somma',
-    headline: 'Essa história tem você',
-    body: [
-      'Oi, {{nome}}! Um tempo atrás você deixou seu cadastro com a gente, e a gente guardou isso com carinho. 🧡',
-      'Agora tem um motivo especial pra te chamar de volta: o Somma Club tá completando 1 ano, e a festa vai ser do nosso jeito, correndo juntos.',
-      'É o Somma Special Day, dia 18/07, em Brasília. Uma corrida, uma comunidade e um aniversário. A sua história com o Somma pode continuar aqui.',
-    ],
-    showPrice: false,
-    cta: 'Quero participar',
-    ctaUrl: SITE_URL,
-    waText: 'Oi! Vi sobre o aniversário de 1 ano do Somma e quero participar',
-  },
-  {
-    base: 'cadastro_site',
-    step: 's2',
-    sendAt: '2026-07-12T13:00:00Z',
-    subject: 'Vem correr o aniversário de 1 ano do Somma 🎉',
-    preheader: '4 ou 8 km, dia 18/07, em Brasília.',
-    selo: 'Vem participar',
-    headline: 'Bora fazer parte disso?',
-    body: [
-      'Oi, {{nome}}! Bora fazer parte dessa festa?',
-      'No dia 18/07, o Somma Special Day comemora 1 ano do Somma Club com uma corrida em Brasília. Você escolhe a sua distância:',
-      '• 4 km pra entrar no ritmo',
-      '• 8 km pra ir mais longe',
-      'Participar é fácil: o ingresso tá no 1º lote, no app Track&Field.',
-      'Faz tempo que você pensa em voltar a correr? Esse é o empurrãozinho. 🧡',
-    ],
-    showPrice: true,
-    cta: 'Quero entrar nessa',
-    ctaUrl: BUY_URL,
-    waText: 'Oi! Como faço pra participar do Somma Special Day?',
-  },
-  {
-    base: 'cadastro_site',
-    step: 's3',
-    sendAt: '2026-07-17T21:00:00Z',
-    subject: 'É esse fim de semana! 🏃 vem com a gente',
-    preheader: 'Última chamada pro Special Day.',
-    selo: 'É essa semana',
-    headline: 'Vem com a gente',
-    body: [
-      'Oi, {{nome}}! É amanhã!',
-      'O Somma Special Day acontece dia 18/07, no COPMDF, em Brasília. É o aniversário de 1 ano do Somma, e ainda dá tempo de você fazer parte.',
-      '4 km ou 8 km, você escolhe. O ingresso tá no app Track&Field.',
-      'Que tal transformar aquele cadastro antigo numa medalha no sábado? 🏅',
-    ],
-    showPrice: false,
-    cta: 'Participar agora',
-    ctaUrl: BUY_URL,
-    waText: 'Oi! Ainda dá tempo de participar do Special Day?',
-  },
+  ...buildCadastroSteps(),
 ]
 
 export function getEventoStep(base: string, step: string): EventoStep | undefined {
