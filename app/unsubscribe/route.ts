@@ -1,13 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { addUnsubscribed } from '@/lib/campaign/campaign-store'
+import { addUnsubscribed as addEventoUnsub } from '@/lib/evento/store'
+import { REGUAS_META, type EventoBase } from '@/lib/evento/reguas'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
-async function unsubscribe(leadId: string | null): Promise<boolean> {
-  if (!leadId || leadId === 'teste') return false
+const EVENTO_BASES = new Set<string>(REGUAS_META.map((m) => m.base))
+
+async function unsubscribe(u: string | null, b: string | null): Promise<boolean> {
+  if (!u || u === 'teste') return false
   try {
-    await addUnsubscribed(leadId)
+    // Réguas do evento: b = "evt:<base>", u = e-mail.
+    if (b && b.startsWith('evt:')) {
+      const base = b.slice(4)
+      if (EVENTO_BASES.has(base)) {
+        await addEventoUnsub(base as EventoBase, u)
+        return true
+      }
+      return false
+    }
+    // Campanha VIP (padrão): u = lead_id.
+    await addUnsubscribed(u)
     return true
   } catch (e) {
     console.error('[unsubscribe] erro:', e)
@@ -17,13 +31,13 @@ async function unsubscribe(leadId: string | null): Promise<boolean> {
 
 // One-click (List-Unsubscribe-Post): clientes de e-mail fazem POST.
 export async function POST(req: NextRequest) {
-  await unsubscribe(req.nextUrl.searchParams.get('u'))
+  await unsubscribe(req.nextUrl.searchParams.get('u'), req.nextUrl.searchParams.get('b'))
   return NextResponse.json({ ok: true })
 }
 
 // Navegador: mostra confirmação.
 export async function GET(req: NextRequest) {
-  const ok = await unsubscribe(req.nextUrl.searchParams.get('u'))
+  const ok = await unsubscribe(req.nextUrl.searchParams.get('u'), req.nextUrl.searchParams.get('b'))
   const titulo = ok ? 'Tudo certo!' : 'Não foi possível concluir'
   const msg = ok
     ? 'Você não vai mais receber os e-mails da pré-venda do Somma Special Day. Se mudar de ideia, é só se cadastrar de novo na lista VIP.'

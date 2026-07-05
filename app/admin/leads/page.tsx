@@ -10,8 +10,10 @@ import EmailStatsDashboard from '@/components/admin/EmailStatsDashboard'
 import EmailActivity, { type EmailActivityItem } from '@/components/admin/EmailActivity'
 import CampaignManager from '@/components/admin/CampaignManager'
 import NutricaoManager from '@/components/admin/NutricaoManager'
+import EventoReguasManager, { type ReguaGroup } from '@/components/admin/EventoReguasManager'
 import { getPresaleStatus } from '@/lib/presale'
 import { getCampaignView } from '@/lib/campaign/admin-view'
+import { getReguasView } from '@/lib/evento/admin-view'
 import { getNutricaoAdminView, type NutricaoAdminView } from '@/lib/nutricao/admin-view'
 
 export const dynamic = 'force-dynamic'
@@ -36,6 +38,15 @@ export default async function LeadsPage() {
     campaign = await getCampaignView()
   } catch {
     campaign = { steps: [], totalEligible: 0 }
+  }
+
+  // Réguas do evento (3 bases). Tolerante a falhas.
+  let reguas: ReguaGroup[] = []
+  try {
+    reguas = await getReguasView()
+  } catch (e) {
+    console.error('[admin] reguas view falhou:', e)
+    reguas = []
   }
 
   let nutricao: NutricaoAdminView | null = null
@@ -98,6 +109,8 @@ export default async function LeadsPage() {
         <EmailActivity items={activity} />
 
         {campaign.steps.length > 0 && <CampaignManager steps={campaign.steps} totalEligible={campaign.totalEligible} />}
+
+        {reguas.length > 0 && <EventoReguasManager groups={reguas} />}
 
         {nutricao && <NutricaoManager view={nutricao} />}
 
