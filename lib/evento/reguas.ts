@@ -172,6 +172,80 @@ function buildCadastroSteps(): EventoStep[] {
   return steps
 }
 
+/**
+ * Burst do 5º dia útil (dia de pagamento, 07/07): 3 e-mails (manhã, tarde,
+ * noite) para TODAS as bases, brincando com o tema "caiu o salário, paga o
+ * cartão e vem garantir o ingresso". Mesma copy nas 3 bases.
+ */
+function buildPaydaySteps(): EventoStep[] {
+  const variantes = [
+    {
+      s: 'pay_m',
+      utc: 12, // 09h BRT
+      subject: 'Caiu o salário? ☀️ separa um trocado pro que importa',
+      preheader: 'Dia de pagamento é dia de garantir sua vaga.',
+      selo: 'Dia de pagamento',
+      headline: 'Caiu na conta!',
+      body: [
+        'Bom dia, {{nome}}! Hoje é aquele dia gostoso: o salário caiu. 🤑',
+        'Antes que ele evapore em boleto, separa um cantinho pra você: sua vaga no Somma Special Day, o aniversário de 1 ano do Somma, dia 18/07.',
+        'É o melhor investimento do mês: 4 km ou 8 km, comunidade animada e pagode ao vivo. 🥁',
+      ],
+      wa: 'Oi! Hoje é dia de pagamento e quero garantir minha vaga no Special Day 🤑',
+    },
+    {
+      s: 'pay_t',
+      utc: 16, // 13h BRT
+      subject: 'Pagou o cartão? 💳 agora paga o que faz bem',
+      preheader: 'Resolveu as contas? Guarda um pedacinho pra correr.',
+      selo: 'Dia de pagamento',
+      headline: 'Paga as contas e vem',
+      body: [
+        'Boa tarde, {{nome}}! Já pagou o cartão, matou os boletos e sobrou aquele respiro?',
+        'Então bora usar um pedacinho com o que faz bem de verdade: correr. Sua vaga no Somma Special Day tá te esperando, dia 18/07.',
+        '1º lote no app Track&Field. Depois o preço sobe, então hoje é o dia certo de garantir.',
+      ],
+      wa: 'Oi! Quero garantir minha vaga no Special Day hoje 💳',
+    },
+    {
+      s: 'pay_n',
+      utc: 22, // 19h BRT
+      subject: 'Fecha o dia de pagamento com chave de ouro 🌙',
+      preheader: 'Investe em você antes do dia acabar.',
+      selo: 'Dia de pagamento',
+      headline: 'Fecha o mês correndo',
+      body: [
+        'Boa noite, {{nome}}! O dia de pagamento tá acabando, e fica a pergunta: já garantiu sua vaga?',
+        'Se ainda não, dá tempo. O Somma Special Day é dia 18/07, aniversário de 1 ano do Somma, com 4 km ou 8 km e muito pagode. 🥁',
+        'Investe em você: garante o 1º lote antes que o preço suba.',
+      ],
+      wa: 'Oi! Quero fechar o dia garantindo minha vaga no Special Day 🌙',
+    },
+  ] as const
+
+  const bases: EventoBase[] = ['lista_vip', 'checkins', 'cadastro_site']
+  const steps: EventoStep[] = []
+  for (const base of bases) {
+    for (const v of variantes) {
+      steps.push({
+        base,
+        step: v.s,
+        sendAt: `2026-07-07T${pad2(v.utc)}:00:00Z`,
+        subject: v.subject,
+        preheader: v.preheader,
+        selo: v.selo,
+        headline: v.headline,
+        body: [...v.body],
+        showPrice: true,
+        cta: 'Garantir minha vaga',
+        ctaUrl: BUY_URL,
+        waText: v.wa,
+      })
+    }
+  }
+  return steps
+}
+
 export const EVENTO_STEPS: EventoStep[] = [
   // ===================== RÉGUA 1 · lista_vip =====================
   {
@@ -360,6 +434,7 @@ export const EVENTO_STEPS: EventoStep[] = [
   },
 
   // ===================== RÉGUA 3 · cadastro_site =====================
+  ...buildPaydaySteps(),
   ...buildCadastroSteps(),
 ]
 
