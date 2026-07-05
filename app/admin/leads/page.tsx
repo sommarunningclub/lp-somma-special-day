@@ -8,11 +8,9 @@ import RefreshButton from '@/components/admin/RefreshButton'
 import PresaleControl from '@/components/admin/PresaleControl'
 import EmailStatsDashboard from '@/components/admin/EmailStatsDashboard'
 import EmailActivity, { type EmailActivityItem } from '@/components/admin/EmailActivity'
-import CampaignManager from '@/components/admin/CampaignManager'
 import NutricaoManager from '@/components/admin/NutricaoManager'
 import EventoReguasManager, { type ReguaGroup } from '@/components/admin/EventoReguasManager'
 import { getPresaleStatus } from '@/lib/presale'
-import { getCampaignView } from '@/lib/campaign/admin-view'
 import { getReguasView } from '@/lib/evento/admin-view'
 import { getNutricaoAdminView, type NutricaoAdminView } from '@/lib/nutricao/admin-view'
 
@@ -32,13 +30,8 @@ export default async function LeadsPage() {
   const rows = (leads ?? []) as ListaVipLead[]
   const presale = await getPresaleStatus()
 
-  // Campanha de escassez (agendamento + relatório). Tolerante a falhas para não derrubar o admin.
-  let campaign: { steps: Awaited<ReturnType<typeof getCampaignView>>['steps']; totalEligible: number } = { steps: [], totalEligible: 0 }
-  try {
-    campaign = await getCampaignView()
-  } catch {
-    campaign = { steps: [], totalEligible: 0 }
-  }
+  // Campanha de escassez ARQUIVADA (fim do 1º lote já passou). Painel oculto,
+  // mas o código (CampaignManager + lib/campaign) segue intacto para reativar.
 
   // Réguas do evento (3 bases). Tolerante a falhas.
   let reguas: ReguaGroup[] = []
@@ -92,9 +85,6 @@ export default async function LeadsPage() {
             <Link href="/admin" className="w-full rounded-full border-4 border-somma-black/20 px-5 py-2.5 text-center font-bebas tracking-widest text-somma-black transition-all hover:border-somma-black hover:bg-somma-black/10 sm:w-auto">
               Propostas
             </Link>
-            <Link href="/admin/concurso-junino" className="w-full rounded-full border-4 border-somma-orange bg-somma-orange/15 px-5 py-2.5 text-center font-bebas tracking-widest text-somma-orange transition-all hover:bg-somma-orange hover:text-somma-cream sm:w-auto">
-              Concurso Junino
-            </Link>
             <Link href="/listavip" className="w-full rounded-full border-4 border-somma-blue bg-somma-blue/20 px-5 py-2.5 text-center font-bebas tracking-widest text-somma-blue transition-all hover:bg-somma-blue hover:text-somma-cream sm:w-auto">
               Ver página
             </Link>
@@ -107,8 +97,6 @@ export default async function LeadsPage() {
         <EmailStatsDashboard leads={rows} />
 
         <EmailActivity items={activity} />
-
-        {campaign.steps.length > 0 && <CampaignManager steps={campaign.steps} totalEligible={campaign.totalEligible} />}
 
         {reguas.length > 0 && <EventoReguasManager groups={reguas} />}
 
