@@ -88,6 +88,18 @@ function priceBlock(): string {
   </table>`
 }
 
+/** Bloco de destaque da atração especial (pagode). Aparece em todos os e-mails. */
+function atracaoBlock(): string {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:4px 0 14px;">
+    <tr><td style="background-color:${COLORS.blue};border:3px solid ${COLORS.black};border-radius:14px;padding:16px 18px;">
+      <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;color:${COLORS.yellow};">🎤 Atração especial</p>
+      <p style="margin:6px 0 0;font-size:18px;font-weight:900;color:#ffffff;line-height:1.15;">Pagode com a Resenha do Sabino</p>
+      <p style="margin:6px 0 0;font-size:13px;color:#ffffffcc;">É pra sambar e pra cantar! O pagode que tá bombando em Brasília vai animar o nosso aniversário. 🥁</p>
+      <a href="https://www.instagram.com/aresenhadosabino/" style="display:inline-block;margin-top:10px;font-size:12px;font-weight:bold;color:${COLORS.yellow};text-decoration:underline;">Conhecer no Instagram →</a>
+    </td></tr>
+  </table>`
+}
+
 function whatsappButton(waText: string): string {
   const href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(waText)}`
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;">
@@ -141,6 +153,7 @@ export function renderEventoEmail({ nome, base, step, unsubscribeUrl }: EventoEm
         <!-- Corpo -->
         <tr><td style="padding:24px 26px 8px;">
           ${renderBody(cfg.body, nome, accent)}
+          ${atracaoBlock()}
           ${cfg.showPrice ? priceBlock() : ''}
 
           <!-- CTA -->
