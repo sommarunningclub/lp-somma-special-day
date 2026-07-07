@@ -49,13 +49,31 @@ async function getCount(startAt: string | null): Promise<number> {
   }
 }
 
+function isPastPresaleDeadline(): boolean {
+  return Date.now() > new Date(PRESALE.deadlineISO).getTime()
+}
+
 /** Status atual da pré-venda (interruptor manual, limite, contagem). */
 export async function getPresaleStatus(): Promise<PresaleStatus> {
+  const pastDeadline = isPastPresaleDeadline()
+
+  // Após o prazo, `closed` é sempre true — evita 2 round-trips ao Supabase na home.
+  if (pastDeadline) {
+    return {
+      limit: DEFAULT_LIMIT,
+      startAt: null,
+      count: 0,
+      closed: true,
+      restantes: 0,
+      manualOpen: true,
+      pastDeadline: true,
+    }
+  }
+
   const { limit, startAt, manualOpen } = await getSettings()
   const count = await getCount(startAt)
   // Fechada se: o admin fechou manualmente, OU há limite (> 0) atingido, OU passou do prazo (dom 23h59).
   const closedByLimit = startAt !== null && limit > 0 && count >= limit
-  const pastDeadline = Date.now() > new Date(PRESALE.deadlineISO).getTime()
   const closed = !manualOpen || closedByLimit || pastDeadline
   return {
     limit,

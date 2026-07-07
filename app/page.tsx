@@ -14,7 +14,8 @@ import NutricaoCaptureSection from '@/components/special-day/NutricaoCaptureSect
 import AddToCalendarSection from '@/components/special-day/AddToCalendarSection'
 import { getPresaleStatus } from '@/lib/presale'
 
-export const dynamic = 'force-dynamic'
+// Sem force-dynamic: após o prazo da pré-venda, getPresaleStatus() não consulta o banco.
+export const revalidate = 3600
 
 export default async function Home() {
   const { closed } = await getPresaleStatus()
