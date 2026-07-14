@@ -42,6 +42,8 @@ export default function DayUseCheckout() {
   const [pixPayload, setPixPayload] = useState<string | null>(null)
   const [pixPaymentId, setPixPaymentId] = useState<string | null>(null)
   const [pixCopied, setPixCopied] = useState(false)
+  const [pixExpiration, setPixExpiration] = useState<string | null>(null)
+  const [pixRemaining, setPixRemaining] = useState<number | null>(null)
 
   // CEP autopreenche endereço (necessário pro creditCardHolderInfo do Asaas).
   const handleCep = async (value: string) => {
@@ -84,6 +86,19 @@ export default function DayUseCheckout() {
     return () => clearInterval(id)
   }, [pageState, pixPaymentId])
 
+  // Cronômetro do PIX (tempo restante até expirar).
+  useEffect(() => {
+    if (pageState !== 'pix' || !pixExpiration) {
+      setPixRemaining(null)
+      return
+    }
+    const target = new Date(pixExpiration).getTime()
+    const tick = () => setPixRemaining(Math.max(0, Math.floor((target - Date.now()) / 1000)))
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [pageState, pixExpiration])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -117,6 +132,7 @@ export default function DayUseCheckout() {
         setPixPaymentId(pay.paymentId)
         setPixQrCode(qr.encodedImage)
         setPixPayload(qr.payload)
+        setPixExpiration(qr.expirationDate ?? null)
         setPageState('pix')
         return
       }
@@ -193,15 +209,43 @@ export default function DayUseCheckout() {
             <img src={`data:image/png;base64,${pixQrCode}`} alt="QR Code PIX" width={220} height={220} className="mx-auto mt-6 rounded-xl border-4 border-somma-black" />
           )}
           <p className="mt-4 font-bebas text-4xl tracking-tight text-somma-black">R$ 75</p>
-          {pixPayload && (
-            <button
-              type="button"
-              onClick={async () => { await navigator.clipboard.writeText(pixPayload); setPixCopied(true); setTimeout(() => setPixCopied(false), 3000) }}
-              className="mt-4 w-full rounded-xl border-4 border-somma-black bg-somma-blue px-6 py-3 font-bebas text-xl tracking-wide text-somma-cream shadow-[4px_4px_0_#0a0a0a]"
-            >
-              {pixCopied ? 'Código copiado!' : 'Copiar código PIX'}
-            </button>
+
+          {pixRemaining !== null && (
+            <div className="mx-auto mt-4 w-fit rounded-xl border-4 border-somma-black bg-somma-yellow px-5 py-2">
+              {pixRemaining > 0 ? (
+                <p className="font-dm text-sm text-somma-black">
+                  Este PIX expira em{' '}
+                  <strong className="font-bebas text-xl tracking-wide tabular-nums">
+                    {String(Math.floor(pixRemaining / 60)).padStart(2, '0')}:
+                    {String(pixRemaining % 60).padStart(2, '0')}
+                  </strong>
+                </p>
+              ) : (
+                <p className="font-dm text-sm font-bold text-somma-black">
+                  ⚠️ Este PIX expirou. Gere um novo pagamento.
+                </p>
+              )}
+            </div>
           )}
+
+          {pixPayload && (
+            <div className="mt-6 text-left">
+              <p className="mb-2 font-dm text-xs font-bold uppercase tracking-wider text-somma-black/60">
+                PIX Copia e Cola
+              </p>
+              <p className="max-h-24 overflow-y-auto break-all rounded-xl border-4 border-somma-black bg-somma-cream px-4 py-3 font-mono text-xs text-somma-black">
+                {pixPayload}
+              </p>
+              <button
+                type="button"
+                onClick={async () => { await navigator.clipboard.writeText(pixPayload); setPixCopied(true); setTimeout(() => setPixCopied(false), 3000) }}
+                className="mt-3 w-full rounded-xl border-4 border-somma-black bg-somma-blue px-6 py-3 font-bebas text-xl tracking-wide text-somma-cream shadow-[4px_4px_0_#0a0a0a]"
+              >
+                {pixCopied ? 'Código copiado!' : 'Copiar código PIX'}
+              </button>
+            </div>
+          )}
+
           <p className="mt-4 font-dm text-xs text-somma-black/50">
             A confirmação aparece aqui automaticamente após o pagamento.
           </p>
