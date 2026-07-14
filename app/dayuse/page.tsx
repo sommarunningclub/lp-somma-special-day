@@ -6,6 +6,11 @@ import DayUsePrograma from '@/components/special-day/dayuse/DayUsePrograma'
 import DayUseShow from '@/components/special-day/dayuse/DayUseShow'
 import DayUseGincana from '@/components/special-day/dayuse/DayUseGincana'
 import DayUseSorteios from '@/components/special-day/dayuse/DayUseSorteios'
+import DayUseAlimentacao from '@/components/special-day/dayuse/DayUseAlimentacao'
+import DayUseRecovery from '@/components/special-day/dayuse/DayUseRecovery'
+import DayUsePrepare from '@/components/special-day/dayuse/DayUsePrepare'
+import DayUseParceiros from '@/components/special-day/dayuse/DayUseParceiros'
+import DayUseLocalizacao from '@/components/special-day/dayuse/DayUseLocalizacao'
 import DayUseCheckout from '@/components/special-day/dayuse/DayUseCheckout'
 
 export const metadata: Metadata = {
@@ -22,6 +27,11 @@ export default function DayUsePage() {
       <DayUseShow />
       <DayUseGincana />
       <DayUseSorteios />
+      <DayUseAlimentacao />
+      <DayUseRecovery />
+      <DayUsePrepare />
+      <DayUseParceiros />
+      <DayUseLocalizacao />
       <DayUseCheckout />
     </SmoothScroll>
   )
