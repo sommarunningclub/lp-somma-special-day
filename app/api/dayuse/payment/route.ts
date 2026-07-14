@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     const today = new Date().toISOString().split('T')[0]
 
     // Grava o pedido como Pendente antes de cobrar (rastreabilidade mesmo se a cobrança falhar).
-    const { data: order } = await supabase
+    const { data: order, error: orderError } = await supabase
       .from('dayuse_orders')
       .insert({
         nome: customer.name,
@@ -52,6 +52,14 @@ export async function POST(request: NextRequest) {
       })
       .select('id')
       .single()
+
+    if (orderError || !order?.id) {
+      console.error('[DayUse][Asaas] order insert error:', orderError)
+      return NextResponse.json(
+        { error: 'Não foi possível registrar seu pedido. Tente novamente.' },
+        { status: 500 },
+      )
+    }
 
     const orderId = order?.id as string | undefined
 
@@ -102,6 +110,15 @@ export async function POST(request: NextRequest) {
 
     if (!res.ok) {
       console.error('[DayUse][Asaas] payment error:', data)
+      if (orderId) {
+        await supabase
+          .from('dayuse_orders')
+          .update({
+            status_pagamento: 'Cancelado',
+            ...(data?.id ? { asaas_payment_id: data.id } : {}),
+          })
+          .eq('id', orderId)
+      }
       return NextResponse.json({ error: asaasError(data) }, { status: res.status })
     }
 
