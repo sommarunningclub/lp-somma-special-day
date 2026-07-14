@@ -43,6 +43,12 @@ export default async function AdminPage() {
               Lista VIP
             </Link>
             <Link
+              href="/admin/dayuse"
+              className="w-full rounded-full border-4 border-somma-orange bg-somma-orange/20 px-5 py-3 text-center font-bebas tracking-widest text-somma-orange transition-all hover:bg-somma-orange hover:text-somma-cream sm:w-auto"
+            >
+              Day Use
+            </Link>
+            <Link
               href="/admin/nova"
               className="w-full rounded-full border-4 border-somma-black bg-somma-orange px-7 py-3.5 text-center font-bebas text-lg tracking-widest text-somma-cream shadow-[4px_4px_0_#0a0a0a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_#0a0a0a] sm:w-auto sm:shadow-[5px_5px_0_#0a0a0a]"
             >
