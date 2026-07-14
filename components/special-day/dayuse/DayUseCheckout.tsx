@@ -360,7 +360,7 @@ export default function DayUseCheckout() {
             className="w-full rounded-xl border-4 border-somma-black bg-somma-orange px-6 py-4 font-bebas text-2xl tracking-wide text-somma-cream shadow-[6px_6px_0_#0a0a0a] transition-transform hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0_#0a0a0a]">
             Pagar R$ 75
           </button>
-          <p className="text-center font-dm text-xs text-somma-black/40">🔒 Pagamento processado com segurança pelo Asaas.</p>
+          <p className="text-center font-dm text-xs text-somma-black/40">🔒 Pagamento processado com segurança pelo Somma Club Payments</p>
         </form>
       </div>
     </section>
