@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
     const res = await fetch(`${ASAAS_API_URL}/payments/${paymentId}/pixQrCode`, {
       method: 'GET',
       headers: asaasHeaders(),
+      cache: 'no-store',
     })
     const data = await res.json()
 

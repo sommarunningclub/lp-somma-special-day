@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { ASAAS_API_URL, asaasHeaders, asaasError, DAYUSE_PRICE } from '@/lib/dayuse/asaas'
+import { sendDayUseConfirmation } from '@/lib/emails/send-dayuse'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -105,6 +106,7 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: asaasHeaders(),
       body: JSON.stringify(payload),
+      cache: 'no-store',
     })
     const data = await res.json()
 
@@ -128,6 +130,19 @@ export async function POST(request: NextRequest) {
         .from('dayuse_orders')
         .update({ asaas_payment_id: data.id, status_pagamento: paid ? 'Pago' : 'Pendente' })
         .eq('id', orderId)
+    }
+
+    // Cartão aprovado na hora: confirma por e-mail já (PIX é confirmado no polling).
+    if (paid) {
+      await sendDayUseConfirmation({
+        nome: customer.name,
+        email: customer.email,
+        valor: DAYUSE_PRICE,
+        forma,
+        dataPagamento: data.paymentDate || data.confirmedDate || today,
+        transactionId: data.id,
+        receiptUrl: data.transactionReceiptUrl || data.invoiceUrl,
+      })
     }
 
     return NextResponse.json({ paymentId: data.id, status: data.status, paid })

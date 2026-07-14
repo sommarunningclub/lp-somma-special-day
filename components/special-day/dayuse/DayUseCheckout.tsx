@@ -135,15 +135,46 @@ export default function DayUseCheckout() {
   // ─── SUCCESS ───
   if (pageState === 'success') {
     return (
-      <section id="dayuse-checkout" className="bg-somma-yellow px-4 py-20 text-center">
-        <div className="mx-auto max-w-md rounded-2xl border-4 border-somma-black bg-somma-cream p-8 shadow-[8px_8px_0_#0a0a0a]">
-          <div className="mb-4 text-6xl">🎉</div>
-          <h2 className="font-bebas text-4xl tracking-tight text-somma-black">Ingresso garantido!</h2>
-          <p className="mt-3 font-dm text-somma-black/70">
-            Seu Day Use do Special Day está confirmado. Te esperamos no after,
-            sábado 18/07. Bora curtir!
-          </p>
-          <a href="/" className="mt-6 inline-block rounded-xl border-4 border-somma-black bg-somma-blue px-6 py-3 font-bebas text-xl tracking-wide text-somma-cream shadow-[4px_4px_0_#0a0a0a]">
+      <section id="dayuse-checkout" className="bg-somma-yellow px-4 py-16 sm:py-20">
+        <div className="mx-auto max-w-lg space-y-5">
+          {/* Confirmação */}
+          <div className="rounded-2xl border-4 border-somma-black bg-somma-cream p-8 text-center shadow-[8px_8px_0_#0a0a0a]">
+            <div className="mb-4 text-6xl">🎉</div>
+            <h2 className="font-bebas text-4xl tracking-tight text-somma-black">Deu tudo certo!</h2>
+            <p className="mt-3 font-dm text-somma-black/70">
+              Seu <strong>Day Use do Special Day</strong> está confirmado e o comprovante
+              foi enviado para o seu e-mail. Te esperamos no after!
+            </p>
+          </div>
+
+          {/* Infos do evento */}
+          <div className="rounded-2xl border-4 border-somma-black bg-white p-6 shadow-[6px_6px_0_#0a0a0a]">
+            <p className="mb-4 font-bebas text-2xl tracking-wide text-somma-black">📍 Seu evento</p>
+            <ul className="space-y-2 font-dm text-sm text-somma-black/80">
+              <li>🗓 <strong>Sábado, 18 de julho de 2026</strong> — a partir das 07h</li>
+              <li>📌 Parque da Cidade — Plano Piloto, Brasília-DF</li>
+            </ul>
+
+            <p className="mt-5 mb-2 font-dm text-xs font-bold uppercase tracking-wider text-somma-orange">
+              Seu ingresso dá acesso a todo o after
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {['🎤 Resenha do Sabino', '🎧 DJ', '🎯 Gincana', '🎁 Sorteios', '🍺 Bar', '🥁 Samba ao vivo'].map((t) => (
+                <span key={t} className="rounded-lg border-2 border-somma-black bg-somma-cream px-3 py-1 font-dm text-xs font-medium text-somma-black">
+                  {t}
+                </span>
+              ))}
+            </div>
+
+            <div className="mt-5 rounded-xl border-2 border-somma-orange bg-somma-orange/10 p-3">
+              <p className="font-dm text-xs leading-relaxed text-somma-black/80">
+                ⚠️ Lembrando: o Day Use <strong>não inclui o kit</strong> nem <strong>a corrida</strong>,
+                e o sorteio do <strong>Adidas Evo SL</strong> é só para quem comprou o kit.
+              </p>
+            </div>
+          </div>
+
+          <a href="/" className="block w-full rounded-xl border-4 border-somma-black bg-somma-blue px-6 py-3 text-center font-bebas text-xl tracking-wide text-somma-cream shadow-[4px_4px_0_#0a0a0a]">
             Voltar ao site
           </a>
         </div>

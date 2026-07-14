@@ -21,6 +21,7 @@ export async function POST(request: NextRequest) {
         phone: phone ? String(phone).replace(/\D/g, '') : undefined,
         notificationDisabled: false,
       }),
+      cache: 'no-store',
     })
     const data = await res.json()
 
