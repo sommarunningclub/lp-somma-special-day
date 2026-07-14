@@ -69,6 +69,25 @@ export default function DayUseAdminDashboard({ orders: initial }: { orders: DayU
     }
   }
 
+  async function remove(id: string, nome: string) {
+    if (!confirm(`Excluir o pedido de ${nome}? Isso também remove a cobrança no Asaas e não pode ser desfeito.`))
+      return
+    setRow(id, 'delete')
+    try {
+      const res = await fetch(`/api/admin/dayuse/${id}`, { method: 'DELETE' })
+      const json = await res.json()
+      if (!res.ok) {
+        alert(json.error || 'Erro ao excluir.')
+        return
+      }
+      setOrders(list => list.filter(o => o.id !== id))
+    } catch {
+      alert('Erro de rede.')
+    } finally {
+      setRow(id, null)
+    }
+  }
+
   async function resend(id: string) {
     setRow(id, 'resend')
     try {
@@ -156,6 +175,13 @@ export default function DayUseAdminDashboard({ orders: initial }: { orders: DayU
                   className="rounded-full border-2 border-somma-black bg-white px-4 py-2 font-bebas text-sm tracking-widest text-somma-black disabled:opacity-40"
                 >
                   Editar
+                </button>
+                <button
+                  disabled={!!b}
+                  onClick={() => remove(o.id, o.nome)}
+                  className="rounded-full border-2 border-red-600 bg-red-500/10 px-4 py-2 font-bebas text-sm tracking-widest text-red-600 disabled:opacity-40"
+                >
+                  {b === 'delete' ? '...' : 'Excluir'}
                 </button>
               </div>
             </article>

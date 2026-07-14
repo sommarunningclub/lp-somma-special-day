@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { isAdmin } from '@/lib/insider'
+import { ASAAS_API_URL, asaasHeaders } from '@/lib/dayuse/asaas'
 import { DAYUSE_STATUS, DAYUSE_FORMAS } from '@/lib/dayuse/types'
 
 export const runtime = 'nodejs'
@@ -82,4 +83,47 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   if (!data?.length) return NextResponse.json({ error: 'Pedido não encontrado' }, { status: 404 })
 
   return NextResponse.json({ ok: true, order: data[0] })
+}
+
+export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+  if (!(await isAdmin())) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
+  const id = params.id
+
+  const { data: order } = await supabase
+    .from('dayuse_orders')
+    .select('asaas_payment_id, asaas_customer_id')
+    .eq('id', id)
+    .maybeSingle()
+
+  if (!order) return NextResponse.json({ error: 'Pedido não encontrado' }, { status: 404 })
+
+  // Remove a cobrança e o cliente no Asaas (best-effort — não bloqueia a exclusão
+  // local se o recurso já não existir ou a API falhar).
+  const asaasDelete = async (path: string) => {
+    try {
+      await fetch(`${ASAAS_API_URL}${path}`, {
+        method: 'DELETE',
+        headers: asaasHeaders(),
+        cache: 'no-store',
+      })
+    } catch (e) {
+      console.error('[admin-dayuse] asaas delete error:', path, e)
+    }
+  }
+  if (order.asaas_payment_id) await asaasDelete(`/payments/${order.asaas_payment_id}`)
+  if (order.asaas_customer_id) await asaasDelete(`/customers/${order.asaas_customer_id}`)
+
+  const { data, error } = await supabase
+    .from('dayuse_orders')
+    .delete()
+    .eq('id', id)
+    .select('id')
+  if (error) {
+    console.error('[admin-dayuse] delete error:', error)
+    return NextResponse.json({ error: 'Falha ao excluir o pedido' }, { status: 500 })
+  }
+  if (!data?.length) return NextResponse.json({ error: 'Pedido não encontrado' }, { status: 404 })
+
+  return NextResponse.json({ ok: true })
 }
