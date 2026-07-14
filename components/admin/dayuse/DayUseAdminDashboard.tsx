@@ -109,12 +109,21 @@ export default function DayUseAdminDashboard({ orders: initial }: { orders: DayU
         <Stat label="Pulseiras" value={totals.pulseiras} />
       </div>
 
-      <input
-        value={query}
-        onChange={e => setQuery(e.target.value)}
-        placeholder="Buscar por nome, e-mail ou CPF"
-        className="w-full rounded-xl border-2 border-somma-black bg-white px-4 py-3 font-dm text-somma-black outline-none"
-      />
+      <div className="flex gap-3">
+        <input
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          placeholder="Buscar por nome, e-mail ou CPF"
+          className="w-full rounded-xl border-2 border-somma-black bg-white px-4 py-3 font-dm text-somma-black outline-none"
+        />
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="shrink-0 rounded-xl border-2 border-somma-black bg-somma-orange px-5 py-3 font-bebas tracking-widest text-somma-cream"
+        >
+          Atualizar
+        </button>
+      </div>
 
       <div className="space-y-3">
         {filtered.map(o => {
