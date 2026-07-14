@@ -6,6 +6,10 @@ import type { NextRequest } from 'next/server'
 // Rewrite mantem a URL original na barra mas mostra o gate.
 // Nao afeta /admin, /api nem o resto do site.
 export function middleware(request: NextRequest) {
+  // Correio Elegante segue liberado; o restante do esquenta vai pra "evento encerrado".
+  if (request.nextUrl.pathname.startsWith('/esquenta-junino/correio')) {
+    return NextResponse.next()
+  }
   const url = request.nextUrl.clone()
   url.pathname = '/evento-encerrado'
   url.search = ''
