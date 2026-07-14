@@ -19,7 +19,9 @@ export async function POST(request: NextRequest) {
         email,
         cpfCnpj: String(cpfCnpj).replace(/\D/g, ''),
         phone: phone ? String(phone).replace(/\D/g, '') : undefined,
-        notificationDisabled: false,
+        // Desativa todas as notificações do Asaas (e-mail/SMS de cobrança, recibo,
+        // etc.) — o único e-mail enviado é o nosso comprovante (Resend).
+        notificationDisabled: true,
       }),
       cache: 'no-store',
     })
