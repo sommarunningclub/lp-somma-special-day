@@ -28,19 +28,16 @@ function formatPhone(value: string) {
     .replace(/(\d{5})(\d{1,4})$/, '$1-$2')
 }
 
-// Data de nascimento em DD/MM/AA (ano com 2 digitos). Aceita ate 8 digitos de
-// entrada: se o usuario digita/cola o ano com 4 digitos (DD/MM/AAAA, formato
-// natural no Brasil), pega os 2 ULTIMOS do ano em vez do seculo — sem corromper.
+// Data de nascimento em DD/MM/AAAA (ano com 4 digitos, formato natural no Brasil).
 function formatBirthDate(value: string) {
   const digits = value.replace(/\D/g, '').slice(0, 8)
   const dd = digits.slice(0, 2)
   const mm = digits.slice(2, 4)
-  const yearDigits = digits.slice(4)
-  const yy = yearDigits.length > 2 ? yearDigits.slice(-2) : yearDigits
+  const yyyy = digits.slice(4, 8)
 
   let out = dd
   if (digits.length >= 3) out += `/${mm}`
-  if (digits.length >= 5) out += `/${yy}`
+  if (digits.length >= 5) out += `/${yyyy}`
   return out
 }
 
@@ -147,7 +144,7 @@ export default function CortesiaForm() {
                   <input
                     {...register('dataNascimento')}
                     {...aria('dataNascimento')}
-                    placeholder="DD/MM/AA"
+                    placeholder="DD/MM/AAAA"
                     inputMode="numeric"
                     className={inputCls}
                     onChange={(e) => {

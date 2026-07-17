@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import FloatingElement from '@/components/special-day/FloatingElement'
 import CortesiaForm from '@/components/special-day/CortesiaForm'
+import CortesiaEsgotada from '@/components/special-day/CortesiaEsgotada'
+import { createServerClient } from '@/lib/supabase/server'
+import { CORTESIA_LIMITE } from '@/lib/validations/cortesia'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,7 +13,13 @@ export const metadata: Metadata = {
   description: 'Preencha seus dados e garanta sua cortesia do Somma Special Day.',
 }
 
-export default function CortesiaPage() {
+export default async function CortesiaPage() {
+  const supabase = createServerClient()
+  const { count } = await supabase
+    .from('cortesia')
+    .select('*', { count: 'exact', head: true })
+  const esgotado = (count ?? 0) >= CORTESIA_LIMITE
+
   return (
     <main className="relative min-h-[100svh] w-full overflow-hidden bg-somma-black px-4 py-10 sm:py-14 md:min-h-screen md:py-20">
       {/* Elementos decorativos flutuantes */}
@@ -48,7 +57,7 @@ export default function CortesiaPage() {
           />
         </div>
 
-        <CortesiaForm />
+        {esgotado ? <CortesiaEsgotada /> : <CortesiaForm />}
       </div>
     </main>
   )

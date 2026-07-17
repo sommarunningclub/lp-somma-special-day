@@ -1,7 +1,7 @@
 'use server'
 
 import { createServerClient } from '@/lib/supabase/server'
-import { cortesiaSchema, type CortesiaInput } from '@/lib/validations/cortesia'
+import { cortesiaSchema, CORTESIA_LIMITE, type CortesiaInput } from '@/lib/validations/cortesia'
 
 type ActionResult =
   | { success: true }
@@ -31,6 +31,20 @@ export async function submitCortesia(formData: unknown): Promise<ActionResult> {
 
   try {
     const supabase = createServerClient()
+
+    // Limite de cortesias: bloqueia quando atingir o teto. Checagem server-side
+    // para nao depender do estado da pagina (evita burlar via requisicao direta).
+    const { count, error: countError } = await supabase
+      .from('cortesia')
+      .select('*', { count: 'exact', head: true })
+
+    if (countError) {
+      return { success: false, error: 'Ocorreu um erro. Tente novamente.' }
+    }
+    if ((count ?? 0) >= CORTESIA_LIMITE) {
+      return { success: false, error: 'As cortesias esgotaram. Não há mais vagas disponíveis.' }
+    }
+
     const lead = normalize(parsed.data)
 
     const { error } = await supabase.from('cortesia').insert(lead)
