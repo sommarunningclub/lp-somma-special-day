@@ -246,6 +246,83 @@ function buildPaydaySteps(): EventoStep[] {
   return steps
 }
 
+/**
+ * Aviso de retirada de kit (sexta 17/07, véspera do evento): 3 disparos ao longo
+ * do dia (12h, 16h, 20h BRT) para TODAS as bases, avisando que a entrega dos kits
+ * está liberada na Loja Track&Field do Brasília Shopping, das 10h às 22h.
+ * Mesma copy nas 3 bases; o tom sobe de urgência do meio-dia até a noite.
+ */
+function buildKitSteps(): EventoStep[] {
+  // Busca por lugar (path-based, sem query param) evita quebrar o & de "Track&Field".
+  const MAPS_URL = 'https://www.google.com/maps/search/Track+Field+Bras%C3%ADlia+Shopping'
+  const KIT_WA = 'Oi! Tenho uma dúvida sobre a retirada do meu kit do Special Day'
+
+  const variantes = [
+    {
+      s: 'kit1',
+      utc: 15, // 12h BRT
+      subject: 'ENTREGA DE KITS LIBERADA! 🧡',
+      preheader: 'Retire seu kit hoje na Track&Field do Brasília Shopping, das 10h às 22h.',
+      selo: 'Retirada de kits',
+      headline: 'Seu kit já pode ser retirado',
+      body: [
+        'Chegou a hora, {{nome}}! 🧡',
+        'A entrega dos kits do Somma Special Day está LIBERADA. É só passar na 📍 Loja Track&Field do Brasília Shopping pra pegar o seu.',
+        'Hoje (sexta), das 10h às 22h.',
+        'Amanhã é dia de correr — chega com o kit já em mãos. 🏃',
+      ],
+    },
+    {
+      s: 'kit2',
+      utc: 19, // 16h BRT
+      subject: 'Já pegou seu kit? 👀 Track&Field até 22h',
+      preheader: 'Os kits estão sendo entregues hoje até as 22h. Não deixa pra depois.',
+      selo: 'Retirada de kits',
+      headline: 'Não deixa pra depois',
+      body: [
+        'Oi, {{nome}}! Lembrete rápido: 👀',
+        'Os kits do Somma Special Day estão sendo entregues HOJE, das 10h às 22h, na 📍 Loja Track&Field do Brasília Shopping.',
+        'Amanhã cedo é a largada — garanta o seu hoje e chegue tranquilo.',
+      ],
+    },
+    {
+      s: 'kit3',
+      utc: 23, // 20h BRT
+      subject: '⏰ Últimas horas pra retirar seu kit (até 22h)',
+      preheader: 'A retirada de kits fecha às 22h de hoje. Corre que dá tempo!',
+      selo: 'Últimas horas',
+      headline: 'Corre que dá tempo!',
+      body: [
+        '{{nome}}, a retirada de kits fecha às 22h de HOJE! ⏰',
+        'Se ainda não pegou o seu, dá um pulo na 📍 Loja Track&Field do Brasília Shopping antes de fechar.',
+        'Amanhã tem Somma Special Day e a gente quer você com o kit em mãos. 🧡',
+      ],
+    },
+  ] as const
+
+  const bases: EventoBase[] = ['lista_vip', 'checkins', 'cadastro_site']
+  const steps: EventoStep[] = []
+  for (const base of bases) {
+    for (const v of variantes) {
+      steps.push({
+        base,
+        step: v.s,
+        sendAt: `2026-07-17T${pad2(v.utc)}:00:00Z`,
+        subject: v.subject,
+        preheader: v.preheader,
+        selo: v.selo,
+        headline: v.headline,
+        body: [...v.body],
+        showPrice: false,
+        cta: 'Como chegar',
+        ctaUrl: MAPS_URL,
+        waText: KIT_WA,
+      })
+    }
+  }
+  return steps
+}
+
 export const EVENTO_STEPS: EventoStep[] = [
   // ===================== RÉGUA 1 · lista_vip =====================
   {
@@ -436,6 +513,9 @@ export const EVENTO_STEPS: EventoStep[] = [
   // ===================== RÉGUA 3 · cadastro_site =====================
   ...buildPaydaySteps(),
   ...buildCadastroSteps(),
+
+  // ===================== Aviso de retirada de kit (17/07, todas as bases) =====================
+  ...buildKitSteps(),
 ]
 
 export function getEventoStep(base: string, step: string): EventoStep | undefined {
