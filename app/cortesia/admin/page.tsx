@@ -48,6 +48,8 @@ export default async function CortesiaAdminPage() {
     genero: (r.genero as string) ?? '',
     cpf: (r.cpf as string) ?? '',
     created_at_fmt: r.created_at ? fmtBR(String(r.created_at)) : '',
+    pago: r.pago === true,
+    pago_em_fmt: r.pago_em ? fmtBR(String(r.pago_em)) : '',
   }))
 
   return (

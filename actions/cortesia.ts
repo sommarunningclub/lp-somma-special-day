@@ -94,3 +94,34 @@ export async function toggleCortesiaBloqueada(bloquear: boolean): Promise<Toggle
     return { success: false, error: 'Não foi possível atualizar. Tente novamente.' }
   }
 }
+
+type PagoResult =
+  | { success: true; pago: boolean }
+  | { success: false; error: string }
+
+/**
+ * Marca/desmarca uma cortesia como paga (controle manual do admin). Registra a
+ * data em pago_em. Somente admin autenticado. Revalida o painel.
+ */
+export async function setCortesiaPago(id: string, pago: boolean): Promise<PagoResult> {
+  if (!(await isAuthenticated())) {
+    return { success: false, error: 'Sessão expirada. Faça login novamente.' }
+  }
+  if (!id) return { success: false, error: 'Registro inválido.' }
+
+  try {
+    const supabase = createServerClient()
+    const { error } = await supabase
+      .from('cortesia')
+      .update({ pago, pago_em: pago ? new Date().toISOString() : null })
+      .eq('id', id)
+
+    if (error) {
+      return { success: false, error: 'Não foi possível salvar. Tente novamente.' }
+    }
+    revalidatePath('/cortesia/admin')
+    return { success: true, pago }
+  } catch {
+    return { success: false, error: 'Não foi possível salvar. Tente novamente.' }
+  }
+}
