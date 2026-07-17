@@ -11,7 +11,7 @@
  * A copy fica aqui de propósito: editar texto = editar este arquivo.
  */
 
-export type EventoBase = 'lista_vip' | 'checkins' | 'cadastro_site'
+export type EventoBase = 'lista_vip' | 'checkins' | 'cadastro_site' | 'dayuse'
 
 export interface EventoStep {
   base: EventoBase
@@ -19,6 +19,11 @@ export interface EventoStep {
   step: string
   /** Momento programado de envio (ISO 8601, UTC). */
   sendAt: string
+  /**
+   * Se true, o passo já nasce ATIVO no agendamento (dispara sozinho no horário).
+   * Default (undefined/false): nasce desativado e o admin precisa ligar na mão.
+   */
+  defaultEnabled?: boolean
   subject: string
   preheader: string
   /** Selo pequeno em cima do título. */
@@ -45,8 +50,15 @@ export interface EventoReguaMeta {
 
 export const SITE_URL = 'https://specialday.sommaclub.com.br'
 const BUY_URL = `${SITE_URL}/#tfsports`
+const DAYUSE_URL = `${SITE_URL}/dayuse`
 
 export const REGUAS_META: EventoReguaMeta[] = [
+  {
+    base: 'dayuse',
+    label: 'Régua Day Use · Todas as bases',
+    descricao: 'Push do ingresso Day Use (R$ 75) para VIP + Check-ins + Cadastro do site, sem enviar duplicado. 3 e-mails no dia 17/07 (12h30, 16h50 e 20h).',
+    accent: '#1faa59',
+  },
   {
     base: 'lista_vip',
     label: 'Régua 1 · Lista VIP',
@@ -323,7 +335,97 @@ function buildKitSteps(): EventoStep[] {
   return steps
 }
 
+/**
+ * Régua Day Use (17/07): 3 e-mails ao longo do dia (12h30, 16h50 e 20h BRT) para
+ * a base unificada (VIP + check-ins + cadastro do site, deduplicada). Foco no
+ * ingresso do after (R$ 75), pra quem não vai correr mas quer viver o dia.
+ * Nasce ATIVA (defaultEnabled) porque é um disparo pontual já aprovado.
+ */
+function buildDayUseSteps(): EventoStep[] {
+  const WA = 'Oi! Quero garantir meu Day Use do Special Day 🎟️'
+  return [
+    {
+      base: 'dayuse',
+      step: 'dayuse1',
+      sendAt: '2026-07-17T15:30:00Z', // 12h30 BRT
+      defaultEnabled: true,
+      subject: 'É amanhã. E você ainda pode entrar 👀',
+      preheader: 'Não vai correr? O after completo do Special Day é seu por R$ 75.',
+      selo: 'É amanhã',
+      headline: 'O after é seu',
+      body: [
+        'Bora ser sincero, {{nome}}: nem todo mundo quer acordar pra correr 8 km. 😅',
+        'Mas ninguém quer ficar de fora do after mais insano de Brasília.',
+        'Por isso existe o Day Use: você não corre, não pega kit — mas vive o dia inteiro do Special Day, com acesso a tudo:',
+        '• Samba ao vivo com a Resenha do Sabino',
+        '• DJ até o pôr do sol',
+        '• Gincana Somma (competição, zoeira e premiação)',
+        '• Sorteios o dia todo, bar e ativações dos parceiros',
+        'É o aniversário de 1 ano do Somma, amanhã (18/07). Depois não tem "ah, eu queria ter ido".',
+      ],
+      showPrice: true,
+      cta: 'Garantir meu Day Use',
+      ctaUrl: DAYUSE_URL,
+      waText: WA,
+    },
+    {
+      base: 'dayuse',
+      step: 'dayuse2',
+      sendAt: '2026-07-17T19:50:00Z', // 16h50 BRT
+      defaultEnabled: true,
+      subject: 'Tudo que te espera no Special Day (com Day Use) 🥁',
+      preheader: 'Samba, gincana, praça de alimentação, recovery e sorteios. O Day Use libera tudo.',
+      selo: 'A experiência',
+      headline: 'Do café ao pôr do sol',
+      body: [
+        'Você pediu, {{nome}}, a gente detalha. Esse é o rolê que o seu Day Use libera 👇',
+        'A programação do dia:',
+        '• 08h–09h · Fit Dance + café da manhã Big Box',
+        '• 09h–12h · Roda de samba & ativações',
+        '• 11h–13h30 · Gincana Somma (provas em equipe + premiação)',
+        '• 13h30–15h · DJ & encerramento social',
+        'Tem praça de alimentação com de tudo — churrasquinho, arroz carreteiro, açaí, crepe e os shakes da DOPAHMINA — e um recovery completo: banheiro de gelo, hidratação e mais.',
+        'E sorteios o dia inteiro: brindes dos parceiros, vouchers e combos do bar Somma.',
+        'Fica a dica: leve uma roupa extra. Tem duchas liberadas e banheiro com chuveiro pra você voltar novo pro after.',
+        'Só um detalhe honesto: o sorteio do tênis Adidas Evo SL é exclusivo de quem comprou o kit. O Day Use concorre a todos os outros. 😉',
+      ],
+      showPrice: true,
+      cta: 'Quero meu Day Use',
+      ctaUrl: DAYUSE_URL,
+      waText: WA,
+    },
+    {
+      base: 'dayuse',
+      step: 'dayuse3',
+      sendAt: '2026-07-17T23:00:00Z', // 20h BRT
+      defaultEnabled: true,
+      subject: '⏰ Última chamada: o Special Day é amanhã',
+      preheader: 'Depois de hoje, o "quero ir" vira "queria ter ido". R$ 75 e você tá dentro.',
+      selo: 'Última chamada',
+      headline: 'Última chamada',
+      body: [
+        'É agora ou o story dos outros amanhã, {{nome}}. 👀',
+        'O Special Day é amanhã (18/07) e essa é a última chamada pro seu Day Use.',
+        'Enquanto você lê isso, a galera já tá garantindo o lugar na roda de samba, no time da gincana e na fila dos sorteios.',
+        'O que te espera:',
+        '• Acesso a todo o after — samba ao vivo, DJ, gincana, bar e ativações',
+        '• Sorteios o dia inteiro',
+        '• Praça de alimentação e recovery completo',
+        '• A melhor comunidade de Brasília reunida',
+        'Sem correr, sem complicação. Só o melhor do dia, por R$ 75.',
+      ],
+      showPrice: true,
+      cta: 'Garantir agora',
+      ctaUrl: DAYUSE_URL,
+      waText: WA,
+    },
+  ]
+}
+
 export const EVENTO_STEPS: EventoStep[] = [
+  // ===================== RÉGUA DAY USE · todas as bases (dedup) =====================
+  ...buildDayUseSteps(),
+
   // ===================== RÉGUA 1 · lista_vip =====================
   {
     base: 'lista_vip',

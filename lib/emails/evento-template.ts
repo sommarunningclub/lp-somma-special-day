@@ -88,6 +88,17 @@ function priceBlock(): string {
   </table>`
 }
 
+/** Bloco de preço do Day Use (R$ 75 · ingresso único). Usado só na régua dayuse. */
+function dayUsePriceBlock(): string {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:4px 0 14px;">
+    <tr><td align="center" style="background-color:#ffffff;border:3px solid ${COLORS.black};border-radius:14px;padding:18px 16px;">
+      <span style="display:inline-block;background:${COLORS.black};color:${COLORS.cream};font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;border-radius:999px;padding:4px 12px;">Ingresso Day Use</span>
+      <p style="margin:12px 0 0;line-height:1;"><span style="font-size:32px;font-weight:900;color:${COLORS.orange};">R$ 75</span></p>
+      <p style="margin:8px 0 0;font-size:12px;color:#5b5344;">ingresso único · à vista · acesso a todo o after</p>
+    </td></tr>
+  </table>`
+}
+
 /** Bloco de destaque da atração especial (pagode). Aparece em todos os e-mails. */
 function atracaoBlock(): string {
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:4px 0 14px;">
@@ -119,6 +130,7 @@ export function renderEventoEmail({ nome, base, step, unsubscribeUrl }: EventoEm
 
   const accent = accentForBase(cfg.base)
   const seloTxt = contrastOn(accent)
+  const isDayUse = cfg.base === 'dayuse'
 
   const html = `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -154,7 +166,7 @@ export function renderEventoEmail({ nome, base, step, unsubscribeUrl }: EventoEm
         <tr><td style="padding:24px 26px 8px;">
           ${renderBody(cfg.body, nome, accent)}
           ${atracaoBlock()}
-          ${cfg.showPrice ? priceBlock() : ''}
+          ${cfg.showPrice ? (isDayUse ? dayUsePriceBlock() : priceBlock()) : ''}
 
           <!-- CTA -->
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;">
@@ -172,11 +184,11 @@ export function renderEventoEmail({ nome, base, step, unsubscribeUrl }: EventoEm
             <tr>
               <td width="50%" valign="top" style="padding:16px 20px;">
                 <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.yellow};">Data e hora</p>
-                <p style="margin:4px 0 0;font-size:15px;font-weight:bold;color:${COLORS.cream};">18/07/2026 · 06h</p>
+                <p style="margin:4px 0 0;font-size:15px;font-weight:bold;color:${COLORS.cream};">${isDayUse ? '18/07 · a partir das 08h' : '18/07/2026 · 06h'}</p>
               </td>
               <td width="50%" valign="top" style="padding:16px 20px;">
                 <p style="margin:0;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${COLORS.yellow};">Local</p>
-                <p style="margin:4px 0 0;font-size:15px;font-weight:bold;color:${COLORS.cream};">COPMDF · Brasília</p>
+                <p style="margin:4px 0 0;font-size:15px;font-weight:bold;color:${COLORS.cream};">${isDayUse ? 'Entre a 106 e 107 Sul · Brasília' : 'COPMDF · Brasília'}</p>
               </td>
             </tr>
           </table>

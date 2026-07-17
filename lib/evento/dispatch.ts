@@ -21,10 +21,24 @@ interface BaseConfig {
   useEmailStatus?: boolean
 }
 
-const BASE_CONFIG: Record<EventoBase, BaseConfig> = {
+const SOURCE_CONFIG = {
   lista_vip: { table: 'lista_vip', nameCol: 'nome', extraCols: ['email_status'], useEmailStatus: true },
   checkins: { table: 'checkins', nameCol: 'nome_completo' },
   cadastro_site: { table: 'cadastro_site', nameCol: 'nome_completo' },
+} satisfies Record<string, BaseConfig>
+
+type SourceKey = keyof typeof SOURCE_CONFIG
+
+/**
+ * Quais tabelas-fonte compõem cada base. As três bases originais mapeiam 1:1
+ * para sua tabela; `dayuse` é a UNIÃO das três, deduplicada por e-mail — assim
+ * quem está em mais de uma lista recebe o Day Use uma vez só.
+ */
+const SOURCES_FOR_BASE: Record<EventoBase, SourceKey[]> = {
+  lista_vip: ['lista_vip'],
+  checkins: ['checkins'],
+  cadastro_site: ['cadastro_site'],
+  dayuse: ['lista_vip', 'checkins', 'cadastro_site'],
 }
 
 interface RawRow {
@@ -33,9 +47,8 @@ interface RawRow {
   email_status?: string | null
 }
 
-/** Busca todos os contatos da base já deduplicados por e-mail (lowercase). */
-async function fetchRecipients(base: EventoBase): Promise<Recipient[]> {
-  const cfg = BASE_CONFIG[base]
+/** Lê uma tabela-fonte inteira (paginada), já descartando e-mails bloqueados. */
+async function fetchTable(cfg: BaseConfig): Promise<RawRow[]> {
   const supabase = createServerClient()
   const cols = ['email', `${cfg.nameCol}`, ...(cfg.extraCols ?? [])].join(', ')
 
@@ -45,22 +58,27 @@ async function fetchRecipients(base: EventoBase): Promise<Recipient[]> {
     const { data, error } = await supabase.from(cfg.table).select(cols).range(from, from + PAGE - 1)
     if (error || !data || data.length === 0) break
     for (const r of data as unknown as Record<string, unknown>[]) {
-      rows.push({
-        nome: String(r[cfg.nameCol] ?? ''),
-        email: String(r.email ?? ''),
-        email_status: (r.email_status as string | null) ?? null,
-      })
+      const status = (r.email_status as string | null) ?? null
+      if (cfg.useEmailStatus && STATUS_BLOQUEADO.has(status ?? '')) continue
+      rows.push({ nome: String(r[cfg.nameCol] ?? ''), email: String(r.email ?? ''), email_status: status })
     }
     if (data.length < PAGE) break
   }
+  return rows
+}
+
+/** Busca todos os contatos da base já deduplicados por e-mail (lowercase). */
+async function fetchRecipients(base: EventoBase): Promise<Recipient[]> {
+  const rowsPerSource = await Promise.all(SOURCES_FOR_BASE[base].map((k) => fetchTable(SOURCE_CONFIG[k])))
 
   const byKey = new Map<string, Recipient>()
-  for (const r of rows) {
-    const email = (r.email || '').trim()
-    const key = email.toLowerCase()
-    if (!EMAIL_RE.test(email)) continue
-    if (cfg.useEmailStatus && STATUS_BLOQUEADO.has(r.email_status ?? '')) continue
-    if (!byKey.has(key)) byKey.set(key, { key, nome: r.nome, email })
+  for (const rows of rowsPerSource) {
+    for (const r of rows) {
+      const email = (r.email || '').trim()
+      const key = email.toLowerCase()
+      if (!EMAIL_RE.test(email)) continue
+      if (!byKey.has(key)) byKey.set(key, { key, nome: r.nome, email })
+    }
   }
   return Array.from(byKey.values())
 }

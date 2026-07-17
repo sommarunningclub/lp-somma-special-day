@@ -62,16 +62,21 @@ async function writeJson(key: string, value: unknown): Promise<void> {
 
 /**
  * Agendamento: usa o salvo, completando com os defaults da config.
- * IMPORTANTE: passos nascem DESATIVADOS (enabled=false) para nada disparar
- * automaticamente antes de a copy ser aprovada. O admin ativa cada passo na mão.
+ * IMPORTANTE: por padrão os passos nascem DESATIVADOS (enabled=false) para nada
+ * disparar antes de a copy ser aprovada. Passos com `defaultEnabled: true`
+ * (ex.: régua Day Use) nascem LIGADOS e disparam sozinhos no horário.
  */
 export async function getSchedule(base: EventoBase): Promise<ScheduleEntry[]> {
-  const defaults: ScheduleEntry[] = stepsForBase(base).map((s) => ({ step: s.step, sendAt: s.sendAt, enabled: false }))
+  const defaults: ScheduleEntry[] = stepsForBase(base).map((s) => ({
+    step: s.step,
+    sendAt: s.sendAt,
+    enabled: s.defaultEnabled ?? false,
+  }))
   const stored = await readJson<ScheduleEntry[] | null>(kSchedule(base), null)
   if (!stored || !Array.isArray(stored)) return defaults
   return defaults.map((d) => {
     const found = stored.find((s) => s.step === d.step)
-    return found ? { step: d.step, sendAt: found.sendAt ?? d.sendAt, enabled: found.enabled ?? false } : d
+    return found ? { step: d.step, sendAt: found.sendAt ?? d.sendAt, enabled: found.enabled ?? d.enabled } : d
   })
 }
 
