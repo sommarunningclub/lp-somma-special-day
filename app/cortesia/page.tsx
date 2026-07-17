@@ -5,6 +5,7 @@ import CortesiaForm from '@/components/special-day/CortesiaForm'
 import CortesiaEsgotada from '@/components/special-day/CortesiaEsgotada'
 import { createServerClient } from '@/lib/supabase/server'
 import { CORTESIA_LIMITE } from '@/lib/validations/cortesia'
+import { isCortesiaBloqueada } from '@/lib/cortesia/settings'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,10 +16,13 @@ export const metadata: Metadata = {
 
 export default async function CortesiaPage() {
   const supabase = createServerClient()
-  const { count } = await supabase
-    .from('cortesia')
-    .select('*', { count: 'exact', head: true })
-  const esgotado = (count ?? 0) >= CORTESIA_LIMITE
+  const [{ count }, bloqueadaManual] = await Promise.all([
+    supabase.from('cortesia').select('*', { count: 'exact', head: true }),
+    isCortesiaBloqueada(),
+  ])
+  // Formulario fecha por bloqueio manual (kill-switch do admin) OU pelo teto.
+  const esgotado = bloqueadaManual || (count ?? 0) >= CORTESIA_LIMITE
+  const motivo = bloqueadaManual ? 'manual' : 'limite'
 
   return (
     <main className="relative min-h-[100svh] w-full overflow-hidden bg-somma-black px-4 py-10 sm:py-14 md:min-h-screen md:py-20">
@@ -57,7 +61,7 @@ export default async function CortesiaPage() {
           />
         </div>
 
-        {esgotado ? <CortesiaEsgotada /> : <CortesiaForm />}
+        {esgotado ? <CortesiaEsgotada motivo={motivo} /> : <CortesiaForm />}
       </div>
     </main>
   )

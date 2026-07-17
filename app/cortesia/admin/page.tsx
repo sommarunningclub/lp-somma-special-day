@@ -3,8 +3,11 @@ import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import { isAuthenticated } from '@/lib/auth'
 import { createServerClient } from '@/lib/supabase/server'
+import { isCortesiaBloqueada } from '@/lib/cortesia/settings'
+import { CORTESIA_LIMITE } from '@/lib/validations/cortesia'
 import LogoutButton from '@/components/admin/LogoutButton'
 import RefreshButton from '@/components/admin/RefreshButton'
+import CortesiaBlockToggle from '@/components/special-day/cortesia/CortesiaBlockToggle'
 import CortesiaAdminDashboard, {
   type CortesiaLead,
 } from '@/components/special-day/cortesia/CortesiaAdminDashboard'
@@ -31,10 +34,10 @@ export default async function CortesiaAdminPage() {
   if (!(await isAuthenticated())) redirect('/login-admin')
 
   const supabase = createServerClient()
-  const { data } = await supabase
-    .from('cortesia')
-    .select('*')
-    .order('created_at', { ascending: false })
+  const [{ data }, bloqueada] = await Promise.all([
+    supabase.from('cortesia').select('*').order('created_at', { ascending: false }),
+    isCortesiaBloqueada(),
+  ])
 
   const leads: CortesiaLead[] = (data ?? []).map((r: Record<string, unknown>) => ({
     id: String(r.id),
@@ -83,6 +86,12 @@ export default async function CortesiaAdminPage() {
             <LogoutButton />
           </div>
         </div>
+
+        <CortesiaBlockToggle
+          initialBlocked={bloqueada}
+          total={leads.length}
+          limite={CORTESIA_LIMITE}
+        />
 
         <CortesiaAdminDashboard leads={leads} />
       </div>

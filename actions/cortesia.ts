@@ -1,7 +1,10 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
+import { isAuthenticated } from '@/lib/auth'
 import { createServerClient } from '@/lib/supabase/server'
 import { cortesiaSchema, CORTESIA_LIMITE, type CortesiaInput } from '@/lib/validations/cortesia'
+import { isCortesiaBloqueada, setCortesiaBloqueada } from '@/lib/cortesia/settings'
 
 type ActionResult =
   | { success: true }
@@ -30,6 +33,12 @@ export async function submitCortesia(formData: unknown): Promise<ActionResult> {
   }
 
   try {
+    // Bloqueio manual (kill-switch acionado pelo admin). Checado no servidor
+    // para nao depender do estado da pagina.
+    if (await isCortesiaBloqueada()) {
+      return { success: false, error: 'As inscrições de cortesia estão encerradas no momento.' }
+    }
+
     const supabase = createServerClient()
 
     // Limite de cortesias: bloqueia quando atingir o teto. Checagem server-side
@@ -60,5 +69,28 @@ export async function submitCortesia(formData: unknown): Promise<ActionResult> {
     return { success: true }
   } catch {
     return { success: false, error: 'Ocorreu um erro. Tente novamente.' }
+  }
+}
+
+type ToggleResult =
+  | { success: true; bloqueada: boolean }
+  | { success: false; error: string }
+
+/**
+ * Liga/desliga o bloqueio manual do formulario de cortesia (kill-switch do
+ * admin). Somente admin autenticado. Revalida a pagina publica e o painel.
+ */
+export async function toggleCortesiaBloqueada(bloquear: boolean): Promise<ToggleResult> {
+  if (!(await isAuthenticated())) {
+    return { success: false, error: 'Sessão expirada. Faça login novamente.' }
+  }
+
+  try {
+    await setCortesiaBloqueada(bloquear)
+    revalidatePath('/cortesia')
+    revalidatePath('/cortesia/admin')
+    return { success: true, bloqueada: bloquear }
+  } catch {
+    return { success: false, error: 'Não foi possível atualizar. Tente novamente.' }
   }
 }
